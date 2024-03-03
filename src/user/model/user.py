@@ -1,4 +1,4 @@
-from src.app import db
+from src import db
 from datetime import datetime
 
 class User(db.Model):
@@ -12,3 +12,4 @@ class User(db.Model):
     salt = db.Column(db.String(192), nullable=False)
     admin_flag = db.Column(db.Boolean, default=False)
     created_timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
