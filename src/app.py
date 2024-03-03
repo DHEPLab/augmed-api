@@ -1,10 +1,14 @@
 from flask import Flask
-
-from src.user.controller.user_controller import hello_blueprint
+from flask_sqlalchemy import SQLAlchemy
+from src.config import Config  # Update this path as necessary
 
 app = Flask(__name__)
+app.config.from_object(Config)
+db = SQLAlchemy(app)
 
-app.register_blueprint(hello_blueprint)
+@app.route('/')
+def hello():
+    return "Hello, World!"
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)

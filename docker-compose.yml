@@ -5,12 +5,13 @@ services:
     image: postgres
     restart: always
     environment:
+      POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: aim_ahead_api
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - "5432:5432"
     volumes:
-      - my_local_dbdata:/var/lib/postgresql/data  # Persist database data
+      - my_local_dbdata:/var/lib/postgresql/data
 
 volumes:
   my_local_dbdata:
