@@ -76,3 +76,4 @@ template.beconf.tfvars
 *.tfstate.backup
 backend.tf
 *.iso
+.env

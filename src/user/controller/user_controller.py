@@ -1,5 +1,5 @@
 from flask import Blueprint
-from src.task.service.service import get_hello_message
+from src.user.service.user_service import get_hello_message
 
 hello_blueprint = Blueprint('hello_blueprint', __name__)
 

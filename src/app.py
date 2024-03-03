@@ -1,6 +1,6 @@
 from flask import Flask
 
-from src.task.controller.controller import hello_blueprint
+from src.user.controller.user_controller import hello_blueprint
 
 app = Flask(__name__)
 
