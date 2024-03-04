@@ -10,6 +10,10 @@ psycopg2-binary = "*"
 python-dotenv = "*"
 flask-alembic = "*"
 flask-migrate = "*"
+black = "*"
+isort = "*"
+flake8 = "*"
+flake8-pyproject = "*"
 
 [dev-packages]
 

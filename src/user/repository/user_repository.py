@@ -1,6 +1,7 @@
 from src import db
 from src.user.model.user import User
 
+
 class UserRepository:
     @staticmethod
     def create_user(name, email, title, password, salt):

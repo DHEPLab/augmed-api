@@ -1,13 +1,18 @@
-from src.user.repository.user_repository import UserRepository
 from werkzeug.security import generate_password_hash
+
+from src.user.repository.user_repository import UserRepository
+
 
 class UserService:
     @staticmethod
     def add_user(data):
-        hashed_password = generate_password_hash(data['password'] + data['salt'])
+        hashed_password = generate_password_hash(data["password"] + data["salt"])
         return UserRepository.create_user(
-            name=data['name'], email=data['email'], title=data['title'],
-            password=hashed_password, salt=data['salt']
+            name=data["name"],
+            email=data["email"],
+            title=data["title"],
+            password=hashed_password,
+            salt=data["salt"],
         )
 
     @staticmethod
