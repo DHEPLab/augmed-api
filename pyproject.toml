@@ -6,7 +6,7 @@ exclude = '''
 '''
 
 [tool.isort]
-skip = ["src/migrations/*"]
+skip_glob = ["src/migrations/*"]
 
 [tool.flake8]
 exclude = ["src/migrations/"]
