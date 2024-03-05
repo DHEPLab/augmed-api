@@ -11,7 +11,7 @@ card_name_regex="\[UNCAIM-[0-9]+\]|\[TECH\]"
 person_name_regex="[A-Z][a-z]+."
 author_name_regex="\[(${person_name_regex})(\s(&|&&)\s${person_name_regex})?\]"
 work_type_regex="build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test"
-commit_msg_regex="^${card_name_regex}${author_name_regex}\s?${work_type_regex}(\([a-z \-]+\))?\!?:\ .+"
+commit_msg_regex="^${card_name_regex}${author_name_regex}\s{0,1}${work_type_regex}(\(([a-z \-]+)\))?\!?:\ .+$"
 
 # Function to read the commit message from the provided file
 get_commit_message() {
