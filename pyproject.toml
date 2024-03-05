@@ -15,21 +15,18 @@ ignore = ["E203", "W503"]
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "-ra -q"
+addopts = "-ra -s --cov=src --cov-branch --cov-report=term --cov-report=html"
+
 testpaths = [
     "tests/*.py",
 ]
 
 [tool.coverage.run]
-branch = true
-source = ["src"]
 omit = [
     "src/migrations/*"
 ]
 
 [tool.coverage.report]
 fail_under = 90  # Your desired coverage threshold
-
-
 
 
