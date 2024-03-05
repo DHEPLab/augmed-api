@@ -14,6 +14,9 @@ black = "*"
 isort = "*"
 flake8 = "*"
 flake8-pyproject = "*"
+pytest = "*"
+coverage = "*"
+pytest-cov = "*"
 
 [dev-packages]
 
