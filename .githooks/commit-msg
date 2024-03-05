@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 # Define color variables for printing messages with color
 RED='\033[0;31m'
@@ -32,9 +32,9 @@ print_success() {
 
 # Function to print an error message with examples
 print_error() {
-    echo -e "${RED}Commit message does not meet Conventional Commit standard.${RESET}"
-    echo -e "${YELLOW}Example: [UNCAIM-70][Alex Xu] feat: the code changes the world.${RESET}"
-    echo -e "${YELLOW}Or for pairs: [UNCAIM-70][Pair DevA & Pair DevB] feat: the code changes the world.${RESET}"
+    echo "${RED}Commit message does not meet Conventional Commit standard.${RESET}"
+    echo "${YELLOW}Example: [UNCAIM-70][Alex Xu] feat: the code changes the world.${RESET}"
+    echo "${YELLOW}Or for pairs: [UNCAIM-70][Pair DevA & Pair DevB] feat: the code changes the world.${RESET}"
 }
 
 # Read the commit message from the provided file path

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 # Define color variables for printing messages with color
 RED='\033[0;31m'
@@ -21,8 +21,8 @@ lint_exit_code=$?
 echo "$lint_output"
 
 if [ $lint_exit_code -ne 0 ]; then
-  echo -e "${RED}flake8 lint failed. Please fix the lint issues before committing.${RESET}"
+  echo "${RED}flake8 lint failed. Please fix the lint issues before committing.${RESET}"
   exit 1
 fi
 
-echo -e "${GREEN}flake8 lint check passed.${RESET}"
+echo "${GREEN}flake8 lint check passed.${RESET}"
