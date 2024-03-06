@@ -20,7 +20,6 @@ jobs:
         run: |
           pip install pipenv
           pipenv install --dev
-          export PYTHONPATH=$(pwd)
       - name: Check code formatting with black
         run: |
           pipenv run black src
