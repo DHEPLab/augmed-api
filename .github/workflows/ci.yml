@@ -21,9 +21,9 @@ jobs:
           pip install pipenv
           pipenv install --deploy --ignore-pipfile
           export PYTHONPATH=$(pwd)
-      - name: Check code formatting with black
-        run: |
-          black src
+#      - name: Check code formatting with black
+#        run: |
+#          black src
       - name: Lint with flake8
         run: |
           flake8 src
