@@ -23,10 +23,10 @@ jobs:
           export PYTHONPATH=$(pwd)
       - name: Check code formatting with black
         run: |
-          black src
+          pipenv run black src
       - name: Lint with flake8
         run: |
-          flake8 src
+          pipenv run flake8 src
 
   test:
     needs: lint
@@ -42,10 +42,9 @@ jobs:
         run: |
           pip install pipenv
           pipenv install --deploy --ignore-pipfile
-          export PYTHONPATH=$(pwd)
       - name: Run tests
         run: |
-          pytest
+          pipenv run pytest
 
   build:
     needs: test
