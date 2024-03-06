@@ -20,6 +20,7 @@ jobs:
         run: |
           pip install pipenv
           pipenv install --deploy --ignore-pipfile
+          export PYTHONPATH=$(pwd)
       - name: Check code formatting with black
         run: |
           black src
@@ -41,6 +42,7 @@ jobs:
         run: |
           pip install pipenv
           pipenv install --deploy --ignore-pipfile
+          export PYTHONPATH=$(pwd)
       - name: Run tests
         run: |
           pytest

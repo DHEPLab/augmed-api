@@ -18,6 +18,7 @@ pytest = "*"
 coverage = "*"
 pytest-cov = "*"
 gunicorn = "*"# ->tomcat, WSGI->severlet
+testcontainers-postgres = "*"
 
 [dev-packages]
 
