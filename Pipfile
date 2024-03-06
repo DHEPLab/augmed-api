@@ -17,6 +17,7 @@ flake8-pyproject = "*"
 pytest = "*"
 coverage = "*"
 pytest-cov = "*"
+gunicorn = "*"# ->tomcat, WSGI->severlet
 
 [dev-packages]
 
