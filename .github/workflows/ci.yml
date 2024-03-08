@@ -45,12 +45,35 @@ jobs:
         run: |
           pipenv run pytest
 
-  build:
+  build-and-push:
     needs: test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag my-flask-app
+      - uses: actions/checkout@v4
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4 # More information on this action can be found below in the 'AWS Credentials' section
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: 211125738433.dkr.ecr.us-east-1.amazonaws.com/aim-ahead-repository
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+#      - name: Deploy to Amazon ECS
+#        run: |
+#          # 使用 AWS CLI 或 Amazon ECS 的部署脚本更新 ECS 服务
+#          # 这需要您已经有一个运行的 ECS 服务和任务定义
+#          aws ecs update-service --cluster your-cluster-name --service your-service-name --force-new-deployment
+#        env:
+#          AWS_REGION: us-east-1
