@@ -67,12 +67,13 @@ jobs:
 
       - name: Build, tag, and push image to Amazon ECR
         env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: aim-ahead-repository
-          IMAGE_TAG: latest
+          ECR_REGISTRY: ${{ env.ECR_REGISTRY }}
+          ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
+          IMAGE_TAG: aim-ahead-api:latest
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
 
 #      - name: Deploy to Amazon ECS
 #        run: |
