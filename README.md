@@ -17,7 +17,7 @@
 
    Pipenv is used to manage dependencies as it can automatically generate the `Pipfile.lock`, unlike `virtualenv` which requires manual generation of `requirements.txt`.
    ```shell
-   pip install --user pipenv
+   pip install pipenv
    ```
    For installing further dependencies, use `pipenv install <package>` instead of `pip install <package>` to manage the dependencies efficiently.
 
@@ -38,7 +38,7 @@ To run the application locally, follow these steps:
 
 1. Ensure all dependencies are installed using Pipenv.
 2. Start your Docker containers if the application requires any external services like databases.
-3. Use the following command to run the application:
+3. Use the following command to run the application under the ``src``:
    ```shell
    flask run
    ```
@@ -75,9 +75,9 @@ flake8 src
 
 ### Local Database
 
-To set up the local database, run:
+To set up the local database, firstly export the var in ``.env`` to local. Then run:
 ```docker
-docker compose up -d
+docker-compose up -d
 ```
 
 And add a .env file in the root  follow the .env_example
@@ -86,7 +86,7 @@ And add a .env file in the root  follow the .env_example
 
 Database migration scripts are managed with [Flask-Alembic](https://flask-alembic.readthedocs.io/en/latest/) under the `src/migrations` folder.
 
-To modify the schema, use the following commands:
+To modify the schema, use the following commands under the ``src``:
 ```shell
 flask db init  # Only needed the first time to create the migration repository.
 
