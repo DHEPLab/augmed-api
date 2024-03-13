@@ -4,8 +4,7 @@ from src.user.model.user import User
 
 class UserRepository:
     @staticmethod
-    def create_user(name, email, title, password, salt):
-        user = User(name=name, email=email, title=title, password=password, salt=salt)
+    def create_user(user: User):
         db.session.add(user)
         db.session.commit()
         return user

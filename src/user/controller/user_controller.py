@@ -1,18 +1,18 @@
 from flask import Blueprint, jsonify, request
 
+from common.model.ApiResponse import ApiResponse
 from src.user.service.user_service import UserService
+from user.model.CreateUserRequest import CreateUserRequest
 
 user_blueprint = Blueprint("user", __name__)
 
 
 @user_blueprint.route("/users", methods=["POST"])
 def create_user():
-    data = request.get_json()
-    user = UserService.add_user(data)
+    data = CreateUserRequest.from_dict(request.get_json())
+    response = UserService.add_inactive_user(data.users)
     return (
-        jsonify(
-            {"id": user.id, "name": user.name, "email": user.email, "title": user.title}
-        ),
+        ApiResponse.success(response),
         201,
     )
 
