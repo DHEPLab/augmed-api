@@ -19,6 +19,7 @@ coverage = "*"
 pytest-cov = "*"
 gunicorn = "*"# ->tomcat, WSGI->severlet
 testcontainers-postgres = "*"
+flask-jwt-extended = "*"
 dataclass-wizard = "*"
 
 [dev-packages]
