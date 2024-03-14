@@ -1,13 +1,16 @@
 from flask import Blueprint, jsonify, request
 
+from app import schema
 from common.model.ApiResponse import ApiResponse
 from src.user.service.user_service import UserService
-from user.model.CreateUserRequest import CreateUserRequest
+from user.controller.request.CreateUserRequest import CreateUserRequest
+from user.controller.schema.create_users_schema import create_users_schema
 
 user_blueprint = Blueprint("user", __name__)
 
 
 @user_blueprint.route("/users", methods=["POST"])
+@schema.validate(create_users_schema)
 def create_user():
     data = CreateUserRequest.from_dict(request.get_json())
     response = UserService.add_inactive_user(data.users)

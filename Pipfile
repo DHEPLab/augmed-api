@@ -22,6 +22,7 @@ testcontainers-postgres = "*"
 flask-jwt-extended = "*"
 pytest-mock = "*"
 dataclass-wizard = "*"
+flask-json-schema = "*"
 
 [dev-packages]
 

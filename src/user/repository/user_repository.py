@@ -1,6 +1,7 @@
 from sqlalchemy import select
 
-from user.model.user import User
+from src import db
+from src.user.model.user import User
 
 
 class UserRepository:
@@ -21,3 +22,8 @@ class UserRepository:
         statement = select(User).filter_by(email=email)
         result = self.db.session.execute(statement).scalar_one_or_none()
         return result
+
+    @staticmethod
+    def get_user_by_email(email):
+        statement = select(User).filter_by(email=email)
+        return db.session.execute(statement).scalar_one_or_none()

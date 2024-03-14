@@ -9,8 +9,8 @@ class Error:
     message: str
 
     @classmethod
-    def build(cls, error: ErrorCode):
-        return cls(error.code, error.message)
+    def build(cls, error: ErrorCode, msg: str = None):
+        return cls(error.code, msg if msg else error.message)
 
 
 @dataclass
@@ -23,5 +23,5 @@ class ApiResponse:
         return cls(data, None)
 
     @classmethod
-    def fail(cls, error: ErrorCode):
-        return cls(None, Error.build(error))
+    def fail(cls, error: ErrorCode, msg: str = None):
+        return cls(None, Error.build(error, msg))

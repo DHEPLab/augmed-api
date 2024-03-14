@@ -8,3 +8,4 @@ class ErrorCode(Enum):
     message: str
 
     UNKNOWN = ("AA-001", "unknown exception")
+    INVALID_PARAMETER = ("AA-002", "invalid parameter")
