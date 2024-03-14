@@ -5,11 +5,15 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
-def create_app():
+def create_app(config_object=None):
     app = Flask(__name__)
 
-    # Configuration setup from config.py
-    app.config.from_object("src.config.Config")
+    # Allow custom configuration for testing
+    if config_object:
+        app.config.from_object(config_object)
+    else:
+        # Default configuration setup from config.py
+        app.config.from_object("src.config.Config")
 
     db.init_app(app)
     Migrate(app, db)  # Initialize Flask-Migrate
@@ -19,4 +23,5 @@ def create_app():
         from src.user.controller.user_controller import user_blueprint
 
         app.register_blueprint(user_blueprint, url_prefix="/api")
+
     return app
