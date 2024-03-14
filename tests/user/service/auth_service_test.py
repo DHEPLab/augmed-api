@@ -8,7 +8,7 @@ from werkzeug.security import generate_password_hash
 from src.user.controller.request.loginRequest import LoginRequest
 from src.user.model.user import User
 from src.user.repository.user_repository import UserRepository
-from src.user.service.auth_service import AuthService
+from src.user.service.authService import AuthService
 from user.controller.authController import auth_blueprint
 
 
@@ -58,8 +58,8 @@ def test_login_failure_with_wrong_email(user_repository_mock, app):
         with pytest.raises(Exception) as exc_info:
             auth_service.login(wrong_email_login_request)
 
-        assert 'Invalid credentials' in str(exc_info.value)
-        assert exc_info.typename == 'Exception'
+        assert 'User not found' in str(exc_info.value)
+        assert exc_info.typename == 'NotFound'
 
 
 def test_login_failure_with_wrong_password(user_repository_mock, app, user):
@@ -70,4 +70,4 @@ def test_login_failure_with_wrong_password(user_repository_mock, app, user):
             auth_service.login(login_request)
 
         assert 'Invalid credentials' in str(exc_info.value)
-        assert exc_info.typename == 'Exception'
+        assert exc_info.typename == 'Unauthorized'

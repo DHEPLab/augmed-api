@@ -1,4 +1,5 @@
 from flask_jwt_extended import create_access_token, create_refresh_token
+from werkzeug.exceptions import NotFound, Unauthorized
 from werkzeug.security import check_password_hash
 
 from src.user.controller.request.loginRequest import LoginRequest
@@ -13,10 +14,13 @@ class AuthService:
     def login(self, login_request: LoginRequest) -> LoginResponse:
         user = self.user_repository.get_user_by_email(login_request.email)
 
-        if user and check_password_hash(user.password, login_request.password):
-            access_token = create_access_token(identity=user.id, fresh=True)
-            refresh_token = create_refresh_token(identity=user.id)
+        if not user:
+            raise NotFound("User not found")
 
-            return LoginResponse(access_token=access_token, refresh_token=refresh_token)
+        if not check_password_hash(user.password, login_request.password):
+            raise Unauthorized("Invalid credentials")
 
-        raise Exception("Invalid credentials")
+        access_token = create_access_token(identity=user.id, fresh=True)
+        refresh_token = create_refresh_token(identity=user.id)
+
+        return LoginResponse(access_token=access_token, refresh_token=refresh_token)

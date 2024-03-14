@@ -20,8 +20,10 @@ def create_app(config_object=None):
 
     with app.app_context():
         # Import Blueprints after initializing db to avoid circular import
+        from src.user.controller.authController import auth_blueprint
         from src.user.controller.user_controller import user_blueprint
 
         app.register_blueprint(user_blueprint, url_prefix="/api")
+        app.register_blueprint(auth_blueprint, url_prefix="/api")
 
     return app

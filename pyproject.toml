@@ -25,12 +25,16 @@ addopts = [
 ]
 
 testpaths = [
-    "tests/*.py",
+    "tests/*test.py",
 ]
+pythonpath = " src"
+
 
 [tool.coverage.run]
 omit = [
-    "src/migrations/*"
+    "src/migrations/*",
+    "*/model/*",
+    "*/__init__.py"
 ]
 
 [tool.coverage.report]
