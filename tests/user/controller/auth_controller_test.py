@@ -29,7 +29,7 @@ def test_login_success(client, mock_auth_service):
         "email": "test@example.com",
         "password": "password123"
     }
-    response = client.post("/api/login", data=json.dumps(login_data), content_type='application/json')
+    response = client.post("/api/auth/login", data=json.dumps(login_data), content_type='application/json')
     assert response.status_code == 200
     data = response.json
     assert data['access_token'] == "fake_access_token"

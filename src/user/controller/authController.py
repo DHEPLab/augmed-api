@@ -7,14 +7,14 @@ from src.user.controller.request.loginRequest import LoginRequest
 from src.user.repository.user_repository import UserRepository
 from src.user.service.authService import AuthService
 
-auth_blueprint = Blueprint("auth", __name__, url_prefix="/auth")
+auth_blueprint = Blueprint("auth", __name__)
 
 user_repository = UserRepository(db=db)
 
 auth_service = AuthService(user_repository=user_repository)
 
 
-@auth_blueprint.route("/login", methods=["POST"])
+@auth_blueprint.route("/auth/login", methods=["POST"])
 def login() -> Response:
     req_data = request.get_json()
     login_request = LoginRequest(email=req_data["email"], password=req_data["password"])
