@@ -7,14 +7,8 @@ from sqlalchemy.exc import IntegrityError
 
 from src import create_app, db
 from src.user.repository.user_repository import UserRepository  # Replace with your actual UserRepository import
+from tests.testConfig import TestConfig
 from user.model.user import User
-
-
-class TestConfig:
-    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    TESTING = True
-
 
 @pytest.fixture(scope='session')
 def app():
@@ -35,6 +29,7 @@ def app():
         command.upgrade(alembic_cfg, 'head')
 
     yield app
+
 
 
 @pytest.fixture(scope='session')
