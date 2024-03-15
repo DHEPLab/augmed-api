@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from psycopg2._psycopg import OperationalError
 
 db = SQLAlchemy()
 
@@ -15,15 +16,23 @@ def create_app(config_object=None):
         # Default configuration setup from config.py
         app.config.from_object("src.config.Config")
 
-    db.init_app(app)
-    Migrate(app, db)  # Initialize Flask-Migrate
+    try:
+        db.init_app(app)
+        Migrate(app, db)
+
+    except OperationalError:
+        print(
+            "Database connection failed. Continuing without database."
+        )  # todo: Remove after db setup
 
     with app.app_context():
         # Import Blueprints after initializing db to avoid circular import
+        from src.health.healthCheckController import healthcheck_blueprint
         from src.user.controller.authController import auth_blueprint
         from src.user.controller.user_controller import user_blueprint
 
         app.register_blueprint(user_blueprint, url_prefix="/api")
         app.register_blueprint(auth_blueprint, url_prefix="/api")
+        app.register_blueprint(healthcheck_blueprint, url_prefix="/api")
 
     return app
