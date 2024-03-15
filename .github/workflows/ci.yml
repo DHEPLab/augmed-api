@@ -43,6 +43,7 @@ jobs:
           pipenv install --deploy --ignore-pipfile
       - name: Run tests
         run: |
+          export PYTHONPATH=$(pwd)
           pipenv run pytest
 
   build-and-push:
