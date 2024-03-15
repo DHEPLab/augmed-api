@@ -1,0 +1,6 @@
+*.md
+/tests
+/.githooks
+/.github
+/htmlcov
+.env_example
