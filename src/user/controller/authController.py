@@ -17,9 +17,7 @@ auth_service = AuthService(user_repository=user_repository)
 @auth_blueprint.route("/login", methods=["POST"])
 def login() -> Response:
     req_data = request.get_json()
-    print("request", req_data)
     login_request = LoginRequest(email=req_data["email"], password=req_data["password"])
-    print("request data", login_request)
     login_response = auth_service.login(login_request)
     response = json.jsonify(asdict(login_response))
     response.status_code = 200
