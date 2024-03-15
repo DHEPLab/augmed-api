@@ -31,6 +31,10 @@ def app():
     yield app
 
 
+@pytest.fixture(scope="session")
+def user_repository(session):
+    return UserRepository(session)
+
 
 @pytest.fixture(scope='session')
 def client(app):
@@ -47,13 +51,6 @@ def _db(app):
         yield db
         db.drop_all()
         db.session.commit()
-
-
-@pytest.fixture(scope='function')
-def user_repository(_db):
-    # Set up the UserRepository fixture
-    return UserRepository(db=db)
-
 
 @pytest.fixture(scope='module', autouse=True)
 def setup_database(app):
@@ -116,3 +113,14 @@ def test_get_user_by_email_failed(user_repository, app):
     with app.app_context():
         retrieved_user = user_repository.get_user_by_email("nonexistent.email@email.com")
         assert retrieved_user is None
+
+
+def test_should_save_user(user_repository: UserRepository):
+    user = User(name="123", email="goodbye@sunwukong.com")
+
+    user_repository.create_user(user)
+    created = user_repository.get_user_by_id(user.id)
+
+    assert created.email == user.email
+    assert created.id is not None
+

@@ -23,6 +23,7 @@ flask-jwt-extended = "*"
 pytest-mock = "*"
 dataclass-wizard = "*"
 flask-json-schema = "*"
+testcontainers = "*"
 
 [dev-packages]
 

@@ -1,10 +1,10 @@
 from flask import Blueprint, jsonify, request
 
-from app import schema
-from common.model.ApiResponse import ApiResponse
+from src.app import schema
+from src.common.model.ApiResponse import ApiResponse
+from src.user.controller.request.CreateUserRequest import CreateUserRequest
+from src.user.controller.schema.create_users_schema import create_users_schema
 from src.user.service.user_service import UserService
-from user.controller.request.CreateUserRequest import CreateUserRequest
-from user.controller.schema.create_users_schema import create_users_schema
 
 user_blueprint = Blueprint("user", __name__)
 

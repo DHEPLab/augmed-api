@@ -1,8 +1,8 @@
 from flask_json_schema import JsonSchema, JsonValidationError
 
-from common.model.ApiResponse import ApiResponse
-from common.model.ErrorCode import ErrorCode
 from src import create_app
+from src.common.model.ApiResponse import ApiResponse
+from src.common.model.ErrorCode import ErrorCode
 
 app = create_app()
 schema = JsonSchema(app)
