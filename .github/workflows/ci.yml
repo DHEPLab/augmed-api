@@ -44,7 +44,7 @@ jobs:
       - name: Run tests
         run: |
           export PYTHONPATH=$(pwd)
-          pipenv run pytest
+          pipenv run pytest tests
 
   build-and-push:
     needs: test

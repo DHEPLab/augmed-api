@@ -8,7 +8,7 @@ create_users_schema = {
                 "type": "object",
                 "properties": {
                     "name": {"type": "string"},
-                    "email": {"type": "string", "format": "email"},
+                    "email": {"type": "string", "pattern": "^\\S+@\\S+\\.\\S+$"},
                     "position": {"type": "string"},
                     "employer": {"type": "string"},
                     "area_of_clinical_ex": {"type": "string"},

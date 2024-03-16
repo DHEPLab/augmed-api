@@ -3,6 +3,8 @@ from flask_json_schema import JsonSchema
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
+from common.exception.exception_handlers import register_error_handlers
+
 db = SQLAlchemy()
 schema = JsonSchema()
 
@@ -36,5 +38,7 @@ def create_app(config_object=None):
         app.register_blueprint(user_blueprint, url_prefix="/api")
         app.register_blueprint(auth_blueprint, url_prefix="/api")
         app.register_blueprint(healthcheck_blueprint, url_prefix="/api")
+
+        register_error_handlers(app)
 
     return app
