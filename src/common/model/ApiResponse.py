@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from common.model import ErrorCode
+from src.common.model import ErrorCode
 
 
 @dataclass

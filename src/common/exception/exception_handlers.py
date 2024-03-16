@@ -3,8 +3,8 @@ from flask_json_schema import JsonValidationError
 from werkzeug.exceptions import (BadRequest, Forbidden, InternalServerError,
                                  NotFound, Unauthorized)
 
-from common.model.ApiResponse import ApiResponse
-from common.model.ErrorCode import ErrorCode
+from src.common.model.ApiResponse import ApiResponse
+from src.common.model.ErrorCode import ErrorCode
 
 
 def register_error_handlers(app):

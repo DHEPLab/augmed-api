@@ -1,12 +1,12 @@
 from flask import Blueprint, jsonify, request
 
-from common.model.ErrorCode import ErrorCode
 from src import db, schema
 from src.common.model.ApiResponse import ApiResponse
+from src.common.model.ErrorCode import ErrorCode
 from src.user.controller.schema.create_users_schema import create_users_schema
+from src.user.model.user import User
+from src.user.repository.user_repository import UserRepository
 from src.user.service.user_service import UserService
-from user.model.user import User
-from user.repository.user_repository import UserRepository
 
 user_blueprint = Blueprint("user", __name__)
 
