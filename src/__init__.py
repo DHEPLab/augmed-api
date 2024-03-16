@@ -1,8 +1,10 @@
 from flask import Flask
+from flask_json_schema import JsonSchema
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
+schema = JsonSchema()
 
 
 def create_app(config_object=None):
@@ -10,11 +12,12 @@ def create_app(config_object=None):
 
     # Allow custom configuration for testing
     if config_object:
-        app.config.from_object(config_object)
+        app.config.from_mapping(config_object)
     else:
         # Default configuration setup from config.py
         app.config.from_object("src.config.Config")
 
+    schema.init_app(app)
     try:
         db.init_app(app)
         Migrate(app, db)

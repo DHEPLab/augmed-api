@@ -4,8 +4,9 @@ from enum import Enum
 
 @dataclass
 class ErrorCode(Enum):
-    code: str
-    message: str
-
-    UNKNOWN = ("AA-001", "unknown exception")
-    INVALID_PARAMETER = ("AA-002", "invalid parameter")
+    INTERNAL_ERROR = 500
+    INVALID_PARAMETER = 400
+    NOT_FOUND = 404
+    UNAUTHORIZED = 401
+    FORBIDDEN = 403
+    BAD_REQUEST = 400

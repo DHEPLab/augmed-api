@@ -10,7 +10,7 @@ class Error:
 
     @classmethod
     def build(cls, error: ErrorCode, msg: str = None):
-        return cls(error.code, msg if msg else error.message)
+        return cls(error.value, msg if msg else error.name)
 
 
 @dataclass

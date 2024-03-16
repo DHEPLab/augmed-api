@@ -9,7 +9,7 @@ class UserRepository:
 
     def create_user(self, user: User):
         self.session.add(user)
-        self.session.commit()
+        self.session.flush()
         return user
 
     def get_user_by_id(self, user_id):

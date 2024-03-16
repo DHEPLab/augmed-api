@@ -1,12 +1,11 @@
 import time
 
 import pytest
+from flask_jwt_extended import JWTManager
 from testcontainers.postgres import PostgresContainer
 
 from src import create_app, db
 
-
-# TODO test app can start with testcontainers
 
 @pytest.fixture(scope="session")
 def app():
@@ -15,8 +14,14 @@ def app():
     time.sleep(3)
 
     app = create_app(
-        dict(SQLALCHEMY_DATABASE_URI=postgres.get_connection_url())
+        dict(
+            SQLALCHEMY_DATABASE_URI=postgres.get_connection_url(),
+            JWT_SECRET_KEY='super-secret-key',
+            JWT_ACCESS_TOKEN_EXPIRES=3600,
+            JWT_REFRESH_TOKEN_EXPIRES=3600,
+        )
     )
+    JWTManager(app)
     # alembic = Alembic()
     # alembic.init_app(app)
     with app.app_context():
@@ -32,3 +37,17 @@ def app():
 def session(app):
     with app.app_context():
         return db.session
+
+
+@pytest.fixture
+def client(app):
+    return app.test_client()
+
+
+@pytest.fixture(scope="function", autouse=True)
+def cleanup(request, session):
+    def function_ends():
+        session.rollback()
+        session.close()
+
+    request.addfinalizer(function_ends)

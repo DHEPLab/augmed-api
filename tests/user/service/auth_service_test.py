@@ -1,26 +1,10 @@
-# auth_service_test.py
-
 import pytest
-from flask import Flask
-from flask_jwt_extended import JWTManager
 from werkzeug.security import generate_password_hash
 
 from src.user.controller.request.loginRequest import LoginRequest
 from src.user.model.user import User
 from src.user.repository.user_repository import UserRepository
 from src.user.service.authService import AuthService
-from user.controller.authController import auth_blueprint
-
-
-@pytest.fixture
-def app():
-    app = Flask(__name__)
-    app.config['JWT_SECRET_KEY'] = 'super-secret-key'  # this test do not mock flask_jwt_extended
-    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 3600
-    app.config['JWT_REFRESH_TOKEN_EXPIRES'] = 3600
-    JWTManager(app)
-    app.register_blueprint(auth_blueprint)
-    return app
 
 
 @pytest.fixture

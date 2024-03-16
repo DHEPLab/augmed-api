@@ -9,7 +9,7 @@ from src.user.service.authService import AuthService
 
 auth_blueprint = Blueprint("auth", __name__)
 
-user_repository = UserRepository(db=db)
+user_repository = UserRepository(db.session)
 
 auth_service = AuthService(user_repository=user_repository)
 
