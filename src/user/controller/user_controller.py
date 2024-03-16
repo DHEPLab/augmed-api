@@ -28,9 +28,9 @@ def create_user():
 def get_user(user_id):
     user = user_service.get_user(user_id)
     if user:
-        return jsonify(ApiResponse.success({
-            "name": user.name,
-            "email": user.email
-        })), 200
+        return (
+            jsonify(ApiResponse.success({"name": user.name, "email": user.email})),
+            200,
+        )
     else:
         return jsonify(ApiResponse.fail(ErrorCode.NOT_FOUND)), 404

@@ -29,7 +29,10 @@ def register_error_handlers(app):
 
     @app.errorhandler(JsonValidationError)
     def validation_error(ex):
-        return ApiResponse.fail(
-            ErrorCode.INVALID_PARAMETER,
-            ",".join(map(lambda error: error.message, ex.errors)),
-        ), ErrorCode.INVALID_PARAMETER.value
+        return (
+            ApiResponse.fail(
+                ErrorCode.INVALID_PARAMETER,
+                ",".join(map(lambda error: error.message, ex.errors)),
+            ),
+            ErrorCode.INVALID_PARAMETER.value,
+        )
