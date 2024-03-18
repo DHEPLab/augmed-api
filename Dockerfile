@@ -28,8 +28,8 @@ RUN pipenv install --deploy --ignore-pipfile
 # Copy the rest of your application's code
 COPY . .
 
-# Make port 8000 available to the world outside this container
-EXPOSE 8000
+# Make port 5000 available to the world outside this container
+EXPOSE 5000
 
 # Run the application
-CMD ["pipenv", "run", "gunicorn", "--bind", "0.0.0.0:8000", "src.app:create_app()"]
+CMD ["pipenv", "run", "gunicorn", "--bind", "0.0.0.0:5000", "src.app:create_app()"]
