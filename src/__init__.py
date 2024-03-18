@@ -24,8 +24,9 @@ def create_app(config_object=None):
     Migrate(app, db)
 
     with app.app_context():
-        if not config_object:
-            db.create_all()
+        # comment db init to avoid failure, need change to migrate
+        # if not config_object:
+        #     upgrade()
 
         # Import Blueprints after initializing db to avoid circular import
         from src.health.healthCheckController import healthcheck_blueprint
