@@ -5,7 +5,7 @@ from flask import Blueprint, Response, json, request
 from src import db
 from src.user.controller.request.loginRequest import LoginRequest
 from src.user.repository.user_repository import UserRepository
-from src.user.service.authService import AuthService
+from src.user.service.auth_service import AuthService
 
 auth_blueprint = Blueprint("auth", __name__)
 
