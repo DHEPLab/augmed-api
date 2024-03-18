@@ -85,6 +85,6 @@ jobs:
 
       - name: Deploy to Amazon ECS
         run: |
-          aws ecs update-service --cluster your-cluster-name --service your-service-name --force-new-deployment
+          aws ecs update-service --cluster aim-ahead-cluster-dev --service aim-ahead-api-service-dev --force-new-deployment
         env:
           AWS_REGION: us-east-1
