@@ -75,14 +75,16 @@ jobs:
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
           IMAGE_TAG: latest
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker build --build-arg POSTGRES_HOST=${{ secrets.POSTGRES_HOST }} \
+          --build-arg POSTGRES_USER=${{ secrets.POSTGRES_USER }} \
+          --build-arg POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
+          --build-arg POSTGRES_DB=${{ secrets.POSTGRES_DB }} \
+          -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
 
-#      - name: Deploy to Amazon ECS
-#        run: |
-#          # 使用 AWS CLI 或 Amazon ECS 的部署脚本更新 ECS 服务
-#          # 这需要您已经有一个运行的 ECS 服务和任务定义
-#          aws ecs update-service --cluster your-cluster-name --service your-service-name --force-new-deployment
-#        env:
-#          AWS_REGION: us-east-1
+      - name: Deploy to Amazon ECS
+        run: |
+          aws ecs update-service --cluster your-cluster-name --service your-service-name --force-new-deployment
+        env:
+          AWS_REGION: us-east-1
