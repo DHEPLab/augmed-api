@@ -18,8 +18,11 @@ auth_service = AuthService(user_repository=user_repository)
 def login() -> Response:
     req_data = request.get_json()
     login_request = LoginRequest(email=req_data["email"], password=req_data["password"])
-    login_response = auth_service.login(login_request)
+    login_response, access_token = auth_service.login(login_request)
+
     response = json.jsonify(asdict(login_response))
     response.status_code = 200
 
+    response.headers["Authorization"] = f"Bearer {access_token}"
+    response.status_code = 200
     return response
