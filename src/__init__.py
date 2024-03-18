@@ -25,7 +25,7 @@ def create_app(config_object=None):
 
     with app.app_context():
         if not config_object:
-            upgrade(directory="migrations")
+            upgrade()
 
         # Import Blueprints after initializing db to avoid circular import
         from src.health.healthCheckController import healthcheck_blueprint
