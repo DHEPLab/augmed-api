@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_json_schema import JsonSchema
-from flask_migrate import Migrate
+from flask_migrate import Migrate, upgrade
 from flask_sqlalchemy import SQLAlchemy
 
 from src.common.exception.exception_handlers import register_error_handlers
@@ -20,16 +20,13 @@ def create_app(config_object=None):
         app.config.from_object("src.config.Config")
 
     schema.init_app(app)
-    try:
-        db.init_app(app)
-        Migrate(app, db)
-
-    except RuntimeError:
-        print(
-            "Database connection failed. Continuing without database."
-        )  # todo: Remove after db setup
+    db.init_app(app)
+    Migrate(app, db)
 
     with app.app_context():
+        if not config_object:
+            upgrade(directory="migrations")
+
         # Import Blueprints after initializing db to avoid circular import
         from src.health.healthCheckController import healthcheck_blueprint
         from src.user.controller.authController import auth_blueprint

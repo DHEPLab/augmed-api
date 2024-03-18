@@ -22,11 +22,8 @@ def app():
         )
     )
     JWTManager(app)
-    # alembic = Alembic()
-    # alembic.init_app(app)
     with app.app_context():
         db.create_all()
-        # alembic.upgrade()
         yield app
         db.session.remove()
         db.drop_all()
