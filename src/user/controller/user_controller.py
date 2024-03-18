@@ -7,6 +7,7 @@ from src.user.controller.schema.create_users_schema import create_users_schema
 from src.user.model.user import User
 from src.user.repository.user_repository import UserRepository
 from src.user.service.user_service import UserService
+from user.utils.auth_utils import jwt_validation_required
 
 user_blueprint = Blueprint("user", __name__)
 
@@ -15,6 +16,7 @@ user_service = UserService(UserRepository(db.session))
 
 @user_blueprint.route("/users", methods=["POST"])
 @schema.validate(create_users_schema)
+@jwt_validation_required()
 def create_user():
     body = request.get_json()
     users = map(
@@ -35,6 +37,7 @@ def create_user():
 
 
 @user_blueprint.route("/users/<int:user_id>", methods=["GET"])
+@jwt_validation_required()
 def get_user(user_id):
     user = user_service.get_user(user_id)
     if user:
