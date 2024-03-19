@@ -44,3 +44,24 @@ def get_user(user_id):
         )
     else:
         return jsonify(ApiResponse.fail(ErrorCode.NOT_FOUND)), 404
+
+
+@user_blueprint.route("/users", methods=["GET"])
+def get_users():
+    db_users = user_service.get_users()
+    resp_users = list(
+        map(
+            lambda user: {
+                "id": user.id,
+                "name": user.name,
+                "email": user.email,
+                "position": user.position,
+                "employer": user.employer,
+                "area_of_clinical_ex": user.area_of_clinical_ex,
+                "active": user.active,
+                "admin_flag": user.admin_flag,
+            },
+            db_users,
+        )
+    )
+    return jsonify(ApiResponse.success({"users": resp_users})), 200

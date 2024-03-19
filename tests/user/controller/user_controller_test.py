@@ -61,3 +61,15 @@ def test_invalid_request_params_when_create_users(client):
     assert response.status_code == 400
     error = response.json["error"]
     assert "ValidationError" in error["message"]
+
+
+def test_get_users(client, mocker):
+    user = User(name="test", email="goodbye@suwukong.com")
+    mocker.patch('src.user.service.user_service.UserService.get_users', return_value=[user])
+
+    response = client.get("/api/users")
+
+    assert response.status_code == 200
+    data = response.json["data"]
+    assert data["users"][0]['email'] == user.email
+

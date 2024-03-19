@@ -59,3 +59,17 @@ def test_not_add_user_when_exception(mocker):
 
     assert result[not_exist_user.email] == "failed: save failed"
 
+
+def test_get_users(mocker):
+    user = User(
+        name='Test User',
+        email='test2@example.com',
+    )
+    mock_repo = mocker.Mock(UserRepository)
+    mock_repo.get_users.return_value = [user]
+    user_service = UserService(mock_repo)
+
+    result = user_service.get_users()
+
+    assert result[0] == user
+

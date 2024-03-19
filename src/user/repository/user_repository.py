@@ -18,3 +18,6 @@ class UserRepository:
     def get_user_by_email(self, email):
         statement = select(User).filter_by(email=email)
         return self.session.execute(statement).scalar_one_or_none()
+
+    def get_users(self):
+        return self.session.query(User).all()
