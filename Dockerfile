@@ -31,5 +31,7 @@ COPY . .
 # Make port 5000 available to the world outside this container
 EXPOSE 5000
 
+WORKDIR ./src
+
 # Run the application
-CMD ["pipenv", "run", "gunicorn", "--bind", "0.0.0.0:5000", "src.app:create_app()"]
+CMD ["pipenv", "run", "flask", "run"]

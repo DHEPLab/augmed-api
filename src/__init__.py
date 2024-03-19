@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_json_schema import JsonSchema
-from flask_migrate import Migrate
+from flask_migrate import Migrate, upgrade
 from flask_sqlalchemy import SQLAlchemy
 
 from src.common.exception.exception_handlers import register_error_handlers
@@ -26,7 +26,7 @@ def create_app(config_object=None):
     with app.app_context():
         # comment db init to avoid failure, need change to migrate
         if not config_object:
-            db.drop_all()
+            upgrade()
 
         # Import Blueprints after initializing db to avoid circular import
         from src.health.healthCheckController import healthcheck_blueprint
