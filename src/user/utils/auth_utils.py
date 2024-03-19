@@ -11,19 +11,18 @@ from user.repository.user_repository import UserRepository
 user_repository = UserRepository(db.session)
 
 
-def validate_jwt_and_refresh(user_repository: UserRepository):
+def validate_jwt_and_refresh():
     verify_jwt_in_request()
     jwt_claims = get_jwt()
 
     user_email = get_jwt_identity()
     user = user_repository.get_user_by_email(user_email)
     if not user:
-        raise Unauthorized("User not found, please logi.")
+        raise Unauthorized("User not found, please login.")
 
     now = datetime.now(timezone.utc)
     jwt_expiry = datetime.fromtimestamp(jwt_claims["exp"], timezone.utc)
     last_login_time = datetime.fromisoformat(jwt_claims.get("last_login_time"))
-
     if jwt_expiry <= now:
         if now - last_login_time > timedelta(days=3):
             raise Unauthorized("Session expired, please login again.")
@@ -36,11 +35,11 @@ def validate_jwt_and_refresh(user_repository: UserRepository):
     return None
 
 
-def jwt_validation_required(user_repository: UserRepository):
+def jwt_validation_required():
     def decorator(fn):
         @wraps(fn)
         def wrapper(*args, **kwargs):
-            new_token = validate_jwt_and_refresh(user_repository)
+            new_token = validate_jwt_and_refresh()
             response = fn(*args, **kwargs)
             if new_token:
                 response.headers["Authorization"] = f"Bearer {new_token}"

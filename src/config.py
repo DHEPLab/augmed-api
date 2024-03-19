@@ -16,4 +16,4 @@ class Config:
     )  # Defaults to 15 minutes
     JWT_REFRESH_TOKEN_EXPIRES = os.getenv(
         "JWT_REFRESH_TOKEN_EXPIRES", 3 * 24 * 60 * 60
-    )  # Defaults to 30 days
+    )  # Defaults to 3 days

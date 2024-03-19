@@ -1,7 +1,7 @@
 import pytest
 from sqlalchemy.exc import IntegrityError
 
-from src.user.repository.user_repository import UserRepository  # Replace with your actual UserRepository import
+from src.user.repository.user_repository import UserRepository
 from user.model.user import User
 
 

@@ -3,4 +3,4 @@ from dataclasses import dataclass
 
 @dataclass
 class LoginResponse:
-    message: str
+    access_token: str

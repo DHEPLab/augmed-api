@@ -29,15 +29,15 @@ def test_login_success(user_repository_mock, app, user):
     with app.app_context():
         auth_service = AuthService(user_repository_mock)
         login_request = LoginRequest(email=user.email, password='password123')
-        login_response,access_token= auth_service.login(login_request)
+        login_response = auth_service.login(login_request)
 
-    assert access_token is not None
-    assert login_response.message == "Login successful"
+    assert login_response.access_token is not None
 
 
 def test_login_failure_with_wrong_email(user_repository_mock, app):
     with app.app_context():
         auth_service = AuthService(user_repository_mock)
+        user_repository_mock.get_user_by_email.return_value = None
         wrong_email_login_request = LoginRequest(email='wrong@example.com', password='password123')
         with pytest.raises(Exception) as exc_info:
             auth_service.login(wrong_email_login_request)

@@ -10,8 +10,8 @@ from src.user.service.user_service import UserService
 from user.utils.auth_utils import jwt_validation_required
 
 user_blueprint = Blueprint("user", __name__)
-
-user_service = UserService(UserRepository(db.session))
+user_repository = UserRepository(db.session)
+user_service = UserService(user_repository=user_repository)
 
 
 @user_blueprint.route("/users", methods=["POST"])

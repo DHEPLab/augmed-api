@@ -13,7 +13,7 @@ class AuthService:
     def __init__(self, user_repository: UserRepository):
         self.user_repository = user_repository
 
-    def login(self, login_request: LoginRequest) -> [LoginResponse, str]:
+    def login(self, login_request: LoginRequest) -> LoginResponse:
         user = self.user_repository.get_user_by_email(login_request.email)
 
         if not user:
@@ -27,4 +27,4 @@ class AuthService:
             identity=user.email, additional_claims=additional_claims, fresh=True
         )
 
-        return LoginResponse(message="Login successful"), access_token
+        return LoginResponse(access_token=access_token)
