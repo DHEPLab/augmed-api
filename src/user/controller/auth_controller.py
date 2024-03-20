@@ -22,5 +22,4 @@ def login() -> Response:
     response.status_code = 200
 
     response.headers["Authorization"] = f"Bearer {login_response.access_token}"
-    response.status_code = 200
     return response

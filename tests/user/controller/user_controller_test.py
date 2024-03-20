@@ -4,7 +4,6 @@ from src.user.model.user import User
 
 
 def test_get_user(client, mocker):
-    # Setup user mock
     user = User(name="test", email="goodbye@suwukong.com")
     mocker.patch('src.user.service.user_service.UserService.get_user', return_value=user)
 
