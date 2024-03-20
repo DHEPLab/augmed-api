@@ -23,9 +23,9 @@ def create_app(config_object=None):
 
     schema.init_app(app)
     db.init_app(app)
-    Migrate(app,
-            db,
-            directory=path.join(path.dirname(path.abspath(__file__)), 'migrations'))
+    Migrate(
+        app, db, directory=path.join(path.dirname(path.abspath(__file__)), "migrations")
+    )
 
     with app.app_context():
         # comment db init to avoid failure, need change to migrate

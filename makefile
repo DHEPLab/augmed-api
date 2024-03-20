@@ -7,7 +7,6 @@ install:
 	pipenv --python `which python3`
 	pipenv install
 
-
 .PHONY: run
 run: install
 	sh -c ' \
@@ -18,13 +17,16 @@ run: install
 		python3 src/app.py \
 	'
 
+.PHONY: format
+format: install
+	black src
+
 .PHONY: lint
 lint: install
 	flake8 src
 
-
 .PHONY: test
-test: lint
+test: install
 	sh -c ' \
 		export DOCKER_HOST=unix://$(HOME)/.colima/default/docker.sock && \
 		pytest tests \

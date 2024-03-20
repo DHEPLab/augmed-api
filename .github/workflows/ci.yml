@@ -7,44 +7,27 @@ on:
     branches: [ main ]
 
 jobs:
-  lint:
+  init: 
     runs-on: ubuntu-latest
-
+    
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.11
-      - name: Install dependencies
+      - name: Set up env & Install
         run: |
-          pip install pipenv
-          pipenv install --dev
-      - name: Check code formatting with black
-        run: |
-          pipenv run black src
-      - name: Lint with flake8
-        run: |
-          pipenv run flake8 src
+          make install
 
   test:
-    needs: lint
     runs-on: ubuntu-latest
-
+    
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.11
-      - name: Install dependencies
+      - name: format
         run: |
-          pip install pipenv
-          pipenv install --deploy --ignore-pipfile
+          make format
+      - name: Lint with flake8
+        run: |
+          make lint
       - name: Run tests
         run: |
-          export PYTHONPATH=$(pwd)
-          pipenv run pytest tests
+          make test
 
   build-and-push:
     needs: test
