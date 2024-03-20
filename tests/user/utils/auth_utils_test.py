@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, timezone
 
 import jwt
 import pytest
-from werkzeug.exceptions import Unauthorized
+from werkzeug.exceptions import Unauthorized, NotFound
 from werkzeug.security import generate_password_hash
 
 from user.model.user import User
@@ -76,11 +76,11 @@ def test_validate_jwt_expired_last_login_over_3_days(app, jwt_request_context, m
 
 def test_validate_jwt_user_not_found(app, jwt_request_context, mocker, user):
     mocker.patch('user.utils.auth_utils.user_repository.get_user_by_email', return_value=None)
-    with pytest.raises(Unauthorized):
+    with pytest.raises(NotFound):
         validate_jwt_and_refresh()
 
 
 def test_validate_jwt_verification_fails(app, jwt_request_context, mocker):
-    mocker.patch('flask_jwt_extended.verify_jwt_in_request', side_effect=Unauthorized("Invalid JWT"))
+    mocker.patch('user.utils.auth_utils.verify_jwt_in_request', side_effect=Unauthorized("Invalid JWT"))
     with pytest.raises(Unauthorized):
         validate_jwt_and_refresh()

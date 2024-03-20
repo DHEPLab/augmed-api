@@ -18,7 +18,7 @@ def login() -> Response:
     login_request = LoginRequest(email=req_data["email"], password=req_data["password"])
     login_response = auth_service.login(login_request)
 
-    response = json.jsonify("Login Successfully")
+    response = json.jsonify(message="Login Successfully")
     response.status_code = 200
 
     response.headers["Authorization"] = f"Bearer {login_response.access_token}"

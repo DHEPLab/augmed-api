@@ -1,9 +1,9 @@
+from os import path
+
 from flask import Flask
 from flask_json_schema import JsonSchema
 from flask_migrate import Migrate, upgrade
 from flask_sqlalchemy import SQLAlchemy
-
-from os import path
 
 from src.common.exception.exception_handlers import register_error_handlers
 

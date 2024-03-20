@@ -16,7 +16,6 @@ user_service = UserService(user_repository=user_repository)
 
 @user_blueprint.route("/users", methods=["POST"])
 @schema.validate(create_users_schema)
-@jwt_validation_required()
 def create_user():
     body = request.get_json()
     users = map(
