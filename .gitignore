@@ -77,3 +77,4 @@ template.beconf.tfvars
 backend.tf
 *.iso
 .env
+.coverage

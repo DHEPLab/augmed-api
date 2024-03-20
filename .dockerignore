@@ -3,4 +3,4 @@
 /.githooks
 /.github
 /htmlcov
-.env_example
+.env*

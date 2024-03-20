@@ -1,0 +1,36 @@
+.PHONY: start
+start: install run
+
+.PHONY: install
+install:
+	pip3 install pipenv
+	pipenv --python `which python3`
+	pipenv install
+
+
+.PHONY: run
+run: install
+	sh -c ' \
+		export PYTHONPATH=`pwd` && \
+		if [ ! -f .env ]; then cp .env.temp .env; fi && \
+		echo $(PYTHONPATH) && \
+		docker-compose up -d db && \
+		python3 src/app.py \
+	'
+
+.PHONY: lint
+lint: install
+	flake8 src
+
+
+.PHONY: test
+test: lint
+	sh -c ' \
+		export DOCKER_HOST=unix://$(HOME)/.colima/default/docker.sock && \
+		pytest tests \
+	'
+
+.PHONY: clean
+clean:
+	pipenv --rm
+	docker stop postgres_container
