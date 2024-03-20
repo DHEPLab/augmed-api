@@ -19,17 +19,18 @@ run: install
 
 .PHONY: format
 format: install
-	black src
+	pipenv run black src
+
 
 .PHONY: lint
 lint: install
-	flake8 src
+	pipenv run flake8 src
 
 .PHONY: test
 test: install
 	sh -c ' \
 		export DOCKER_HOST=unix://$(HOME)/.colima/default/docker.sock && \
-		pytest tests \
+		pipenv run pytest tests \
 	'
 
 .PHONY: clean
