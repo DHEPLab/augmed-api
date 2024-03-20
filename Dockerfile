@@ -22,6 +22,8 @@ RUN pip install pipenv
 # Copy the Pipfile and Pipfile.lock into the container
 COPY Pipfile Pipfile.lock ./
 
+RUN pipenv --python `which python3`
+
 # Install project dependencies
 RUN pipenv install --deploy --ignore-pipfile
 
