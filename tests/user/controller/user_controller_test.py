@@ -1,6 +1,6 @@
 import json
 
-from user.model.user import User
+from src.user.model.user import User
 
 
 def test_get_user(client, mocker):
@@ -8,7 +8,7 @@ def test_get_user(client, mocker):
     user = User(name="test", email="goodbye@suwukong.com")
     mocker.patch('src.user.service.user_service.UserService.get_user', return_value=user)
 
-    mocker.patch('user.utils.auth_utils.validate_jwt_and_refresh', return_value=None)
+    mocker.patch('src.user.utils.auth_utils.validate_jwt_and_refresh', return_value=None)
 
     response = client.get("/api/users/1")
 
@@ -21,7 +21,7 @@ def test_get_user(client, mocker):
 def test_can_not_get_user(client, mocker):
     mocker.patch('src.user.service.user_service.UserService.get_user', return_value=None)
 
-    mocker.patch('user.utils.auth_utils.validate_jwt_and_refresh', return_value=None)
+    mocker.patch('src.user.utils.auth_utils.validate_jwt_and_refresh', return_value=None)
 
     response = client.get("/api/users/1")
 

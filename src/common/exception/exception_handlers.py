@@ -1,12 +1,7 @@
 from flask import jsonify
 from flask_json_schema import JsonValidationError
-from werkzeug.exceptions import (
-    BadRequest,
-    Forbidden,
-    InternalServerError,
-    NotFound,
-    Unauthorized,
-)
+from werkzeug.exceptions import (BadRequest, Forbidden, InternalServerError,
+                                 NotFound, Unauthorized)
 
 from src.common.model.ApiResponse import ApiResponse
 from src.common.model.ErrorCode import ErrorCode

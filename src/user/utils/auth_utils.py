@@ -6,7 +6,7 @@ from flask_jwt_extended import (create_access_token, get_jwt, get_jwt_identity,
 from werkzeug.exceptions import NotFound, Unauthorized
 
 from src import db
-from user.repository.user_repository import UserRepository
+from src.user.repository.user_repository import UserRepository
 
 user_repository = UserRepository(db.session)
 

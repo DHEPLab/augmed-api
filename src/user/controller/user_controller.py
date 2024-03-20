@@ -7,7 +7,7 @@ from src.user.controller.schema.create_users_schema import create_users_schema
 from src.user.model.user import User
 from src.user.repository.user_repository import UserRepository
 from src.user.service.user_service import UserService
-from user.utils.auth_utils import jwt_validation_required
+from src.user.utils.auth_utils import jwt_validation_required
 
 user_blueprint = Blueprint("user", __name__)
 user_repository = UserRepository(db.session)
