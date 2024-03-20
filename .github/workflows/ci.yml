@@ -16,6 +16,7 @@ jobs:
           make install
 
   test:
+    needs: init
     runs-on: ubuntu-latest
     
     steps:
