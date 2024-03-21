@@ -37,7 +37,7 @@ def create_app(config_object=None):
         from src.user.controller.auth_controller import auth_blueprint
         from src.user.controller.user_controller import user_blueprint
 
-        app.register_blueprint(user_blueprint, url_prefix="/api")
+        app.register_blueprint(user_blueprint, url_prefix="/admin")
         app.register_blueprint(auth_blueprint, url_prefix="/api")
         app.register_blueprint(healthcheck_blueprint, url_prefix="/api")
 

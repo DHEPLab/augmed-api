@@ -9,7 +9,7 @@ def test_get_user(client, mocker):
 
     mocker.patch('src.user.utils.auth_utils.validate_jwt_and_refresh', return_value=None)
 
-    response = client.get("/api/users/1")
+    response = client.get("/admin/users/1")
 
     assert response.status_code == 200
     data = response.get_json()["data"]
@@ -22,7 +22,7 @@ def test_can_not_get_user(client, mocker):
 
     mocker.patch('src.user.utils.auth_utils.validate_jwt_and_refresh', return_value=None)
 
-    response = client.get("/api/users/1")
+    response = client.get("/admin/users/1")
 
     assert response.status_code == 404
     error = response.json["error"]
@@ -40,7 +40,7 @@ def test_create_users(client):
         }]
     }
 
-    response = client.post("/api/users", data=json.dumps(request), content_type='application/json')
+    response = client.post("/admin/users", data=json.dumps(request), content_type='application/json')
 
     assert response.status_code == 201
     data = response.json["data"]
@@ -60,7 +60,7 @@ def test_invalid_request_params_when_create_users(client):
         ]
     }
 
-    response = client.post("/api/users", data=json.dumps(request), content_type='application/json')
+    response = client.post("/admin/users", data=json.dumps(request), content_type='application/json')
 
     assert response.status_code == 400
     error = response.json["error"]
