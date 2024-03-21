@@ -3,12 +3,7 @@ from functools import wraps
 
 from flask_jwt_extended import (create_access_token, get_jwt, get_jwt_identity,
                                 verify_jwt_in_request)
-from werkzeug.exceptions import NotFound, Unauthorized
-
-from src import db
-from src.user.repository.user_repository import UserRepository
-
-user_repository = UserRepository(db.session)
+from werkzeug.exceptions import Unauthorized
 
 
 def validate_jwt_and_refresh():
@@ -16,9 +11,6 @@ def validate_jwt_and_refresh():
     jwt_claims = get_jwt()
 
     user_email = get_jwt_identity()
-    user = user_repository.get_user_by_email(user_email)
-    if not user:
-        raise NotFound("User not found, please login.")
 
     now = datetime.now(timezone.utc)
     jwt_expiry = datetime.fromtimestamp(jwt_claims["exp"], timezone.utc)

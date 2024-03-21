@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, timezone
 
 import jwt
 import pytest
-from werkzeug.exceptions import Unauthorized, NotFound
+from werkzeug.exceptions import Unauthorized
 from werkzeug.security import generate_password_hash
 
 from user.model.user import User
@@ -45,8 +45,6 @@ def jwt_request_context(app, mocker, generate_dummy_jwt):
 
 
 def test_validate_jwt_not_expired(mocker, app, jwt_request_context, user):
-    mocker.patch('user.utils.auth_utils.user_repository.get_user_by_email', return_value=user)
-
     new_token = validate_jwt_and_refresh()
     assert new_token is None
 
@@ -57,8 +55,6 @@ def test_validate_jwt_expired_new_token_issued(app, jwt_request_context, mocker,
         "last_login_time": (datetime.now(tz=timezone.utc) - timedelta(hours=1)).isoformat(),
     })
 
-    mocker.patch('user.utils.auth_utils.user_repository.get_user_by_email', return_value=user)
-
     new_token = validate_jwt_and_refresh()
     assert new_token is not None
 
@@ -68,15 +64,8 @@ def test_validate_jwt_expired_last_login_over_3_days(app, jwt_request_context, m
         "exp": (datetime.now(tz=timezone.utc) - timedelta(days=4)).timestamp(),
         "last_login_time": (datetime.now(tz=timezone.utc) - timedelta(days=4)).isoformat(),
     })
-    mocker.patch('user.utils.auth_utils.user_repository.get_user_by_email', return_value=user)
 
     with pytest.raises(Unauthorized):
-        validate_jwt_and_refresh()
-
-
-def test_validate_jwt_user_not_found(app, jwt_request_context, mocker, user):
-    mocker.patch('user.utils.auth_utils.user_repository.get_user_by_email', return_value=None)
-    with pytest.raises(NotFound):
         validate_jwt_and_refresh()
 
 
