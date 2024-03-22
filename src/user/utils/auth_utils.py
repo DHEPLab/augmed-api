@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta, timezone
 from functools import wraps
 
+from flask import jsonify, request
 from flask_jwt_extended import (create_access_token, get_jwt, get_jwt_identity,
                                 verify_jwt_in_request)
 from werkzeug.exceptions import Unauthorized
@@ -33,8 +34,19 @@ def jwt_validation_required():
         def wrapper(*args, **kwargs):
             new_token = validate_jwt_and_refresh()
             response = fn(*args, **kwargs)
-            if new_token:
-                response.headers["Authorization"] = f"Bearer {new_token}"
+
+            if not new_token:
+                original_jwt = request.headers.get("Authorization", "").split(" ")[-1]
+                jwt_to_set = original_jwt
+            else:
+                jwt_to_set = new_token
+
+            if jwt_to_set:
+                response = jsonify(
+                    response
+                )  # Ensure response is a Flask response object
+                response.headers["Authorization"] = f"Bearer {jwt_to_set}"
+
             return response
 
         return wrapper
