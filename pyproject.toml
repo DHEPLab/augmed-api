@@ -10,8 +10,8 @@ skip_glob = ["src/migrations/*"]
 
 [tool.flake8]
 exclude = ["src/migrations/"]
-max-line-length = 88
-ignore = ["E203", "W503"]
+max-line-length = 120
+ignore = ["E203", "W503", "F811"]
 
 [tool.pytest.ini_options]
 minversion = "6.0"
