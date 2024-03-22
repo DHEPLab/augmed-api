@@ -7,17 +7,22 @@ class User(db.Model):
     db.metadata.clear()
     __tablename__ = "user"
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(128), nullable=True)
-    email = db.Column(db.String(128), nullable=False, unique=True)
-    password = db.Column(db.String(192), nullable=True)
-    salt = db.Column(db.String(192), nullable=True)
-    admin_flag = db.Column(db.Boolean, default=False)
-    position = db.Column(db.String(512), nullable=True)
-    employer = db.Column(db.String(512), nullable=True)
-    area_of_clinical_ex = db.Column(db.String(512), nullable=True)
-    active = db.Column(db.Boolean, default=False)
-    created_timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    modified_timestamp = db.Column(
+    id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name: str = db.Column(db.String(128), nullable=True)
+    email: str = db.Column(db.String(128), nullable=False, unique=True)
+    password: str = db.Column(db.String(192), nullable=True)
+    salt: str = db.Column(db.String(192), nullable=True)
+    admin_flag: str = db.Column(db.Boolean, default=False)
+    position: str = db.Column(db.String(512), nullable=True)
+    employer: str = db.Column(db.String(512), nullable=True)
+    area_of_clinical_ex: str = db.Column(db.String(512), nullable=True)
+    active: bool = db.Column(db.Boolean, default=False)
+    created_timestamp: datetime = db.Column(db.DateTime, default=datetime.utcnow)
+    modified_timestamp: datetime = db.Column(
         db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
     )
+
+    def copy(self, **kwargs):
+        for attr, value in kwargs.items():
+            setattr(self, attr, value)
+        return self

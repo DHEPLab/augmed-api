@@ -1,4 +1,7 @@
+import re
 import pytest
+from src.common.exception.BusinessException import BusinessException, BusinessExceptionEnum
+from src.user.controller.request.signupRequest import SignupRequest
 from werkzeug.security import generate_password_hash
 
 from src.user.controller.request.loginRequest import LoginRequest
@@ -22,7 +25,16 @@ def user():
 def user_repository_mock(mocker, user):
     mock_repo = mocker.Mock(UserRepository)
     mock_repo.get_user_by_email.return_value = user
+    mock_repo.query_user_by_email.return_value = None
     return mock_repo
+
+@pytest.fixture
+def invalid_singup_request():
+    return SignupRequest("john@example.com", "simple password")
+
+@pytest.fixture
+def valid_singup_request():
+    return SignupRequest("john@example.com", "9eNLBWpws6TCGk8_ibQn")
 
 
 def test_login_success(user_repository_mock, app, user):
@@ -53,3 +65,25 @@ def test_login_failure_with_wrong_password(user_repository_mock, app, user):
             auth_service.login(login_request)
 
     assert 'Invalid credentials' in str(exc_info.value)
+
+
+def test_signup_should_failed_when_user_password_is_invalid(user_repository_mock, invalid_singup_request):
+    auth_service = AuthService(user_repository_mock)
+
+    with pytest.raises(BusinessException, match=re.compile(BusinessExceptionEnum.UserPasswordInvalid.name)):
+        auth_service.signup(invalid_singup_request)
+
+
+def test_signup_should_failed_when_user_not_in_pilot(user_repository_mock, valid_singup_request):
+    auth_service = AuthService(user_repository_mock)
+    
+    with pytest.raises(BusinessException, match=re.compile(BusinessExceptionEnum.UserNotInPilot.name)):
+        auth_service.signup(valid_singup_request)
+
+
+def test_signup_should_failed_when_user_already_signup(user, user_repository_mock, valid_singup_request):
+    auth_service = AuthService(user_repository_mock)
+    user_repository_mock.query_user_by_email.return_value = user.copy(active=True)
+    
+    with pytest.raises(BusinessException, match=re.compile(BusinessExceptionEnum.UserEmailIsAlreadySignup.name)):
+        auth_service.signup(valid_singup_request)

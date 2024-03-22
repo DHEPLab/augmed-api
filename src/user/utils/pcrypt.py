@@ -1,6 +1,6 @@
-from os import urandom
 from base64 import b64encode
 from hashlib import scrypt
+from os import urandom
 
 
 def decode(b: bytes):

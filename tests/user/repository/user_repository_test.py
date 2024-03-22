@@ -71,3 +71,30 @@ def test_get_users(user_repository):
     assert len(users) == 2
     assert users[0].email == user_1.email
     assert users[1].email == user_2.email
+
+
+def test_query_user_by_email_success(user_repository: UserRepository):
+    user = User(name="john", email="goodbye@sunwukong.com")
+    user_repository.create_user(user)
+
+    found = user_repository.query_user_by_email(user.email)
+
+    assert found is not None
+
+
+def test_query_user_by_email_failed(user_repository):
+    found = user_repository.query_user_by_email("nonexistent.email@email.com")
+
+    assert found is None
+
+
+def test_update_user(user_repository):
+    user = User(name="john", email="goodbye@sunwukong.com")
+    user_repository.create_user(user)
+
+    inserted_user = user_repository.query_user_by_email(user.email)
+
+    assert inserted_user.active == False
+
+    user_repository.update_user(inserted_user.copy(active=True))
+    assert user_repository.query_user_by_email(user.email).active == True

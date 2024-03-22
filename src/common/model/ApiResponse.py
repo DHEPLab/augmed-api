@@ -14,7 +14,7 @@ class Error:
         return cls(error.value, msg if msg else error.name)
 
     @classmethod
-    def build(cls, e: BusinessExceptionEnum):
+    def erorr(cls, e: BusinessExceptionEnum):
         return cls(e.code, e.message)
 
 
@@ -32,5 +32,5 @@ class ApiResponse:
         return cls(None, Error.build(error, msg))
 
     @classmethod
-    def fail(cls, e: BusinessExceptionEnum):
+    def error(cls, e: BusinessExceptionEnum):
         return cls(None, Error.build(e))
