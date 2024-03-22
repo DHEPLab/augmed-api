@@ -1,13 +1,23 @@
 from flask import jsonify
 from flask_json_schema import JsonValidationError
-from werkzeug.exceptions import (BadRequest, Forbidden, InternalServerError,
-                                 NotFound, Unauthorized)
+from src.common.exception.BusinessException import BusinessException
+from werkzeug.exceptions import (
+    BadRequest,
+    Forbidden,
+    InternalServerError,
+    NotFound,
+    Unauthorized,
+)
 
 from src.common.model.ApiResponse import ApiResponse
 from src.common.model.ErrorCode import ErrorCode
 
 
 def register_error_handlers(app):
+    @app.errorhandler(BusinessException)
+    def handle_business_exception(e: BusinessException):
+        return jsonify(ApiResponse.fail(e.error)), 500
+
     @app.errorhandler(InternalServerError)
     def handle_application_exception(error):
         return jsonify(ApiResponse.fail(ErrorCode.INTERNAL_ERROR, str(error))), 500

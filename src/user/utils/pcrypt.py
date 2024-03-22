@@ -16,7 +16,7 @@ def generate_salt():
 
 
 def pcrypt(password: str, salt: str):
-    drived = scrypt(password.encode(), salt=encode(salt), n=2**14, r=8,  p=1 , dklen=128)
+    drived = scrypt(password.encode(), salt=encode(salt), n=2**14, r=8, p=1, dklen=128)
 
     return decode(drived)
 
