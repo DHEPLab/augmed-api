@@ -10,7 +10,7 @@ echo "${YELLOW}Running tests and checking coverage before pushing changes...${RE
 
 # Run pytest with coverage
 export PYTHONPATH=$(pwd)
-pytest tests
+make test
 
 # Capture the exit status of pytest command
 result=$?
