@@ -28,7 +28,10 @@ lint: install
 
 .PHONY: test
 test: install
-	pipenv run pytest tests
+	sh -c ' \
+        export TESTCONTAINERS_RYUK_DISABLED=true && \
+        pipenv run pytest tests \
+    '
 	
 
 .PHONY: clean
