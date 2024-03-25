@@ -33,4 +33,4 @@ class ApiResponse:
 
     @classmethod
     def error(cls, e: BusinessExceptionEnum):
-        return cls(None, Error.build(e))
+        return cls(None, Error.erorr(e))

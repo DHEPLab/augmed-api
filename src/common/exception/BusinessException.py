@@ -4,9 +4,15 @@ from enum import Enum
 class BusinessExceptionEnum(Enum):
     UserPasswordInvalid = (
         "1001",
-        "Password should be 8-128 characters, and contain letter, number, and symbol. Please try again.",
+        (
+            "Passwords must have at least 8 characters and contain at least a letter, "
+            "a number and a symbol. Please try again."
+        ),
     )
-    UserNotInPilot = ("1002", "It seems that you are not invited to Pilot group.")
+    UserNotInPilot = (
+        "1002",
+        "It seems that you are not invited to Pilot group. Please contact dhep.lab@gmail.com",
+    )
     UserEmailIsAlreadySignup = ("1003", "Email is already sign up, please login.")
 
     def __init__(self, code, message):

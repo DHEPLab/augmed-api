@@ -8,16 +8,16 @@ def test_validate_password_input_valid_return_True():
     assert validate_password(valid_password) == True  
 
 
-def test_validate_password_input_no_lower_case_letter_return_False():
+def test_validate_password_input_no_lower_case_letter_return_True():
     pwd_no_lower_case = "O2XFACVPUM*R=@SE"
  
-    assert validate_password(pwd_no_lower_case) == False  
+    assert validate_password(pwd_no_lower_case) == True  
 
 
-def test_validate_password_input_no_upper_case_letter_return_False():
+def test_validate_password_input_no_upper_case_letter_return_True():
     pwd_no_upper_case = "o2xfacvpum*r=@se"
  
-    assert validate_password(pwd_no_upper_case) == False  
+    assert validate_password(pwd_no_upper_case) == True  
 
 
 def test_validate_password_input_no_digital_return_False():
