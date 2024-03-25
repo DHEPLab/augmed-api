@@ -2,6 +2,7 @@ from os import path
 
 from flask import Flask
 from flask_json_schema import JsonSchema
+from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate, upgrade
 from flask_sqlalchemy import SQLAlchemy
 
@@ -9,6 +10,7 @@ from src.common.exception.exception_handlers import register_error_handlers
 
 db = SQLAlchemy()
 schema = JsonSchema()
+jwt = JWTManager()
 
 
 def create_app(config_object=None):
@@ -23,6 +25,7 @@ def create_app(config_object=None):
 
     schema.init_app(app)
     db.init_app(app)
+    jwt.init_app(app)
     Migrate(
         app, db, directory=path.join(path.dirname(path.abspath(__file__)), "migrations")
     )

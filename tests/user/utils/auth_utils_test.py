@@ -52,7 +52,9 @@ def test_validate_jwt_not_expired(mocker, app, jwt_request_context, user):
 def test_validate_jwt_expired_new_token_issued(app, jwt_request_context, mocker, user):
     mocker.patch('user.utils.auth_utils.get_jwt', return_value={
         "exp": (datetime.now(tz=timezone.utc) - timedelta(minutes=30)).timestamp(),
-        "last_login_time": (datetime.now(tz=timezone.utc) - timedelta(hours=1)).isoformat(),
+        "additional_claims": {
+            "last_login_time": (datetime.now(tz=timezone.utc) - timedelta(hours=1)).isoformat(),
+        }
     })
 
     new_token = validate_jwt_and_refresh()
@@ -62,11 +64,14 @@ def test_validate_jwt_expired_new_token_issued(app, jwt_request_context, mocker,
 def test_validate_jwt_expired_last_login_over_3_days(app, jwt_request_context, mocker, user):
     mocker.patch('user.utils.auth_utils.get_jwt', return_value={
         "exp": (datetime.now(tz=timezone.utc) - timedelta(days=4)).timestamp(),
-        "last_login_time": (datetime.now(tz=timezone.utc) - timedelta(days=4)).isoformat(),
+        "additional_claims": {
+            "last_login_time": (datetime.now(tz=timezone.utc) - timedelta(days=4)).isoformat(),
+        }
     })
 
     with pytest.raises(Unauthorized):
         validate_jwt_and_refresh()
+
 
 
 def test_validate_jwt_verification_fails(app, jwt_request_context, mocker):
