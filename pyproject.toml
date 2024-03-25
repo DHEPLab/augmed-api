@@ -34,7 +34,8 @@ pythonpath = " src"
 omit = [
     "src/migrations/*",
     "*/model/*",
-    "*/__init__.py"
+    "*/__init__.py",
+    "*/config.py"
 ]
 
 [tool.coverage.report]
