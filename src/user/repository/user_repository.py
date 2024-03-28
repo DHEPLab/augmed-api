@@ -27,7 +27,7 @@ class UserRepository:
 
     def update_user(self, user: User):
         self.session.merge(user)
-        self.session.commit()
+        self.session.flush()
         return user
 
     def get_users(self):

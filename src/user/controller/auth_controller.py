@@ -1,6 +1,7 @@
 from flask import Blueprint, Response, json, request
 
 from src import db
+from src.common.model.ApiResponse import ApiResponse
 from src.user.controller.request.loginRequest import LoginRequest
 from src.user.controller.request.signupRequest import SignupRequest
 from src.user.repository.user_repository import UserRepository
@@ -33,11 +34,9 @@ def signup() -> Response:
         email=req_data["email"], password=req_data["password"]
     )
 
-    print(f"signup_request, {signup_request}")
-
     auth_service.signup(signup_request)
 
-    response = json.jsonify(message="Sign up Successfully")
+    response = json.jsonify(ApiResponse.success("Sign up successfully"))
     response.status_code = 201
 
     return response
