@@ -3,12 +3,8 @@ FROM python:3.11-slim
 
 # Set ENV
 ARG DATABASE_URL
-ARG JWT_SECRET_KEY
-
 
 ENV DATABASE_URL=$DATABASE_URL
-ENV JWT_SECRET_KEY=${JWT_SECRET_KEY}
-
 
 # Set the working directory in the container
 WORKDIR /usr/src/app

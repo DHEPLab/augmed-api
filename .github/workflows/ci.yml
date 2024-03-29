@@ -62,7 +62,6 @@ jobs:
           IMAGE_TAG: latest
         run: |
           docker build --build-arg DATABASE_URL="${{ secrets.DATABASE_URL }}" \
-          --build-arg JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}" \
           -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
