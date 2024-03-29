@@ -1,4 +1,4 @@
-# aim-ahead-api
+# AIM-AHEAD-API
 
 ## Local Environment Setup
 
