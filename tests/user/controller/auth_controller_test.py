@@ -122,6 +122,6 @@ def test_sign_up_failed_when_user_aready_sign_up(client,
         "data": None,
         "error": {
             "code": "1003",
-            "message": "Email is already sign up, please login."
+            "message": "Email is already sign up, please log in."
         }
     } == response.json

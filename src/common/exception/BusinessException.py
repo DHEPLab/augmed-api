@@ -13,7 +13,7 @@ class BusinessExceptionEnum(Enum):
         "1002",
         "It seems that you are not invited to Pilot group. Please contact dhep.lab@gmail.com",
     )
-    UserEmailIsAlreadySignup = ("1003", "Email is already sign up, please login.")
+    UserEmailIsAlreadySignup = ("1003", "Email is already sign up, please log in.")
     UserEmailIsNotSignup = ("1004", "Email hasn’t sign up, please sign up.")
     UserPasswordIncorrect = ("1005", "Incorrect password. Please try again.")
 
