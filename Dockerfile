@@ -1,11 +1,6 @@
 # Use an official Python runtime as a parent image
 FROM python:3.11-slim
 
-# Set ENV
-ARG DATABASE_URL
-
-ENV DATABASE_URL=$DATABASE_URL
-
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
