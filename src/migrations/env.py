@@ -3,8 +3,41 @@ from logging.config import fileConfig
 
 from flask import current_app
 from src.user.model import user
-
 from alembic import context
+
+# clinical data
+from src.cases.model.clinical_data.person import condition_occurrence
+from src.cases.model.clinical_data.person import death
+from src.cases.model.clinical_data.person import device_exposure
+from src.cases.model.clinical_data.person import drug_exposure
+from src.cases.model.clinical_data.person import measurement
+from src.cases.model.clinical_data.person import note
+from src.cases.model.clinical_data.person import observation
+from src.cases.model.clinical_data.person import observation_period
+from src.cases.model.clinical_data.person import person
+from src.cases.model.clinical_data.person import procedure_occurrence
+from src.cases.model.clinical_data.person import specimen
+from src.cases.model.clinical_data.person import visit_detail
+from src.cases.model.clinical_data.person import visit_occurrence
+from src.cases.model.clinical_data import fact_relationship
+# health system
+from src.cases.model.health_system import care_site
+from src.cases.model.health_system import location
+from src.cases.model.health_system import provider
+
+# vocabularies
+
+from src.cases.model.vocabularies import concept
+from src.cases.model.vocabularies import concept_ancestor
+from src.cases.model.vocabularies import concept_class
+from src.cases.model.vocabularies import concept_relationship
+from src.cases.model.vocabularies import concept_synonym
+from src.cases.model.vocabularies import domain
+from src.cases.model.vocabularies import drug_strength
+from src.cases.model.vocabularies import relationship
+from src.cases.model.vocabularies import source_to_concept_map
+from src.cases.model.vocabularies import vocabulary
+
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

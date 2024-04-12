@@ -1,6 +1,8 @@
 from src import db
 
 
+# TODO:recheck index with document
+# TODO relationship concept
 class Vocabulary(db.Model):
     __tablename__ = "vocabulary"
 
