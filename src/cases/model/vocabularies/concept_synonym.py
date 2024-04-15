@@ -12,7 +12,10 @@ class ConceptSynonym(db.Model):
     )
     concept_synonym_name = db.Column(db.String(1000), primary_key=True, nullable=False)
     language_concept_id = db.Column(
-        db.Integer, db.ForeignKey("concept.concept_id"), nullable=False
+        db.Integer,
+        db.ForeignKey("concept.concept_id"),
+        primary_key=True,
+        nullable=False,
     )
 
     # Relationships
