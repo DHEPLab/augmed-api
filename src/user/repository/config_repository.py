@@ -16,3 +16,6 @@ class ConfigRepository:
                 path_config=config["path_config"],
             )
             self.session.add(new_config)
+
+    def get_all_configurations(self):
+        return self.session.query(Config).all()
