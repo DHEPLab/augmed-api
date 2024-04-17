@@ -25,10 +25,10 @@ class Note(db.Model):
     note_event_id = db.Column(db.Integer)
     note_event_field_concept_id = db.Column(db.Integer)
     # Relationships
-    person = db.relationship("Person", backref=db.backref("notes", lazy="dynamic"))
-    provider = db.relationship("Provider", back_populates="notes")
-    visit_occurrence = db.relationship("VisitOccurrence", back_populates="notes")
-    visit_detail = db.relationship("VisitDetail", back_populates="notes")
+    # person = db.relationship("Person", backref=db.backref("notes", lazy="dynamic"))
+    # provider = db.relationship("Provider", back_populates="notes")
+    # visit_occurrence = db.relationship("VisitOccurrence", back_populates="notes")
+    # visit_detail = db.relationship("VisitDetail", back_populates="notes")
 
 
 class NoteNLP(db.Model):

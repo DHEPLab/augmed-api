@@ -31,15 +31,15 @@ class Observation(db.Model):
     obs_event_field_concept_id = db.Column(db.Integer)
 
     # Define relationships
-    person = db.relationship(
-        "Person", backref=db.backref("observations", lazy="dynamic")
-    )
-    provider = db.relationship(
-        "Provider", backref=db.backref("observations", lazy="dynamic")
-    )
-    visit_occurrence = db.relationship(
-        "VisitOccurrence", backref=db.backref("observations", lazy="dynamic")
-    )
-    visit_detail = db.relationship(
-        "VisitDetail", backref=db.backref("observations", lazy="dynamic")
-    )
+    # person = db.relationship(
+    #     "Person", backref=db.backref("observations", lazy="dynamic")
+    # )
+    # provider = db.relationship(
+    #     "Provider", backref=db.backref("observations", lazy="dynamic")
+    # )
+    # visit_occurrence = db.relationship(
+    #     "VisitOccurrence", backref=db.backref("observations", lazy="dynamic")
+    # )
+    # visit_detail = db.relationship(
+    #     "VisitDetail", backref=db.backref("observations", lazy="dynamic")
+    # )

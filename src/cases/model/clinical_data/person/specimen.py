@@ -21,4 +21,4 @@ class Specimen(db.Model):
     disease_status_source_value = db.Column(db.String(50))
 
     # Relationship to the Person table
-    person = db.relationship("Person", backref=db.backref("specimens", lazy="dynamic"))
+    # person = db.relationship("Person", backref=db.backref("specimens", lazy="dynamic"))

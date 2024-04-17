@@ -1,5 +1,4 @@
 from sqlalchemy import TIMESTAMP, Column, Date, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
 
 from src import db
 
@@ -28,4 +27,4 @@ class VisitOccurrence(db.Model):
     )
 
     # Relationships
-    person = relationship("Person", back_populates="visit_occurrences")
+    # person = relationship("Person", back_populates="visit_occurrences")

@@ -14,11 +14,11 @@ class CareSite(db.Model):
     place_of_service_source_value = db.Column(db.String(50))
 
     # Relationships
-    location = db.relationship(
-        "Location", backref=db.backref("care_sites", lazy="dynamic")
-    )
-    place_of_service_concept = db.relationship(
-        "Concept",
-        foreign_keys=[place_of_service_concept_id],
-        backref=db.backref("care_sites_as_place_of_service", lazy="dynamic"),
-    )
+    # location = db.relationship(
+    #     "Location", backref=db.backref("care_sites", lazy="dynamic")
+    # )
+    # place_of_service_concept = db.relationship(
+    #     "Concept",
+    #     foreign_keys=[place_of_service_concept_id],
+    #     backref=db.backref("care_sites_as_place_of_service", lazy="dynamic"),
+    # )

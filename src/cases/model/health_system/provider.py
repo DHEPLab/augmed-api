@@ -23,16 +23,16 @@ class Provider(db.Model):
     )
 
     # Relationships
-    care_site = db.relationship(
-        "CareSite", backref=db.backref("providers", lazy="dynamic")
-    )
-    specialty_concept = db.relationship(
-        "Concept",
-        foreign_keys=[specialty_concept_id],
-        backref=db.backref("providers_as_specialty", lazy="dynamic"),
-    )
-    gender_concept = db.relationship(
-        "Concept",
-        foreign_keys=[gender_concept_id],
-        backref=db.backref("providers_as_gender", lazy="dynamic"),
-    )
+    # care_site = db.relationship(
+    #     "CareSite", backref=db.backref("providers", lazy="dynamic")
+    # )
+    # specialty_concept = db.relationship(
+    #     "Concept",
+    #     foreign_keys=[specialty_concept_id],
+    #     backref=db.backref("providers_as_specialty", lazy="dynamic"),
+    # )
+    # gender_concept = db.relationship(
+    #     "Concept",
+    #     foreign_keys=[gender_concept_id],
+    #     backref=db.backref("providers_as_gender", lazy="dynamic"),
+    # )

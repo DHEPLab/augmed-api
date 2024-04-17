@@ -1,5 +1,4 @@
 from sqlalchemy import TIMESTAMP, Column, Date, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
 
 from src import db
 
@@ -26,10 +25,10 @@ class ConditionOccurrence(db.Model):
     condition_source_concept_id = Column(Integer)
     condition_status_source_value = Column(String(50))
 
-    # Relationships
-    person = relationship("Person", back_populates="condition_occurrences")
-    provider = relationship("Provider", back_populates="condition_occurrences")
-    visit_occurrence = relationship(
-        "VisitOccurrence", back_populates="condition_occurrences"
-    )
-    visit_detail = relationship("VisitDetail", back_populates="condition_occurrences")
+    # # Relationships
+    # person = relationship("Person", back_populates="condition_occurrences")
+    # provider = relationship("Provider", back_populates="condition_occurrences")
+    # visit_occurrence = relationship(
+    #     "VisitOccurrence", back_populates="condition_occurrences"
+    # )
+    # visit_detail = relationship("VisitDetail", back_populates="condition_occurrences")

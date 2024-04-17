@@ -33,13 +33,13 @@ class DrugExposure(db.Model):
     dose_unit_source_value = db.Column(db.String(50))
 
     # Define relationships
-    person = db.relationship("Person", backref=db.backref("drug_exposures", lazy=True))
-    provider = db.relationship(
-        "Provider", backref=db.backref("drug_exposures", lazy=True)
-    )
-    visit_occurrence = db.relationship(
-        "VisitOccurrence", backref=db.backref("drug_exposures", lazy=True)
-    )
-    visit_detail = db.relationship(
-        "VisitDetail", backref=db.backref("drug_exposures", lazy=True)
-    )
+    # person = db.relationship("Person", backref=db.backref("drug_exposures", lazy=True))
+    # provider = db.relationship(
+    #     "Provider", backref=db.backref("drug_exposures", lazy=True)
+    # )
+    # visit_occurrence = db.relationship(
+    #     "VisitOccurrence", backref=db.backref("drug_exposures", lazy=True)
+    # )
+    # visit_detail = db.relationship(
+    #     "VisitDetail", backref=db.backref("drug_exposures", lazy=True)
+    # )
