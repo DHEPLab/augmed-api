@@ -1,24 +1,29 @@
 import pytest
-from src.user.repository.config_repository import ConfigRepository
-from src.user.model.config import Config
+
+from src.user.model.configurations import Configurations
+from src.user.repository.configuration_repository import ConfigurationRepository
+
 
 @pytest.fixture(scope="session")
 def config_repository(session):
-    return ConfigRepository(session)
+    return ConfigurationRepository(session)
 
-@pytest.fixture(autouse=True)
-def setup_database(session):
-    session.query(Config).delete()
-    session.commit()
+#
+# @pytest.fixture(autouse=True)
+# def teardown_database(session):
+#     yield
+#     session.query(Configurations).delete()
 
-def test_replace_from_blank_to_non_blank(config_repository: ConfigRepository ):
+
+def test_replace_from_blank_to_non_blank(config_repository: ConfigurationRepository):
     assert config_repository.get_all_configurations() == []
 
     new_configs = [{'user_id': 1, 'case_id': 1, 'path_config': {'info': 'details'}}]
     config_repository.replace_all_configurations(new_configs)
     assert len(config_repository.get_all_configurations()) == 1
 
-def test_replace_with_case_change(config_repository: ConfigRepository):
+
+def test_replace_with_case_change(config_repository: ConfigurationRepository):
     # Initial configuration for user 1, case 1
     initial_configs = [{'user_id': 1, 'case_id': 1, 'path_config': {'info': 'initial'}}]
     config_repository.replace_all_configurations(initial_configs)
@@ -32,7 +37,8 @@ def test_replace_with_case_change(config_repository: ConfigRepository):
     assert all_configs[0].case_id == 2
     assert all_configs[0].path_config['info'] == 'updated'
 
-def test_replace_to_more_configurations(config_repository: ConfigRepository):
+
+def test_replace_to_more_configurations(config_repository: ConfigurationRepository):
     initial_configs = [{'user_id': 1, 'case_id': 1, 'path_config': {'info': 'initial'}}]
     config_repository.replace_all_configurations(initial_configs)
 
@@ -44,7 +50,8 @@ def test_replace_to_more_configurations(config_repository: ConfigRepository):
 
     assert len(config_repository.get_all_configurations()) == 2
 
-def test_replace_to_fewer_configurations(config_repository: ConfigRepository):
+
+def test_replace_to_fewer_configurations(config_repository: ConfigurationRepository):
     # Initial configurations
     initial_configs = [
         {'user_id': 1, 'case_id': 1, 'path_config': {'info': 'one'}},
@@ -60,7 +67,8 @@ def test_replace_to_fewer_configurations(config_repository: ConfigRepository):
     assert all_configs[0].case_id == 1
     assert all_configs[0].path_config['info'] == 'remaining'
 
-def test_path_config_from_value_to_blank(config_repository: ConfigRepository):
+
+def test_path_config_from_value_to_blank(config_repository: ConfigurationRepository):
     # Start with a non-blank path_config
     initial_config = [{'user_id': 1, 'case_id': 1, 'path_config': {'info': 'initial data'}}]
     config_repository.replace_all_configurations(initial_config)

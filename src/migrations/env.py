@@ -3,7 +3,7 @@ from logging.config import fileConfig
 
 from flask import current_app
 from src.user.model import user
-from src.user.model import config
+from src.user.model import configurations
 from alembic import context
 
 # clinical data

@@ -1,7 +1,7 @@
 from src import db
 
 
-class Config(db.Model):
+class Configurations(db.Model):
     __tablename__ = "configurations"
     id: int = db.Column(db.Integer, primary_key=True)
     user_id: int = db.Column(db.Integer, db.ForeignKey("user.id"))
