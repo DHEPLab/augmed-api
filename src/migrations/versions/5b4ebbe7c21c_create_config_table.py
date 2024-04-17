@@ -1,8 +1,8 @@
 """Create config table
 
-Revision ID: 734fdb757341
+Revision ID: 5b4ebbe7c21c
 Revises: ef7467079fda
-Create Date: 2024-04-16 15:05:16.978444
+Create Date: 2024-04-16 16:37:54.619840
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '734fdb757341'
+revision = '5b4ebbe7c21c'
 down_revision = 'ef7467079fda'
 branch_labels = None
 depends_on = None
