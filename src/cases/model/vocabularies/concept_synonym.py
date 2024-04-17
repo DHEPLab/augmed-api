@@ -18,6 +18,12 @@ class ConceptSynonym(db.Model):
         nullable=False,
     )
 
+    __table_args__ = (
+        db.UniqueConstraint(
+            "concept_id", "concept_synonym_name", "language_concept_id"
+        ),
+    )
+
     # Relationships
     concept = db.relationship(
         "Concept",
