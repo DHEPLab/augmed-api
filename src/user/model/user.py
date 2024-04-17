@@ -4,7 +4,7 @@ from src import db
 
 
 class User(db.Model):
-    db.metadata.clear()
+    # db.metadata.clear()
     __tablename__ = "user"
 
     id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)

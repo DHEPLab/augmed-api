@@ -2,7 +2,7 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 
 from src.user.repository.user_repository import UserRepository
-from user.model.user import User
+from src.user.model.user import User
 
 
 @pytest.fixture(scope="session")

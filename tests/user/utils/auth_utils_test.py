@@ -5,8 +5,8 @@ import pytest
 from werkzeug.exceptions import Unauthorized
 from werkzeug.security import generate_password_hash
 
-from user.model.user import User
-from user.utils.auth_utils import validate_jwt_and_refresh
+from src.user.model.user import User
+from src.user.utils.auth_utils import validate_jwt_and_refresh
 
 
 @pytest.fixture
