@@ -1,7 +1,9 @@
+import os
 import time
 
 import pytest
 from flask_jwt_extended import JWTManager
+from flask_migrate import Migrate, upgrade
 from testcontainers.postgres import PostgresContainer
 
 from src import create_app, db
@@ -13,6 +15,9 @@ def app():
     postgres.start()
     time.sleep(3)
 
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    migrations_dir = os.path.join(base_dir, 'src', 'migrations')
+
     app = create_app(
         dict(
             SQLALCHEMY_DATABASE_URI=postgres.get_connection_url(),
@@ -23,10 +28,11 @@ def app():
     )
     JWTManager(app)
     with app.app_context():
-        db.create_all()
+        Migrate(app, db, directory=migrations_dir)
+        upgrade()
+
         yield app
         db.session.remove()
-        db.drop_all()
         postgres.stop()
 
 
