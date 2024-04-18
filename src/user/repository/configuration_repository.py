@@ -1,4 +1,4 @@
-from src.user.model.configurations import Configurations
+from src.user.model.configuration import Configuration
 
 
 class ConfigurationRepository:
@@ -6,16 +6,15 @@ class ConfigurationRepository:
     def __init__(self, session):
         self.session = session
 
-    def replace_all_configurations(self, new_configurations):
-        self.session.query(Configurations).delete(synchronize_session="fetch")
+    def clean_configurations(self):
+        self.session.query(Configuration).delete()
+        self.session.flush()
 
-        for config in new_configurations:
-            new_config = Configurations(
-                user_id=config["user_id"],
-                case_id=config["case_id"],
-                path_config=config["path_config"],
-            )
-            self.session.add(new_config)
+    def save_configuration(self, config: Configuration):
+
+        self.session.add(config)
+        self.session.flush()
+        return
 
     def get_all_configurations(self):
-        return self.session.query(Configurations).all()
+        return self.session.query(Configuration).all()
