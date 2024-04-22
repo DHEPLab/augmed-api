@@ -10,8 +10,8 @@ def config_repository(session):
     return repo
 
 def test_clean_configurations(config_repository):
-    config_repository.save_configuration(Configuration(user_id=1, case_id=1, path_config={'info': 'initial'}))
-    config_repository.save_configuration(Configuration(user_id=2, case_id=2, path_config={'info': 'second'}))
+    config_repository.save_configuration(Configuration(user_email='usera@example.com', case_id=1, path_config={'info': 'initial'}))
+    config_repository.save_configuration(Configuration(user_id='usera@example.com', case_id=2, path_config={'info': 'second'}))
     assert len(config_repository.get_all_configurations()) == 2
 
     config_repository.clean_configurations()
@@ -19,7 +19,7 @@ def test_clean_configurations(config_repository):
 
 def test_save_configuration(config_repository):
     # Test saving a single configuration
-    new_config = Configuration(user_id=1, case_id=1, path_config={'info': 'details'})
+    new_config = Configuration(user_id='usera@example.com', case_id=1, path_config={'info': 'details'})
     config_repository.save_configuration(new_config)
     all_configs = config_repository.get_all_configurations()
     assert len(all_configs) == 1
@@ -30,8 +30,8 @@ def test_save_configuration(config_repository):
 def test_save_multiple_configurations(config_repository):
     # Saving multiple configurations
     configs = [
-        Configuration(user_id=1, case_id=1, path_config={'info': 'first'}),
-        Configuration(user_id=2, case_id=2, path_config={'info': 'second'})
+        Configuration(user_id='usera@example.com', case_id=1, path_config={'info': 'first'}),
+        Configuration(user_id='usera@example.com', case_id=2, path_config={'info': 'second'})
     ]
     for config in configs:
         config_repository.save_configuration(config)
