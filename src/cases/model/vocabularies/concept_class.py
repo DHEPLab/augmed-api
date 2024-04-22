@@ -9,8 +9,3 @@ class ConceptClass(db.Model):
     concept_class_concept_id = db.Column(
         db.Integer, db.ForeignKey("concept.concept_id"), nullable=False
     )
-
-    # Relationship to Concept
-    concept_class_concept = db.relationship(
-        "Concept", backref=db.backref("concept_classes", lazy="dynamic")
-    )

@@ -15,15 +15,3 @@ class CohortDefinition(db.Model):
         db.Integer, db.ForeignKey("concept.concept_id"), nullable=False
     )
     cohort_initiation_date = db.Column(db.Date)
-
-    # Relationships
-    definition_type_concept = db.relationship(
-        "Concept",
-        foreign_keys=[definition_type_concept_id],
-        backref=db.backref("cohort_definitions_by_type", lazy="dynamic"),
-    )
-    subject_concept = db.relationship(
-        "Concept",
-        foreign_keys=[subject_concept_id],
-        backref=db.backref("cohort_definitions_by_subject", lazy="dynamic"),
-    )

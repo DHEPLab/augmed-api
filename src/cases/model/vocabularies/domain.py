@@ -9,8 +9,3 @@ class Domain(db.Model):
     domain_concept_id = db.Column(
         db.Integer, db.ForeignKey("concept.concept_id"), nullable=False
     )
-
-    # Relationship to Concept
-    domain_concept = db.relationship(
-        "Concept", backref=db.backref("domains", lazy="dynamic")
-    )

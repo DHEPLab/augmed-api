@@ -23,15 +23,3 @@ class ConceptSynonym(db.Model):
             "concept_id", "concept_synonym_name", "language_concept_id"
         ),
     )
-
-    # Relationships
-    concept = db.relationship(
-        "Concept",
-        foreign_keys=[concept_id],
-        backref=db.backref("synonyms", lazy="dynamic"),
-    )
-    language_concept = db.relationship(
-        "Concept",
-        foreign_keys=[language_concept_id],
-        backref=db.backref("synonym_languages", lazy="dynamic"),
-    )

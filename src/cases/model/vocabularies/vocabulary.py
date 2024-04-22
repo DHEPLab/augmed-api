@@ -2,7 +2,6 @@ from src import db
 
 
 # TODO:recheck index with document
-# TODO relationship concept
 class Vocabulary(db.Model):
     __tablename__ = "vocabulary"
 
@@ -12,9 +11,4 @@ class Vocabulary(db.Model):
     vocabulary_version = db.Column(db.String(255))
     vocabulary_concept_id = db.Column(
         db.Integer, db.ForeignKey("concept.concept_id"), nullable=False
-    )
-
-    # Relationship to Concept
-    vocabulary_concept = db.relationship(
-        "Concept", backref=db.backref("vocabularies", lazy="dynamic")
     )

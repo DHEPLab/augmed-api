@@ -17,20 +17,3 @@ class Metadata(db.Model):
     value_as_number = db.Column(db.Numeric)
     metadata_date = db.Column(db.Date)
     metadata_datetime = db.Column(db.TIMESTAMP)
-
-    # Relationships
-    metadata_concept = db.relationship(
-        "Concept",
-        foreign_keys=[metadata_concept_id],
-        backref=db.backref("metadata_as_concept", lazy="dynamic"),
-    )
-    metadata_type_concept = db.relationship(
-        "Concept",
-        foreign_keys=[metadata_type_concept_id],
-        backref=db.backref("metadata_as_type", lazy="dynamic"),
-    )
-    value_as_concept = db.relationship(
-        "Concept",
-        foreign_keys=[value_as_concept_id],
-        backref=db.backref("metadata_as_value", lazy="dynamic"),
-    )

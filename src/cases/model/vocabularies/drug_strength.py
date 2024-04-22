@@ -30,28 +30,3 @@ class DrugStrength(db.Model):
     valid_start_date = db.Column(db.Date, nullable=False)
     valid_end_date = db.Column(db.Date, nullable=False)
     invalid_reason = db.Column(db.String(1))
-
-    # Relationships
-    drug_concept = db.relationship(
-        "Concept", foreign_keys=[drug_concept_id], backref="drug_strengths_as_drug"
-    )
-    ingredient_concept = db.relationship(
-        "Concept",
-        foreign_keys=[ingredient_concept_id],
-        backref="drug_strengths_as_ingredient",
-    )
-    amount_unit_concept = db.relationship(
-        "Concept",
-        foreign_keys=[amount_unit_concept_id],
-        backref="drug_strengths_as_amount_unit",
-    )
-    numerator_unit_concept = db.relationship(
-        "Concept",
-        foreign_keys=[numerator_unit_concept_id],
-        backref="drug_strengths_as_numerator_unit",
-    )
-    denominator_unit_concept = db.relationship(
-        "Concept",
-        foreign_keys=[denominator_unit_concept_id],
-        backref="drug_strengths_as_denominator_unit",
-    )

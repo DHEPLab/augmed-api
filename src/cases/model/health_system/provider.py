@@ -21,18 +21,3 @@ class Provider(db.Model):
     gender_source_concept_id = db.Column(
         db.Integer, db.ForeignKey("concept.concept_id")
     )
-
-    # Relationships
-    # care_site = db.relationship(
-    #     "CareSite", backref=db.backref("providers", lazy="dynamic")
-    # )
-    # specialty_concept = db.relationship(
-    #     "Concept",
-    #     foreign_keys=[specialty_concept_id],
-    #     backref=db.backref("providers_as_specialty", lazy="dynamic"),
-    # )
-    # gender_concept = db.relationship(
-    #     "Concept",
-    #     foreign_keys=[gender_concept_id],
-    #     backref=db.backref("providers_as_gender", lazy="dynamic"),
-    # )

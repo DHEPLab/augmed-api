@@ -26,23 +26,6 @@ class Episode(db.Model):
         db.Integer, db.ForeignKey("concept.concept_id")
     )
 
-    # Relationships
-    person = db.relationship("Person", backref=db.backref("episodes", lazy="dynamic"))
-    episode_concept = db.relationship(
-        "Concept", foreign_keys=[episode_concept_id], backref="episodes_by_concept"
-    )
-    episode_object_concept = db.relationship(
-        "Concept",
-        foreign_keys=[episode_object_concept_id],
-        backref="episodes_by_object",
-    )
-    episode_type_concept = db.relationship(
-        "Concept", foreign_keys=[episode_type_concept_id], backref="episodes_by_type"
-    )
-    parent_episode = db.relationship(
-        "Episode", remote_side=[episode_id], backref="child_episodes"
-    )
-
 
 class EpisodeEvent(db.Model):
     __tablename__ = "episode_event"
@@ -59,9 +42,3 @@ class EpisodeEvent(db.Model):
     episode_event_field_concept_id = db.Column(
         db.Integer, db.ForeignKey("concept.concept_id"), nullable=False
     )
-
-    # Relationships - Assuming an Episode and Concept model are defined elsewhere
-    episode = db.relationship(
-        "Episode", backref=db.backref("episode_events", lazy="dynamic")
-    )
-    episode_event_field_concept = db.relationship("Concept", backref="episode_events")

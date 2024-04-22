@@ -25,6 +25,3 @@ class VisitOccurrence(db.Model):
     preceding_visit_occurrence_id = Column(
         Integer, ForeignKey("visit_occurrence.visit_occurrence_id")
     )
-
-    # Relationships
-    # person = relationship("Person", back_populates="visit_occurrences")

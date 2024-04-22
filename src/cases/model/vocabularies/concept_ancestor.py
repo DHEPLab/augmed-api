@@ -18,14 +18,3 @@ class ConceptAncestor(db.Model):
     )
     min_levels_of_separation = db.Column(db.Integer, nullable=False)
     max_levels_of_separation = db.Column(db.Integer, nullable=False)
-
-    ancestor_concept = db.relationship(
-        "Concept",
-        foreign_keys=[ancestor_concept_id],
-        backref=db.backref("descendants", lazy="dynamic"),
-    )
-    descendant_concept = db.relationship(
-        "Concept",
-        foreign_keys=[descendant_concept_id],
-        backref=db.backref("ancestors", lazy="dynamic"),
-    )

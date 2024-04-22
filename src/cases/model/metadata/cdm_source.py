@@ -18,8 +18,3 @@ class CDMSource(db.Model):
     cdm_version = db.Column(db.String(10))
     cdm_version_concept_id = db.Column(db.Integer, nullable=False)
     vocabulary_version = db.Column(db.String(20), nullable=False)
-
-    # Relationships - assuming a Concept model exists for cdm_version_concept_id
-    cdm_version_concept = db.relationship(
-        "Concept", backref=db.backref("cdm_sources", lazy="dynamic")
-    )

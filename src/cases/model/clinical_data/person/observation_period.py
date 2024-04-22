@@ -11,5 +11,3 @@ class ObservationPeriod(db.Model):
     observation_period_start_date = Column(Date, nullable=False)
     observation_period_end_date = Column(Date, nullable=False)
     period_type_concept_id = Column(Integer, nullable=False)
-
-    # person = relationship("Person", back_populates="observation_periods")

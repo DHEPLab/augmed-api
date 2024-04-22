@@ -12,8 +12,3 @@ class Relationship(db.Model):
     relationship_concept_id = db.Column(
         db.Integer, db.ForeignKey("concept.concept_id"), nullable=False
     )
-
-    # Relationships
-    relationship_concept = db.relationship(
-        "Concept", backref=db.backref("relationships", lazy="dynamic")
-    )

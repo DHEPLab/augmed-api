@@ -27,17 +27,3 @@ class DeviceExposure(db.Model):
     unit_concept_id = db.Column(db.Integer)
     unit_source_value = db.Column(db.String(50))
     unit_source_concept_id = db.Column(db.Integer)
-
-    # Define relationships
-    # person = db.relationship(
-    #     "Person", backref=db.backref("device_exposures", lazy="dynamic")
-    # )
-    # provider = db.relationship(
-    #     "Provider", backref=db.backref("device_exposures", lazy="dynamic")
-    # )
-    # visit_occurrence = db.relationship(
-    #     "VisitOccurrence", backref=db.backref("device_exposures", lazy="dynamic")
-    # )
-    # visit_detail = db.relationship(
-    #     "VisitDetail", backref=db.backref("device_exposures", lazy="dynamic")
-    # )

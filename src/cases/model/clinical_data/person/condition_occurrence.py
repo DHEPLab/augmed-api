@@ -24,11 +24,3 @@ class ConditionOccurrence(db.Model):
     condition_source_value = Column(String(50))
     condition_source_concept_id = Column(Integer)
     condition_status_source_value = Column(String(50))
-
-    # # Relationships
-    # person = relationship("Person", back_populates="condition_occurrences")
-    # provider = relationship("Provider", back_populates="condition_occurrences")
-    # visit_occurrence = relationship(
-    #     "VisitOccurrence", back_populates="condition_occurrences"
-    # )
-    # visit_detail = relationship("VisitDetail", back_populates="condition_occurrences")

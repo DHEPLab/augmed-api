@@ -12,11 +12,3 @@ class ConditionEra(db.Model):
     condition_era_start_date = db.Column(db.Date, nullable=False)
     condition_era_end_date = db.Column(db.Date, nullable=False)
     condition_occurrence_count = db.Column(db.Integer)
-
-    # Relationships
-    person = db.relationship(
-        "Person", backref=db.backref("condition_eras", lazy="dynamic")
-    )
-    condition_concept = db.relationship(
-        "Concept", backref=db.backref("condition_eras_as_condition", lazy="dynamic")
-    )

@@ -15,9 +15,3 @@ class Cohort(db.Model):
     )
     cohort_start_date = db.Column(db.Date, nullable=False)
     cohort_end_date = db.Column(db.Date, nullable=False)
-
-    # Relationships - Assuming CohortDefinition and Person models are defined elsewhere
-    cohort_definition = db.relationship(
-        "CohortDefinition", backref=db.backref("cohorts", lazy="dynamic")
-    )
-    subject = db.relationship("Person", backref=db.backref("cohorts", lazy="dynamic"))

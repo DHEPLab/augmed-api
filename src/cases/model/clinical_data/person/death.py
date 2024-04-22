@@ -13,8 +13,3 @@ class Death(db.Model):
     cause_concept_id = db.Column(db.Integer)
     cause_source_value = db.Column(db.String(50))
     cause_source_concept_id = db.Column(db.Integer)
-
-    # # Define relationship to Person
-    # person = db.relationship(
-    #     "Person", backref=db.backref("death", uselist=False, lazy="joined")
-    # )

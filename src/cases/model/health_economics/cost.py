@@ -28,23 +28,3 @@ class Cost(db.Model):
     revenue_code_source_value = db.Column(db.String(50))
     drg_concept_id = db.Column(db.Integer, db.ForeignKey("concept.concept_id"))
     drg_source_value = db.Column(db.String(3))
-
-    # Relationships
-    currency_concept = db.relationship(
-        "Concept",
-        foreign_keys=[currency_concept_id],
-        backref=db.backref("costs_as_currency", lazy="dynamic"),
-    )
-    revenue_code_concept = db.relationship(
-        "Concept",
-        foreign_keys=[revenue_code_concept_id],
-        backref=db.backref("costs_as_revenue_code", lazy="dynamic"),
-    )
-    drg_concept = db.relationship(
-        "Concept",
-        foreign_keys=[drg_concept_id],
-        backref=db.backref("costs_as_drg", lazy="dynamic"),
-    )
-    payer_plan_period = db.relationship(
-        "PayerPlanPeriod", backref=db.backref("costs", lazy="dynamic")
-    )

@@ -31,17 +31,3 @@ class Measurement(db.Model):
     value_source_value = db.Column(db.String(50))
     measurement_event_id = db.Column(db.Integer)
     meas_event_field_concept_id = db.Column(db.Integer)
-
-    # Define relationships
-    # person = db.relationship(
-    #     "Person", backref=db.backref("measurements", lazy="dynamic")
-    # )
-    # provider = db.relationship(
-    #     "Provider", backref=db.backref("measurements", lazy="dynamic")
-    # )
-    # visit_occurrence = db.relationship(
-    #     "VisitOccurrence", backref=db.backref("measurements", lazy="dynamic")
-    # )
-    # visit_detail = db.relationship(
-    #     "VisitDetail", backref=db.backref("measurements", lazy="dynamic")
-    # )

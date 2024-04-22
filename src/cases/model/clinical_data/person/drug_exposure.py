@@ -31,15 +31,3 @@ class DrugExposure(db.Model):
     drug_source_concept_id = db.Column(db.Integer)
     route_source_value = db.Column(db.String(50))
     dose_unit_source_value = db.Column(db.String(50))
-
-    # Define relationships
-    # person = db.relationship("Person", backref=db.backref("drug_exposures", lazy=True))
-    # provider = db.relationship(
-    #     "Provider", backref=db.backref("drug_exposures", lazy=True)
-    # )
-    # visit_occurrence = db.relationship(
-    #     "VisitOccurrence", backref=db.backref("drug_exposures", lazy=True)
-    # )
-    # visit_detail = db.relationship(
-    #     "VisitDetail", backref=db.backref("drug_exposures", lazy=True)
-    # )

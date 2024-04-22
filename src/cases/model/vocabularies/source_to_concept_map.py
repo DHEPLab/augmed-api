@@ -20,15 +20,3 @@ class SourceToConceptMap(db.Model):
     valid_start_date = db.Column(db.Date, nullable=False)
     valid_end_date = db.Column(db.Date, nullable=False)
     invalid_reason = db.Column(db.String(1))
-
-    # Relationships to Concept
-    source_concept = db.relationship(
-        "Concept",
-        foreign_keys=[source_concept_id],
-        backref=db.backref("source_to_concept_map_as_source", lazy="dynamic"),
-    )
-    target_concept = db.relationship(
-        "Concept",
-        foreign_keys=[target_concept_id],
-        backref=db.backref("source_to_concept_map_as_target", lazy="dynamic"),
-    )

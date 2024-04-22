@@ -19,6 +19,3 @@ class Specimen(db.Model):
     unit_source_value = db.Column(db.String(50))
     anatomic_site_source_value = db.Column(db.String(50))
     disease_status_source_value = db.Column(db.String(50))
-
-    # Relationship to the Person table
-    # person = db.relationship("Person", backref=db.backref("specimens", lazy="dynamic"))

@@ -13,9 +13,3 @@ class DrugEra(db.Model):
     drug_era_end_date = db.Column(db.Date, nullable=False)
     drug_exposure_count = db.Column(db.Integer)
     gap_days = db.Column(db.Integer)
-
-    # Relationships
-    person = db.relationship("Person", backref=db.backref("drug_eras", lazy="dynamic"))
-    drug_concept = db.relationship(
-        "Concept", backref=db.backref("drug_eras_as_drug", lazy="dynamic")
-    )
