@@ -25,6 +25,7 @@ flask-jwt-extended = "*"
 pytest-mock = "*"
 flask-json-schema = "*"
 testcontainers = "*"
+openpyxl = "*"
 
 [dev-packages]
 
