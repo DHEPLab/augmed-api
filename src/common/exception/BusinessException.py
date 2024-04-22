@@ -16,10 +16,15 @@ class BusinessExceptionEnum(Enum):
     UserEmailIsAlreadySignup = ("1003", "Email is already sign up, please log in.")
     UserEmailIsNotSignup = ("1004", "Email hasn’t sign up, please sign up.")
     UserPasswordIncorrect = ("1005", "Incorrect password. Please try again.")
+    ConfigFileIncorrect = (
+        "1006",
+        "Error while processing Excel file, please check again.",
+    )
 
-    def __init__(self, code, message):
-        self._code = code
-        self._message = message
+
+def __init__(self, code, message):
+    self._code = code
+    self._message = message
 
     @property
     def code(self):
