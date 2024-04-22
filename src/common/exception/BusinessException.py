@@ -22,17 +22,10 @@ class BusinessExceptionEnum(Enum):
     )
     InvalidFileExtension = (
         "1007",
-        "Invalid file extension. Only .xlsx or .xls files are allowed."
+        "Invalid file extension. Only .xlsx or .xls files are allowed.",
     )
-    NoFilePart = (
-        "1008",
-        "No file part in the request."
-    )
-    NoFileSelected = (
-        "1009",
-        "No file selected."
-    )
-
+    NoFilePart = ("1008", "No file part in the request.")
+    NoFileSelected = ("1009", "No file selected.")
 
     def __init__(self, code, message):
         self._code = code
