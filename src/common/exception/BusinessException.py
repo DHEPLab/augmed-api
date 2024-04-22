@@ -20,11 +20,23 @@ class BusinessExceptionEnum(Enum):
         "1006",
         "Error while processing Excel file, please check again.",
     )
+    InvalidFileExtension = (
+        "1007",
+        "Invalid file extension. Only .xlsx or .xls files are allowed."
+    )
+    NoFilePart = (
+        "1008",
+        "No file part in the request."
+    )
+    NoFileSelected = (
+        "1009",
+        "No file selected."
+    )
 
 
-def __init__(self, code, message):
-    self._code = code
-    self._message = message
+    def __init__(self, code, message):
+        self._code = code
+        self._message = message
 
     @property
     def code(self):
