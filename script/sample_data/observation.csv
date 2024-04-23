@@ -1,0 +1,13 @@
+observation_id,person_id,observation_concept_id,observation_date,observation_time,observation_type_concept_id,value_as_number,value_as_string,value_as_concept_id,qualifier_concept_id,unit_concept_id,provider_id,visit_occurrence_id,visit_detail_id,observation_source_value,observation_source_concept_id,unit_source_value,qualifier_source_value,value_source_value,observation_event_id,obs_event_field_concept_id
+1,1,4041306,2024-04-22,,0,,non-somker,,,,,1,,,,,,,,
+2,1,4238768,2024-04-22,,0,,,,,710237,,1,,,,10,,,,
+3,1,79936,2024-04-22,,38000282,,"5x Per night",,0,,,1,,,,0,,,,
+4,1,79936,2024-04-22,,38000282,,"Accomp: Extreme thirst",,0,,,1,,,,0,,,,
+5,1,79936,2024-04-22,,38000282,,"Onset: Abrupt",,0,,,1,,,,0,,,,
+6,1,79936,2024-04-22,,38000282,,,0,42538822,8511,,1,,,,4,,,,
+7,1,35826012,2024-04-22,,4034855,,,0,42538822,9580,,1,,,,3,,,,
+8,1,4147325,2024-04-22,,4034855,,"Assos w/ early morning nausea",,,,,1,,,,,,,,
+9,1,4147325,2024-04-22,,4034855,,"Worsened by coughing or lying down",,,,,1,,,,,,,,
+10,1,40303797,2024-04-22,,4034855,,"Duration: 3 months",0,,,,1,,,,,,,,
+11,1,37311267,2024-04-22,,4034855,,"",0,,9529,,1,,,,3,,,,
+12,1,37311267,2024-04-22,,4034855,,"Duration: 3 months",0,,,,1,,,,,,,,
