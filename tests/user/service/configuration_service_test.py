@@ -55,10 +55,13 @@ def test_process_excel_file_success(mocker, mock_repo, valid_excel_file, config_
 
     # Assertions to check if the response is as expected
     assert len(response) == len(config_data)
-    assert response["usera@example.com-1"] == "added"
-    assert response["userb@example.com-2"] == "added"
+    assert response[0]["user_case_key"] == "usera@example.com-1"
+    assert response[0]["status"] == "added"
+    assert response[1]["user_case_key"] == "userb@example.com-2"
+    assert response[1]["status"] == "added"
     mock_repo.clean_configurations.assert_called_once()
     assert mock_repo.save_configuration.call_count == len(config_data)
+
 
 
 def test_parser_error(mocker, mock_repo, valid_excel_file):
@@ -82,7 +85,7 @@ def test_database_cleaning_error(mocker, mock_repo, valid_excel_file):
 
 
 def test_database_save_error(mocker, mock_repo, valid_excel_file):
-    config_data = [{"user_email": "user@example.com", "case_id": 1, "path_config": []}]
+    config_data = [{"user_email": "usera@example.com", "case_id": 1, "path_config": []}]
     mocker.patch('src.user.utils.excel_parser.parse_excel_stream_to_configurations', return_value=config_data)
     mock_repo.clean_configurations.return_value = None
     mock_repo.save_configuration.side_effect = Exception("Save failed")
@@ -90,6 +93,6 @@ def test_database_save_error(mocker, mock_repo, valid_excel_file):
 
     response = service.process_excel_file(valid_excel_file)
 
-    assert response == {'usera@example.com-1': 'failed: save failed',
-                        'userb@example.com-2': 'failed: save failed'}
+    assert response[0]["user_case_key"] == 'usera@example.com-1'
+    assert response[0]["status"] == 'failed'
     mock_repo.clean_configurations.assert_called_once()
