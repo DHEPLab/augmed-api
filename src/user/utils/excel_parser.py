@@ -19,7 +19,7 @@ class ExcelConfigurationParser:
             if not any(row):
                 continue  # Skip fully blank lines
 
-            user, case, path, collapse, highlight = row
+            user, case, path, collapse, highlight, *_ = row
             current_config = self._process_row(
                 current_config, configurations, user, case, path, collapse, highlight
             )
