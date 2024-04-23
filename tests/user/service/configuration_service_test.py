@@ -4,7 +4,7 @@ import pytest
 from openpyxl import Workbook
 from werkzeug.exceptions import InternalServerError
 
-from common.exception.BusinessException import BusinessException, BusinessExceptionEnum
+from src.common.exception.BusinessException import BusinessException, BusinessExceptionEnum
 from src.user.repository.configuration_repository import ConfigurationRepository
 from src.user.service.configuration_service import ConfigurationService
 

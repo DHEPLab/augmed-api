@@ -2,11 +2,11 @@ from io import BytesIO
 
 from werkzeug.exceptions import InternalServerError
 
-from common.exception.BusinessException import (BusinessException,
-                                                BusinessExceptionEnum)
+from src.common.exception.BusinessException import (BusinessException,
+                                                    BusinessExceptionEnum)
 from src.user.repository.configuration_repository import \
     ConfigurationRepository
-from user.utils.excel_parser import parse_excel_stream_to_configurations
+from src.user.utils.excel_parser import parse_excel_stream_to_configurations
 
 
 class ConfigurationService:
