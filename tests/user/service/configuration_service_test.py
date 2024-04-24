@@ -52,7 +52,7 @@ def test_process_excel_file_success(mocker, mock_repo, valid_excel_file, config_
     service = ConfigurationService(repository=mock_repo)
 
     response = service.process_excel_file(valid_excel_file)
-
+    print('response',response.__str__())
     # Assertions to check if the response is as expected
     assert len(response) == len(config_data)
     assert response[0]["user_case_key"] == "usera@example.com-1"

@@ -12,14 +12,15 @@ def test_should_parse_excell_stream_correctly_when_all_config_are_set():
     # Headers
     ws.append(['User', 'Case No.', 'Path', 'Collapse', 'Highlight'])
     # Data for multiple users and cases
-    ws.append(['usera@example.com', '1', 'Background.abc', 'TRUE', 'TRUE'])
-    ws.append([None, None, 'background.xxx', 'TRUE', 'FALSE'])
-    ws.append(['userb@example.com', '1', 'Background.patient demo', 'FALSE', 'FALSE'])
+    ws.append(['usera@example.com', '1', 'Background.abc', True, True])
+    ws.append([None, None, 'background.xxx', True, False])
+    ws.append(['userb@example.com', '1', 'Background.patient demo', False, False])
     excel_stream = BytesIO()
     wb.save(excel_stream)
     excel_stream.seek(0)
 
     result = parse_excel_stream_to_configurations(excel_stream)
+    for r in result: print(r.__str__())
 
     assert len(result) == 2
 
@@ -50,14 +51,15 @@ def test_should_ignore_none_config():
     # Headers
     ws.append(['User', 'Case No.', 'Path', 'Collapse', 'Highlight'])
     # Data for multiple users and cases
-    ws.append(['usera@example.com', '1', 'Background.abc', None, 'TRUE'])
-    ws.append([None, None, 'background.xxx', 'TRUE', None])
+    ws.append(['usera@example.com', '1', 'Background.abc', None, True])
+    ws.append([None, None, 'background.xxx', True, None])
     ws.append([None, None, 'Background.patient demo', None, None])
     excel_stream = BytesIO()
     wb.save(excel_stream)
     excel_stream.seek(0)
 
     result = parse_excel_stream_to_configurations(excel_stream)
+    for r in result: print(r.__str__())
 
     assert len(result) == 1
     assert result[0].user_email == 'usera@example.com'

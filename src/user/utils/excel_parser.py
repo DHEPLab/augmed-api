@@ -14,12 +14,20 @@ class ExcelConfigurationParser:
     def parse(self) -> List[Configuration]:
         configurations = []
         current_config = None
-
+        header = [cell for cell in next(self.sheet.iter_rows(min_row=1, max_row=1, values_only=True))]
+        print('header', header)
         for row in self.sheet.iter_rows(min_row=2, values_only=True):
+            print('row', row)
+
             if not any(row):
                 continue  # Skip fully blank lines
 
-            user, case, path, collapse, highlight, *_ = row
+            row_data = dict(zip(header, row))
+            user = row_data.get('User')
+            case = row_data.get('Case No.')
+            path = row_data.get('Path')
+            collapse = row_data.get('Collapse')
+            highlight = row_data.get('Highlight')
             current_config = self._process_row(
                 current_config, configurations, user, case, path, collapse, highlight
             )
@@ -27,7 +35,7 @@ class ExcelConfigurationParser:
         return configurations
 
     def _process_row(
-        self, current_config, configurations, user, case, path, collapse, highlight
+            self, current_config, configurations, user, case, path, collapse, highlight
     ):
         if self._is_part_of_merged_cells(user, case):
             self._add_path_config_to_last(current_config, path, collapse, highlight)
@@ -41,12 +49,12 @@ class ExcelConfigurationParser:
         return user is None and case is None
 
     def _handle_new_or_existing_config(
-        self, current_config, configurations, user, case, path, collapse, highlight
+            self, current_config, configurations, user, case, path, collapse, highlight
     ):
         if (
-            current_config is None
-            or user != current_config.user_email
-            or case != current_config.case_id
+                current_config is None
+                or user != current_config.user_email
+                or case != current_config.case_id
         ):
             current_config = self._create_new_config(user, case)
             configurations.append(current_config)
@@ -75,9 +83,9 @@ class ExcelConfigurationParser:
     def _build_style_dict(collapse, highlight) -> dict:
         style = {}
         if collapse is not None:
-            style["Collapse"] = collapse == "TRUE"
+            style["Collapse"] = collapse
         if highlight is not None:
-            style["Highlight"] = highlight == "TRUE"
+            style["Highlight"] = highlight
         return style
 
 

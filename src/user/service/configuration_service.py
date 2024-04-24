@@ -19,6 +19,7 @@ class ConfigurationService:
             configurations = parse_excel_stream_to_configurations(file_stream)
         except Exception as e:
             raise BusinessException(BusinessExceptionEnum.ConfigFileIncorrect) from e
+        for _ in configurations: print('config', _.__str__())
 
         responses = []
         try:
@@ -31,9 +32,11 @@ class ConfigurationService:
             user_case_key = f"{config.user_email}-{config.case_id}"
             result = {"user_case_key": user_case_key}  # 创建一个新的字典来存储结果
             try:
-                self.repository.save_configuration(config)
+                r = self.repository.save_configuration(config)
+                print(r)
                 result["status"] = "added"  # 设置状态为 "added"
-            except Exception:
+            except Exception as e:
+                print(e)
                 result["status"] = "failed"  # 设置状态为 "failed"
             responses.append(result)  # 添加结果到响应列表中
 

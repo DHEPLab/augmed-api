@@ -11,10 +11,9 @@ class ConfigurationRepository:
         self.session.flush()
 
     def save_configuration(self, config: Configuration):
-
         self.session.add(config)
         self.session.flush()
-        return
+        return config
 
     def get_all_configurations(self):
         return self.session.query(Configuration).all()
