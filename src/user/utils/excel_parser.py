@@ -77,9 +77,9 @@ class ExcelConfigurationParser:
     def _build_style_dict(self, collapse, highlight) -> dict:
         style = {}
         if collapse is not None:
-            style["Collapse"] = collapse
+            style["collapse"] = collapse
         if highlight is not None:
-            style["Highlight"] = highlight
+            style["highlight"] = highlight
         return style
 
 

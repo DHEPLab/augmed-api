@@ -27,20 +27,20 @@ def test_should_parse_excell_stream_correctly_when_all_config_are_set():
     assert result[0].case_id == 1
     assert len(result[0].path_config) == 2
     assert result[0].path_config[0]['path'] == 'Background.abc'
-    assert result[0].path_config[0]['style']['Collapse'] is True
-    assert result[0].path_config[0]['style']['Highlight'] is True
+    assert result[0].path_config[0]['style']['collapse'] is True
+    assert result[0].path_config[0]['style']['highlight'] is True
 
     assert result[0].path_config[1]['path'] == 'background.xxx'
-    assert result[0].path_config[1]['style']['Collapse'] is True
-    assert result[0].path_config[1]['style']['Highlight'] is False
+    assert result[0].path_config[1]['style']['collapse'] is True
+    assert result[0].path_config[1]['style']['highlight'] is False
 
     assert result[1].user_email == 'userb@example.com'
     assert result[1].case_id == 1
     assert len(result[1].path_config) == 1
 
     assert result[1].path_config[0]['path'] == 'Background.patient demo'
-    assert result[1].path_config[0]['style']['Collapse'] is False
-    assert result[1].path_config[0]['style']['Highlight'] is False
+    assert result[1].path_config[0]['style']['collapse'] is False
+    assert result[1].path_config[0]['style']['highlight'] is False
 
 
 def test_should_ignore_none_config():
@@ -65,9 +65,9 @@ def test_should_ignore_none_config():
     assert len(result[0].path_config) == 2
     assert result[0].path_config[0]['path'] == 'Background.abc'
     assert 'Collapse' not in result[0].path_config[0]['style']
-    assert result[0].path_config[0]['style']['Highlight'] is True
+    assert result[0].path_config[0]['style']['highlight'] is True
     assert result[0].path_config[1]['path'] == 'background.xxx'
-    assert result[0].path_config[1]['style']['Collapse'] is True
+    assert result[0].path_config[1]['style']['collapse'] is True
     assert 'Highlight' not in result[0].path_config[1]['style']
 
 
