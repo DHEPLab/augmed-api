@@ -10,6 +10,8 @@ from src.cases.repository.person_repository import PersonRepository
 from src.cases.repository.visit_occurrence_repository import \
     VisitOccurrenceRepository
 from src.common.constants import CONCEPT_IDS
+from src.user.repository.configuration_repository import \
+    ConfigurationRepository
 
 
 def get_page_configuration():
@@ -23,7 +25,7 @@ def group_by(source_list, key_selector):
     return target_list
 
 
-def get_value_of_rows(rows, get_func):
+def get_value_of_rows(rows: list, get_func) -> str | None | list:
     if len(rows) == 1:
         return get_func(rows[0])
     result = []
@@ -42,6 +44,29 @@ def get_age(person, visit_occurrence):
     return str(visit_occurrence.visit_start_date.year - person.year_of_birth)
 
 
+def attach_style(display_configuration, case_details):
+    paths = display_configuration["path"].split(".")
+    level = 0
+    nodes = case_details
+    while level < len(paths):
+        found = False
+        for node in nodes:
+            if node.key == paths[level]:
+                nodes = node.values
+                level = level + 1
+                found = True
+                if level == len(paths):
+                    node.style = display_configuration["style"]
+                break
+        if not found:
+            break
+
+
+def add_if_value_present(data, node):
+    if node.values:
+        data.append(node)
+
+
 class CaseService:
     def __init__(
         self,
@@ -51,6 +76,7 @@ class CaseService:
         observation_repository: ObservationRepository,
         person_repository: PersonRepository,
         drug_exposure_repository: DrugExposureRepository,
+        configuration_repository: ConfigurationRepository,
     ):
         self.visit_occurrence_repository = visit_occurrence_repository
         self.concept_repository = concept_repository
@@ -58,8 +84,9 @@ class CaseService:
         self.observationRepository = observation_repository
         self.person_repository = person_repository
         self.drug_exposure_repository = drug_exposure_repository
+        self.configuration_repository = configuration_repository
 
-    def get_case_detail(self, case_id: int):
+    def get_case_detail(self, case_id):
         page_config = get_page_configuration()
         title_resolvers = {
             "BACKGROUND": self.get_nodes_of_background,
@@ -67,15 +94,16 @@ class CaseService:
             "PHYSICAL EXAMINATION": self.get_nodes_of_measurement,
         }
         data: list[TreeNode] = []
-        # TODO into one line, no data no show
         for key, title_config in page_config.items():
-            data.append(TreeNode(key, title_resolvers[key](case_id, title_config)))
+            add_if_value_present(
+                data, TreeNode(key, title_resolvers[key](case_id, title_config))
+            )
         return data
 
     def get_nodes_of_measurement(self, case_id, title_config):
         data: list[TreeNode] = []
         for key, title_concept_ids in title_config.items():
-            section_name = self.get_concept_name(title_concept_ids)
+            section_name = self.get_concept_name(title_concept_ids[0])
             parent_measurements = self.measurement_repository.get_measurements(
                 case_id, title_concept_ids
             )
@@ -105,8 +133,7 @@ class CaseService:
                             get_value_of_rows(rows, self.get_value_of_measurement),
                         )
                     )
-                data.append(parent_node)
-        # TODO Lab&Diagnose
+                add_if_value_present(data, parent_node)
         return data
 
     def get_value_of_measurement(self, measurement) -> str | None:
@@ -138,8 +165,7 @@ class CaseService:
                         get_value_of_rows(rows, self.get_value_of_observation),
                     )
                 )
-            data.append(parent_node)
-            # TODO HPI hard code?
+            add_if_value_present(data, parent_node)
         return data
 
     def get_value_of_observation(self, observation) -> str | None:
@@ -158,16 +184,13 @@ class CaseService:
             )
         return value
 
-    def get_concept_name(self, *concept_ids):
-        return self.concept_repository.get_concept(concept_ids[0]).concept_name
-
     def get_nodes_of_background(self, case_id, title_config):
         data: list[TreeNode] = [
             self.get_nodes_of_patient(case_id),
-            self.get_nodes_of_drug(case_id),
         ]
         for key, config in title_config.items():
-            data.append(TreeNode(key, self.get_nodes_of_nested_fields(case_id, config)))
+            node = TreeNode(key, self.get_nodes_of_nested_fields(case_id, config))
+            add_if_value_present(data, node)
         return data
 
     def get_nodes_of_patient(self, case_id):
@@ -181,18 +204,6 @@ class CaseService:
             "Patient Demographics", [TreeNode("Age", age), TreeNode("Gender", gender)]
         )
 
-    def get_nodes_of_drug(self, case_id):
-        drugs = self.drug_exposure_repository.get_drugs(case_id)
-        drug_nodes = []
-        for drug in drugs:
-            drug_nodes.append(
-                TreeNode(
-                    self.get_concept_name(drug.drug_concept_id),
-                    self.get_value_of_drug(drug),
-                )
-            )
-        return TreeNode("Medical History", drug_nodes)
-
     def get_nodes_of_nested_fields(self, case_id, config):
         if is_leaf_node(config):
             observations = self.observationRepository.get_observations_by_concept(
@@ -204,12 +215,22 @@ class CaseService:
             node = TreeNode(
                 key, self.get_nodes_of_nested_fields(case_id, nested_config)
             )
-            data.append(node)
+            add_if_value_present(data, node)
         return data
 
-    @staticmethod
-    def get_value_of_drug(drug):
-        return [
-            "Quantity: {quantity}".format(quantity=str(drug.quantity)),
-            "Duration: {duration}".format(duration=str(drug.days_supply)),
-        ]
+    def get_concept_name(self, concept_id):
+        return self.concept_repository.get_concept(concept_id).concept_name
+
+    def get_case_review(self, case_id):
+        current_user = "goodbye@sunwukong.com"  # TODO get current user
+        case_details = self.get_case_detail(case_id)
+        path_configurations = (
+            self.configuration_repository.get_configuration_by_user_and_case(
+                case_id, current_user
+            )
+        )
+        if path_configurations:
+            for item in path_configurations:
+                if item.get("style"):
+                    attach_style(item, case_details)
+        return case_details

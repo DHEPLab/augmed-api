@@ -17,3 +17,13 @@ class ConfigurationRepository:
 
     def get_all_configurations(self):
         return self.session.query(Configuration).all()
+
+    def get_configuration_by_user_and_case(self, case_id, user_email):
+        return (
+            self.session.query(Configuration)
+            .filter(
+                Configuration.user_email == user_email, Configuration.case_id == case_id
+            )
+            .first()
+            .path_config
+        )
