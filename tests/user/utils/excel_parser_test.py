@@ -20,7 +20,6 @@ def test_should_parse_excell_stream_correctly_when_all_config_are_set():
     excel_stream.seek(0)
 
     result = parse_excel_stream_to_configurations(excel_stream)
-    for r in result: print(r.__str__())
 
     assert len(result) == 2
 
@@ -59,7 +58,6 @@ def test_should_ignore_none_config():
     excel_stream.seek(0)
 
     result = parse_excel_stream_to_configurations(excel_stream)
-    for r in result: print(r.__str__())
 
     assert len(result) == 1
     assert result[0].user_email == 'usera@example.com'
@@ -122,14 +120,16 @@ def test_should_keep_duplicate_user_case_relationship():
     # Data for multiple users and cases
     ws.append(['usera@example.com', '1', 'Background.patient demo', None, None])
     ws.append(['usera@example.com', '1', 'Background.patient demo', None, None])
+    ws.append([None, None, 'Background.drug', None, None])
+    ws.append(['usera@example.com', '1', None, None, None])
+
     excel_stream = BytesIO()
     wb.save(excel_stream)
     excel_stream.seek(0)
 
     result = parse_excel_stream_to_configurations(excel_stream)
-    for r in result: print(r.__str__())
 
-    assert len(result) == 2
+    assert len(result) == 3
     assert result[0].user_email == 'usera@example.com'
     assert result[0].case_id == 1
     assert len(result[0].path_config) == 0
@@ -138,3 +138,8 @@ def test_should_keep_duplicate_user_case_relationship():
 
     assert result[1].case_id == 1
     assert len(result[1].path_config) == 0
+    assert result[1].user_email == 'usera@example.com'
+
+    assert result[2].case_id == 1
+    assert len(result[1].path_config) == 0
+    assert result[2].user_email == 'usera@example.com'

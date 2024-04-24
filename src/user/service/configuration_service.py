@@ -14,14 +14,14 @@ class ConfigurationService:
         self.repository = repository
 
     def process_excel_file(self, file_stream: BytesIO) -> list[dict[str, str]]:
-
+        # Step 1: parse excel
         try:
             configurations = parse_excel_stream_to_configurations(file_stream)
         except Exception as e:
             raise BusinessException(BusinessExceptionEnum.ConfigFileIncorrect) from e
-        for _ in configurations: print('config', _.__str__())
 
         responses = []
+        # Step 2: clean db
         try:
             self.repository.clean_configurations()
         except Exception as e:
@@ -32,11 +32,9 @@ class ConfigurationService:
             user_case_key = f"{config.user_email}-{config.case_id}"
             result = {"user_case_key": user_case_key}  # 创建一个新的字典来存储结果
             try:
-                r = self.repository.save_configuration(config)
-                print(r)
+                self.repository.save_configuration(config)
                 result["status"] = "added"  # 设置状态为 "added"
-            except Exception as e:
-                print(e)
+            except Exception:
                 result["status"] = "failed"  # 设置状态为 "failed"
             responses.append(result)  # 添加结果到响应列表中
 
