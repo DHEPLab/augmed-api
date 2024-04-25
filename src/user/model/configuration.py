@@ -13,3 +13,10 @@ class Configuration(db.Model):
             f"Configuration(id={self.id}, user_id={self.user_email}, "
             f"case_id={self.case_id}, path_config={self.path_config})"
         )
+
+    def to_dict(self):
+        return {
+            "user_email": self.user_email,
+            "case_id": self.case_id,
+            "path_config": self.path_config
+        }

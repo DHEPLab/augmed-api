@@ -20,6 +20,7 @@ def test_should_parse_excell_stream_correctly_when_all_config_are_set():
     excel_stream.seek(0)
 
     result = parse_excel_stream_to_configurations(excel_stream)
+    result_dicts = [config.to_dict() for config in result]
 
     # Define expected results
     expected_results = [
@@ -41,7 +42,8 @@ def test_should_parse_excell_stream_correctly_when_all_config_are_set():
     ]
 
     # Assert with a simple comparison
-    assert result == expected_results
+    assert result_dicts == expected_results
+
 
 def test_should_ignore_none_config():
     # Prepare the test data (Workbook with multiple configurations)
