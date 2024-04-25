@@ -14,10 +14,6 @@ from src.user.repository.configuration_repository import \
     ConfigurationRepository
 
 
-def get_page_configuration():
-    return CONCEPT_IDS
-
-
 def group_by(source_list, key_selector):
     target_list = defaultdict(list)
     for item in source_list:
@@ -67,6 +63,10 @@ def add_if_value_present(data, node):
         data.append(node)
 
 
+def get_page_configuration():
+    return CONCEPT_IDS
+
+
 class CaseService:
     def __init__(
         self,
@@ -81,7 +81,7 @@ class CaseService:
         self.visit_occurrence_repository = visit_occurrence_repository
         self.concept_repository = concept_repository
         self.measurement_repository = measurement_repository
-        self.observationRepository = observation_repository
+        self.observation_repository = observation_repository
         self.person_repository = person_repository
         self.drug_exposure_repository = drug_exposure_repository
         self.configuration_repository = configuration_repository
@@ -152,7 +152,7 @@ class CaseService:
         data: list[TreeNode] = []
         for key, concept_type_ids in title_config.items():
             parent_node = TreeNode(key, [])
-            observations = self.observationRepository.get_observations_by_type(
+            observations = self.observation_repository.get_observations_by_type(
                 case_id, concept_type_ids
             )
             observations_by_concept = group_by(
@@ -206,7 +206,7 @@ class CaseService:
 
     def get_nodes_of_nested_fields(self, case_id, config):
         if is_leaf_node(config):
-            observations = self.observationRepository.get_observations_by_concept(
+            observations = self.observation_repository.get_observations_by_concept(
                 case_id, config
             )
             return get_value_of_rows(observations, self.get_value_of_observation)

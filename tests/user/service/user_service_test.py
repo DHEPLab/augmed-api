@@ -3,7 +3,7 @@ from werkzeug.security import generate_password_hash
 
 from src.user.model.user import User
 from src.user.repository.user_repository import UserRepository
-from user.service.user_service import UserService
+from src.user.service.user_service import UserService
 
 
 @pytest.fixture

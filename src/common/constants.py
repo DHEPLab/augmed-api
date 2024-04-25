@@ -11,7 +11,6 @@ CONCEPT_IDS = {
     "PATIENT COMPLAINT": {
         "Chief Complaint": [38000282],
         "Current Symptoms": [4034855],
-        "HPI": [4176423],
     },
     "PHYSICAL EXAMINATION": {
         "Physical Characteristics": [4086988],
