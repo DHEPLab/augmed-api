@@ -63,11 +63,6 @@ class ExcelConfigurationParser:
             user_email=user_email, case_id=int(case_id), path_config=[]
         )
 
-    def _add_path_config(self, config, path, collapse, highlight):
-        style = self._build_style_dict(collapse, highlight)
-        if style:
-            config.path_config.append({"path": path, "style": style})
-
     def _add_path_config_to_last(self, config, path, collapse, highlight):
         if path is not None and config:
             style = self._build_style_dict(collapse, highlight)

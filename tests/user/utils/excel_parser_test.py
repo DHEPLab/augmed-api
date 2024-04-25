@@ -21,27 +21,27 @@ def test_should_parse_excell_stream_correctly_when_all_config_are_set():
 
     result = parse_excel_stream_to_configurations(excel_stream)
 
-    assert len(result) == 2
+    # Define expected results
+    expected_results = [
+        {
+            'user_email': 'usera@example.com',
+            'case_id': 1,
+            'path_config': [
+                {'path': 'Background.abc', 'style': {'collapse': True, 'highlight': True}},
+                {'path': 'background.xxx', 'style': {'collapse': True, 'highlight': False}}
+            ]
+        },
+        {
+            'user_email': 'userb@example.com',
+            'case_id': 1,
+            'path_config': [
+                {'path': 'Background.patient demo', 'style': {'collapse': False, 'highlight': False}}
+            ]
+        }
+    ]
 
-    assert result[0].user_email == 'usera@example.com'
-    assert result[0].case_id == 1
-    assert len(result[0].path_config) == 2
-    assert result[0].path_config[0]['path'] == 'Background.abc'
-    assert result[0].path_config[0]['style']['collapse'] is True
-    assert result[0].path_config[0]['style']['highlight'] is True
-
-    assert result[0].path_config[1]['path'] == 'background.xxx'
-    assert result[0].path_config[1]['style']['collapse'] is True
-    assert result[0].path_config[1]['style']['highlight'] is False
-
-    assert result[1].user_email == 'userb@example.com'
-    assert result[1].case_id == 1
-    assert len(result[1].path_config) == 1
-
-    assert result[1].path_config[0]['path'] == 'Background.patient demo'
-    assert result[1].path_config[0]['style']['collapse'] is False
-    assert result[1].path_config[0]['style']['highlight'] is False
-
+    # Assert with a simple comparison
+    assert result == expected_results
 
 def test_should_ignore_none_config():
     # Prepare the test data (Workbook with multiple configurations)
@@ -59,16 +59,25 @@ def test_should_ignore_none_config():
 
     result = parse_excel_stream_to_configurations(excel_stream)
 
+    # Check if the result matches the expected configuration
     assert len(result) == 1
     assert result[0].user_email == 'usera@example.com'
     assert result[0].case_id == 1
     assert len(result[0].path_config) == 2
-    assert result[0].path_config[0]['path'] == 'Background.abc'
-    assert 'Collapse' not in result[0].path_config[0]['style']
-    assert result[0].path_config[0]['style']['highlight'] is True
-    assert result[0].path_config[1]['path'] == 'background.xxx'
-    assert result[0].path_config[1]['style']['collapse'] is True
-    assert 'Highlight' not in result[0].path_config[1]['style']
+
+    # Assert the configuration of paths
+    expected_path_0 = {
+        'path': 'Background.abc',
+        'style': {'highlight': True}
+    }
+    expected_path_1 = {
+        'path': 'background.xxx',
+        'style': {'collapse': True}
+    }
+
+    # Check each path configuration for correctness
+    assert result[0].path_config[0] == expected_path_0
+    assert result[0].path_config[1] == expected_path_1
 
 
 def test_should_ignore_none_config_while_keep_user_case_relationship():
