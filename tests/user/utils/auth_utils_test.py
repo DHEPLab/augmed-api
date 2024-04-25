@@ -6,7 +6,7 @@ from werkzeug.exceptions import Unauthorized
 from werkzeug.security import generate_password_hash
 
 from src.user.model.user import User
-from src.user.utils.auth_utils import validate_jwt_and_refresh
+from src.user.utils.auth_utils import validate_jwt_and_refresh, get_user_email_from_jwt
 
 
 @pytest.fixture
@@ -75,3 +75,9 @@ def test_validate_jwt_verification_fails(app, jwt_request_context, mocker):
     mocker.patch('src.user.utils.auth_utils.verify_jwt_in_request', side_effect=Unauthorized("Invalid JWT"))
     with pytest.raises(Unauthorized):
         validate_jwt_and_refresh()
+
+
+def test_get_user_email_from_jwt(app, jwt_request_context):
+    user_email = get_user_email_from_jwt()
+
+    assert user_email == "test@example.com"

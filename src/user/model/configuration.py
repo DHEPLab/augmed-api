@@ -18,5 +18,5 @@ class Configuration(db.Model):
         return {
             "user_email": self.user_email,
             "case_id": self.case_id,
-            "path_config": self.path_config
+            "path_config": self.path_config,
         }

@@ -32,6 +32,15 @@ def validate_jwt_and_refresh():
     return None
 
 
+def get_user_email_from_jwt():
+    """
+    Extracts and returns the user's email from the current JWT.
+    It assumes that the JWT is valid and the email is stored as the identity.
+    """
+    verify_jwt_in_request()  # Ensure that the JWT is present and valid
+    return get_jwt_identity()
+
+
 def jwt_validation_required():
     def decorator(fn):
         @wraps(fn)
