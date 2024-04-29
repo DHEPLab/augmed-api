@@ -221,14 +221,11 @@ class CaseService:
     def get_concept_name(self, concept_id):
         return self.concept_repository.get_concept(concept_id).concept_name
 
-    def get_case_review(self, case_id):
-        current_user = "goodbye@sunwukong.com"  # TODO get current user
+    def get_case_review(self, case_id, config_id):
+        configuration = self.configuration_repository.get_configuration_by_id(config_id)
         case_details = self.get_case_detail(case_id)
-        path_configurations = (
-            self.configuration_repository.get_configuration_by_user_and_case(
-                case_id, current_user
-            )
-        )
+        path_configurations = configuration.path_config if configuration else None
+
         if path_configurations:
             for item in path_configurations:
                 if item.get("style"):

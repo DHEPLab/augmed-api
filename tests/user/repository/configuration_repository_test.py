@@ -2,6 +2,7 @@ import pytest
 from src.user.model.configuration import Configuration
 from src.user.repository.configuration_repository import ConfigurationRepository
 
+
 @pytest.fixture
 def config_repository(session):
     repo = ConfigurationRepository(session)
@@ -9,13 +10,17 @@ def config_repository(session):
     session.commit()
     return repo
 
+
 def test_clean_configurations(config_repository):
-    config_repository.save_configuration(Configuration(user_email='usera@example.com', case_id=1, path_config={'info': 'initial'}))
-    config_repository.save_configuration(Configuration(user_email='usera@example.com', case_id=2, path_config={'info': 'second'}))
+    config_repository.save_configuration(
+        Configuration(user_email='usera@example.com', case_id=1, path_config={'info': 'initial'}))
+    config_repository.save_configuration(
+        Configuration(user_email='usera@example.com', case_id=2, path_config={'info': 'second'}))
     assert len(config_repository.get_all_configurations()) == 2
 
     config_repository.clean_configurations()
     assert len(config_repository.get_all_configurations()) == 0
+
 
 def test_save_configuration(config_repository):
     # Test saving a single configuration
@@ -26,6 +31,7 @@ def test_save_configuration(config_repository):
     assert all_configs[0].user_email == 'usera@example.com'
     assert all_configs[0].case_id == 1
     assert all_configs[0].path_config == {'info': 'details'}
+
 
 def test_save_multiple_configurations(config_repository):
     # Saving multiple configurations
@@ -39,6 +45,15 @@ def test_save_multiple_configurations(config_repository):
     all_configs = config_repository.get_all_configurations()
     assert len(all_configs) == 2
     # Check details of one of the configurations
-    assert any(config.user_email == 'usera@example.com' and config.case_id == 1 and config.path_config == {'info': 'first'} for config in all_configs)
+    assert any(
+        config.user_email == 'usera@example.com' and config.case_id == 1 and config.path_config == {'info': 'first'} for
+        config in all_configs)
 
 
+def test_get_configuration_by_id(config_repository):
+    new_config = Configuration(user_email='usera@example.com', case_id=1, path_config={'info': 'details'}, id=1)
+    config_repository.save_configuration(new_config)
+
+    found = config_repository.get_configuration_by_id(new_config.id)
+
+    assert found == new_config

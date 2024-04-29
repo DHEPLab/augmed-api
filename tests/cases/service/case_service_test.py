@@ -11,6 +11,7 @@ from src.cases.service.case_service import (CaseService, add_if_value_present,
                                             attach_style, get_age,
                                             get_value_of_rows, group_by,
                                             is_leaf_node)
+from src.user.model.configuration import Configuration
 from src.user.repository.configuration_repository import \
     ConfigurationRepository
 from tests.cases.case_fixture import (concept_fixture, measurement_fixture,
@@ -653,7 +654,7 @@ class TestGetValue:
 
 
 class TestGetCaseReview:
-    def test_get_case_review(self, mocker):
+    def test_get_case_review_with_configuration_and_path_config(self, mocker):
         (
             concept_repository,
             configuration_repository,
@@ -663,10 +664,12 @@ class TestGetCaseReview:
             person_repository,
             visit_occurrence_repository,
         ) = mock_repos(mocker)
-        configuration_repository.get_configuration_by_user_and_case.return_value = [
-            {"path": "BACKGROUND.Patient Demographics", "style": {"collapse": True}},
-            {"path": "no path", "style": {"collapse": True}},
-        ]
+        configuration_repository.get_configuration_by_id.return_value = Configuration(
+            path_config=[
+                {"path": "BACKGROUND.Patient Demographics", "style": {"collapse": True}},
+                {"path": "no path", "style": {"collapse": True}},
+            ]
+        )
         case_service = CaseService(
             visit_occurrence_repository=visit_occurrence_repository,
             concept_repository=concept_repository,
@@ -677,7 +680,7 @@ class TestGetCaseReview:
             configuration_repository=configuration_repository,
         )
 
-        case_review = case_service.get_case_review(1)
+        case_review = case_service.get_case_review(1, 1)
 
         assert case_review == [
             TreeNode(
@@ -687,6 +690,41 @@ class TestGetCaseReview:
                         "Patient Demographics",
                         [TreeNode("Age", "36"), TreeNode("Gender", "test")],
                         {"collapse": True},
+                    )
+                ],
+            )
+        ]
+
+    def test_get_case_review_without_configuration(self, mocker):
+        (
+            concept_repository,
+            configuration_repository,
+            drug_exposure_repository,
+            measurement_repository,
+            observation_repository,
+            person_repository,
+            visit_occurrence_repository,
+        ) = mock_repos(mocker)
+        configuration_repository.get_configuration_by_id.return_value = None
+        case_service = CaseService(
+            visit_occurrence_repository=visit_occurrence_repository,
+            concept_repository=concept_repository,
+            measurement_repository=measurement_repository,
+            observation_repository=observation_repository,
+            person_repository=person_repository,
+            drug_exposure_repository=drug_exposure_repository,
+            configuration_repository=configuration_repository,
+        )
+
+        case_review = case_service.get_case_review(1, 1)
+
+        assert case_review == [
+            TreeNode(
+                "BACKGROUND",
+                [
+                    TreeNode(
+                        "Patient Demographics",
+                        [TreeNode("Age", "36"), TreeNode("Gender", "test")],
                     )
                 ],
             )

@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 
 from src import db
 from src.cases.repository.concept_repository import ConceptRepository
@@ -36,5 +36,6 @@ case_service = CaseService(
 @case_blueprint.route("/cases/<int:case_id>", methods=["GET"])
 # @jwt_validation_required()
 def get_case_detail(case_id):
-    case_review = case_service.get_case_review(case_id)
+    config_id = request.args.get("config", type=int)
+    case_review = case_service.get_case_review(case_id, config_id)
     return jsonify(ApiResponse.success(case_review)), 200
