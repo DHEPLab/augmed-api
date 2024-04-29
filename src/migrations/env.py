@@ -39,6 +39,8 @@ from src.cases.model.vocabularies import relationship
 from src.cases.model.vocabularies import source_to_concept_map
 from src.cases.model.vocabularies import vocabulary
 
+from src.common.model.system_config import SystemConfig
+
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

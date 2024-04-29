@@ -1,33 +1,36 @@
 import json
 
+from src.common.model.system_config import SystemConfig
 from tests.cases.case_fixture import input_case
 
 
-def test_get_case_review(client, mocker, session):
+def test_get_case_review(client, session):
     input_case(session)
-
-    mocker.patch(
-        "src.cases.service.case_service.CONCEPT_IDS",
-        {
-            "BACKGROUND": {
-                "Family History": [4167217],
-                "Social History": {
-                    "Smoke": [4041306],
-                    "Alcohol": [4238768],
-                    "Drug use": [4038710],
-                    "Sexual behavior": [4283657, 4314454],
+    session.add(
+        SystemConfig(
+            id="page_config",
+            json_config={
+                "BACKGROUND": {
+                    "Family History": [4167217],
+                    "Social History": {
+                        "Smoke": [4041306],
+                        "Alcohol": [4238768],
+                        "Drug use": [4038710],
+                        "Sexual behavior": [4283657, 4314454],
+                    },
+                },
+                "PATIENT COMPLAINT": {
+                    "Chief Complaint": [38000282],
+                    "Current Symptoms": [4034855],
+                },
+                "PHYSICAL EXAMINATION": {
+                    "Vital Signs": [4263222],
+                    "Abdominal": [4152368],
                 },
             },
-            "PATIENT COMPLAINT": {
-                "Chief Complaint": [38000282],
-                "Current Symptoms": [4034855],
-            },
-            "PHYSICAL EXAMINATION": {
-                "Vital Signs": [4263222],
-                "Abdominal": [4152368],
-            },
-        },
+        )
     )
+    session.flush()
 
     response = client.get("/api/cases/1")
 

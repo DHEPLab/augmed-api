@@ -11,6 +11,9 @@ from src.cases.service.case_service import (CaseService, add_if_value_present,
                                             attach_style, get_age,
                                             get_value_of_rows, group_by,
                                             is_leaf_node)
+from src.common.model.system_config import SystemConfig
+from src.common.repository.system_config_repository import \
+    SystemConfigRepository
 from src.user.model.configuration import Configuration
 from src.user.repository.configuration_repository import \
     ConfigurationRepository
@@ -136,6 +139,7 @@ def mock_repos(mocker):
     drug_exposure_repository = mocker.Mock(DrugExposureRepository)
     configuration_repository = mocker.Mock(ConfigurationRepository)
     concept_repository = mocker.Mock(ConceptRepository)
+    system_config_repository = mocker.Mock(SystemConfigRepository)
 
     visit_occurrence_repository.get_visit_occurrence.return_value = (
         visit_occurrence_fixture()
@@ -146,6 +150,33 @@ def mock_repos(mocker):
     observation_repository.get_observations_by_type.return_value = []
     measurement_repository.get_measurements.return_value = []
     measurement_repository.get_measurements_of_parents.return_value = []
+    system_config_repository.get_config_by_id.return_value = SystemConfig(
+        id="page_config",
+        json_config={
+            "BACKGROUND": {
+                "Family History": [4167217],
+                "Social History": {
+                    "Smoke": [4041306],
+                    "Alcohol": [4238768],
+                    "Drug use": [4038710],
+                    "Sexual behavior": [4283657, 4314454],
+                },
+            },
+            "PATIENT COMPLAINT": {
+                "Chief Complaint": [38000282],
+                "Current Symptoms": [4034855],
+            },
+            "PHYSICAL EXAMINATION": {
+                "Physical Characteristics": [4086988],
+                "Vital Signs": [4263222],
+                "Cardiovascular": [36717771],
+                "Ophthalmology": [4080843],
+                "Respiratory": [4090320],
+                "Abdominal": [4152368],
+                "Neurological": [4154954],
+            },
+        },
+    )
     return (
         concept_repository,
         configuration_repository,
@@ -154,6 +185,7 @@ def mock_repos(mocker):
         observation_repository,
         person_repository,
         visit_occurrence_repository,
+        system_config_repository,
     )
 
 
@@ -183,6 +215,7 @@ class TestGetCaseDetail:
             observation_repository,
             person_repository,
             visit_occurrence_repository,
+            system_config_repository,
         ) = mock_repos(mocker)
 
         case_service = CaseService(
@@ -193,6 +226,7 @@ class TestGetCaseDetail:
             person_repository=person_repository,
             drug_exposure_repository=drug_exposure_repository,
             configuration_repository=configuration_repository,
+            system_config_repository=system_config_repository,
         )
 
         # When
@@ -221,6 +255,7 @@ class TestGetCaseDetail:
             observation_repository,
             person_repository,
             visit_occurrence_repository,
+            system_config_repository,
         ) = mock_repos(mocker)
 
         observation_repository.get_observations_by_concept.return_value = [
@@ -235,6 +270,7 @@ class TestGetCaseDetail:
             person_repository=person_repository,
             drug_exposure_repository=drug_exposure_repository,
             configuration_repository=configuration_repository,
+            system_config_repository=system_config_repository,
         )
 
         # When
@@ -259,6 +295,7 @@ class TestGetCaseDetail:
             observation_repository,
             person_repository,
             visit_occurrence_repository,
+            system_config_repository,
         ) = mock_repos(mocker)
 
         observation_repository.get_observations_by_type.return_value = [
@@ -273,6 +310,7 @@ class TestGetCaseDetail:
             person_repository=person_repository,
             drug_exposure_repository=drug_exposure_repository,
             configuration_repository=configuration_repository,
+            system_config_repository=system_config_repository,
         )
 
         # When
@@ -294,6 +332,7 @@ class TestGetCaseDetail:
             observation_repository,
             person_repository,
             visit_occurrence_repository,
+            system_config_repository,
         ) = mock_repos(mocker)
 
         concept_repository.get_concept.side_effect = mock_concept_func
@@ -309,6 +348,7 @@ class TestGetCaseDetail:
             person_repository=person_repository,
             drug_exposure_repository=drug_exposure_repository,
             configuration_repository=configuration_repository,
+            system_config_repository=system_config_repository,
         )
 
         # When
@@ -342,6 +382,7 @@ class TestGetCaseDetail:
             observation_repository,
             person_repository,
             visit_occurrence_repository,
+            system_config_repository,
         ) = mock_repos(mocker)
 
         concept_repository.get_concept.side_effect = mock_concept_func
@@ -357,6 +398,7 @@ class TestGetCaseDetail:
             person_repository=person_repository,
             drug_exposure_repository=drug_exposure_repository,
             configuration_repository=configuration_repository,
+            system_config_repository=system_config_repository,
         )
 
         # When
@@ -392,6 +434,7 @@ class TestGetValue:
             observation_repository,
             person_repository,
             visit_occurrence_repository,
+            system_config_repository,
         ) = mock_repos(mocker)
 
         case_service = CaseService(
@@ -402,6 +445,7 @@ class TestGetValue:
             person_repository=person_repository,
             drug_exposure_repository=drug_exposure_repository,
             configuration_repository=configuration_repository,
+            system_config_repository=system_config_repository,
         )
         observation_family_history_with_string = observation_fixture(
             concept_id=4167217,
@@ -430,6 +474,7 @@ class TestGetValue:
             observation_repository,
             person_repository,
             visit_occurrence_repository,
+            system_config_repository,
         ) = mock_repos(mocker)
 
         case_service = CaseService(
@@ -440,6 +485,7 @@ class TestGetValue:
             person_repository=person_repository,
             drug_exposure_repository=drug_exposure_repository,
             configuration_repository=configuration_repository,
+            system_config_repository=system_config_repository,
         )
         observation_family_history_with_number = observation_fixture(
             concept_id=4167217,
@@ -468,6 +514,7 @@ class TestGetValue:
             observation_repository,
             person_repository,
             visit_occurrence_repository,
+            system_config_repository,
         ) = mock_repos(mocker)
 
         case_service = CaseService(
@@ -478,6 +525,7 @@ class TestGetValue:
             person_repository=person_repository,
             drug_exposure_repository=drug_exposure_repository,
             configuration_repository=configuration_repository,
+            system_config_repository=system_config_repository,
         )
         observation_family_history_with_concept = observation_fixture(
             concept_id=4167217,
@@ -506,6 +554,7 @@ class TestGetValue:
             observation_repository,
             person_repository,
             visit_occurrence_repository,
+            system_config_repository,
         ) = mock_repos(mocker)
 
         case_service = CaseService(
@@ -516,6 +565,7 @@ class TestGetValue:
             person_repository=person_repository,
             drug_exposure_repository=drug_exposure_repository,
             configuration_repository=configuration_repository,
+            system_config_repository=system_config_repository,
         )
         observation_family_history_with_unit = observation_fixture(
             concept_id=4167217,
@@ -545,6 +595,7 @@ class TestGetValue:
             observation_repository,
             person_repository,
             visit_occurrence_repository,
+            system_config_repository,
         ) = mock_repos(mocker)
 
         case_service = CaseService(
@@ -555,6 +606,7 @@ class TestGetValue:
             person_repository=person_repository,
             drug_exposure_repository=drug_exposure_repository,
             configuration_repository=configuration_repository,
+            system_config_repository=system_config_repository,
         )
         observation_family_history_with_qualifier = observation_fixture(
             concept_id=4167217,
@@ -584,6 +636,7 @@ class TestGetValue:
             observation_repository,
             person_repository,
             visit_occurrence_repository,
+            system_config_repository,
         ) = mock_repos(mocker)
 
         case_service = CaseService(
@@ -594,6 +647,7 @@ class TestGetValue:
             person_repository=person_repository,
             drug_exposure_repository=drug_exposure_repository,
             configuration_repository=configuration_repository,
+            system_config_repository=system_config_repository,
         )
         measurement_vital_signs_pulse_rate_with_number = measurement_fixture(
             concept_id=40,
@@ -623,6 +677,7 @@ class TestGetValue:
             observation_repository,
             person_repository,
             visit_occurrence_repository,
+            system_config_repository,
         ) = mock_repos(mocker)
 
         case_service = CaseService(
@@ -633,6 +688,7 @@ class TestGetValue:
             person_repository=person_repository,
             drug_exposure_repository=drug_exposure_repository,
             configuration_repository=configuration_repository,
+            system_config_repository=system_config_repository,
         )
         measurement_vital_signs_bp_with_concept = measurement_fixture(
             concept_id=43,
@@ -663,10 +719,14 @@ class TestGetCaseReview:
             observation_repository,
             person_repository,
             visit_occurrence_repository,
+            system_config_repository,
         ) = mock_repos(mocker)
         configuration_repository.get_configuration_by_id.return_value = Configuration(
             path_config=[
-                {"path": "BACKGROUND.Patient Demographics", "style": {"collapse": True}},
+                {
+                    "path": "BACKGROUND.Patient Demographics",
+                    "style": {"collapse": True},
+                },
                 {"path": "no path", "style": {"collapse": True}},
             ]
         )
@@ -678,6 +738,7 @@ class TestGetCaseReview:
             person_repository=person_repository,
             drug_exposure_repository=drug_exposure_repository,
             configuration_repository=configuration_repository,
+            system_config_repository=system_config_repository,
         )
 
         case_review = case_service.get_case_review(1, 1)
@@ -704,6 +765,7 @@ class TestGetCaseReview:
             observation_repository,
             person_repository,
             visit_occurrence_repository,
+            system_config_repository,
         ) = mock_repos(mocker)
         configuration_repository.get_configuration_by_id.return_value = None
         case_service = CaseService(
@@ -714,6 +776,7 @@ class TestGetCaseReview:
             person_repository=person_repository,
             drug_exposure_repository=drug_exposure_repository,
             configuration_repository=configuration_repository,
+            system_config_repository=system_config_repository,
         )
 
         case_review = case_service.get_case_review(1, 1)

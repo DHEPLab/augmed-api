@@ -11,6 +11,8 @@ from src.cases.repository.visit_occurrence_repository import \
     VisitOccurrenceRepository
 from src.cases.service.case_service import CaseService
 from src.common.model.ApiResponse import ApiResponse
+from src.common.repository.system_config_repository import \
+    SystemConfigRepository
 from src.user.repository.configuration_repository import \
     ConfigurationRepository
 
@@ -22,6 +24,7 @@ observation_repository = ObservationRepository(db.session)
 person_repository = PersonRepository(db.session)
 drug_exposure_repository = DrugExposureRepository(db.session)
 configuration_repository = ConfigurationRepository(db.session)
+system_config_repository = SystemConfigRepository(db.session)
 case_service = CaseService(
     visit_occurrence_repository=visit_occurrence_repository,
     concept_repository=concept_repository,
@@ -30,6 +33,7 @@ case_service = CaseService(
     person_repository=person_repository,
     drug_exposure_repository=drug_exposure_repository,
     configuration_repository=configuration_repository,
+    system_config_repository=system_config_repository,
 )
 
 

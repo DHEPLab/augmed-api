@@ -9,7 +9,8 @@ from src.cases.repository.observation_repository import ObservationRepository
 from src.cases.repository.person_repository import PersonRepository
 from src.cases.repository.visit_occurrence_repository import \
     VisitOccurrenceRepository
-from src.common.constants import CONCEPT_IDS
+from src.common.repository.system_config_repository import \
+    SystemConfigRepository
 from src.user.repository.configuration_repository import \
     ConfigurationRepository
 
@@ -63,10 +64,6 @@ def add_if_value_present(data, node):
         data.append(node)
 
 
-def get_page_configuration():
-    return CONCEPT_IDS
-
-
 class CaseService:
     def __init__(
         self,
@@ -77,6 +74,7 @@ class CaseService:
         person_repository: PersonRepository,
         drug_exposure_repository: DrugExposureRepository,
         configuration_repository: ConfigurationRepository,
+        system_config_repository: SystemConfigRepository,
     ):
         self.visit_occurrence_repository = visit_occurrence_repository
         self.concept_repository = concept_repository
@@ -85,9 +83,10 @@ class CaseService:
         self.person_repository = person_repository
         self.drug_exposure_repository = drug_exposure_repository
         self.configuration_repository = configuration_repository
+        self.system_config_repository = system_config_repository
 
     def get_case_detail(self, case_id):
-        page_config = get_page_configuration()
+        page_config = self.get_page_configuration()
         title_resolvers = {
             "BACKGROUND": self.get_nodes_of_background,
             "PATIENT COMPLAINT": self.get_nodes_of_observation,
@@ -220,6 +219,9 @@ class CaseService:
 
     def get_concept_name(self, concept_id):
         return self.concept_repository.get_concept(concept_id).concept_name
+
+    def get_page_configuration(self):
+        return self.system_config_repository.get_config_by_id("page_config").json_config
 
     def get_case_review(self, case_id, config_id):
         configuration = self.configuration_repository.get_configuration_by_id(config_id)
