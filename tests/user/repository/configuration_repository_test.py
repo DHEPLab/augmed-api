@@ -1,4 +1,5 @@
 import pytest
+
 from src.user.model.configuration import Configuration
 from src.user.repository.configuration_repository import ConfigurationRepository
 
@@ -57,3 +58,17 @@ def test_get_configuration_by_id(config_repository):
     found = config_repository.get_configuration_by_id(new_config.id)
 
     assert found == new_config
+def test_get_case_configurations_by_user_empty(config_repository):
+    assert config_repository.get_case_configurations_by_user('usera@example.com') == []
+
+
+def test_get_case_configurations_by_user_single_user_multiple_configs(config_repository):
+    configs = [
+        Configuration(user_email='usera@example.com', case_id=1, id=101),
+        Configuration(user_email='usera@example.com', case_id=2, id=102)
+    ]
+    for config in configs:
+        config_repository.save_configuration(config)
+
+    result = config_repository.get_case_configurations_by_user('usera@example.com')
+    assert sorted(result) == sorted([(1, 101), (2, 102)])

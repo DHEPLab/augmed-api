@@ -268,7 +268,11 @@ class CaseService:
                 case_id=case_id,
                 age=age,
                 gender=gender,
-                patient_chief_complaint=patient_chief_complaint.__str__(),
+                patient_chief_complaint=(
+                    ", ".join(patient_chief_complaint)
+                    if patient_chief_complaint
+                    else ""
+                ),
             )
             cases_summary_list.append(case_summary)
 

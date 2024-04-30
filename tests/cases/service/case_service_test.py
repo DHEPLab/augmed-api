@@ -1,3 +1,4 @@
+from cases.controller.response.get_case_summaries_response import CaseSummary
 from src.cases.model.case import TreeNode
 from src.cases.repository.concept_repository import ConceptRepository
 from src.cases.repository.drug_exposure_repository import \
@@ -838,7 +839,79 @@ class TestGetCaseReview:
             )
         ]
 
-    def test_get_case_review_without_configuration(self, mocker):
+
+class TestGetCaseSummary:
+    def test_get_cases_by_user_no_cases(self, mocker):
+        (
+            concept_repository,
+            configuration_repository,
+            drug_exposure_repository,
+            measurement_repository,
+            observation_repository,
+            person_repository,
+            visit_occurrence_repository,
+            system_config_repository,
+
+        ) = mock_repos(mocker)
+        configuration_repository.get_case_configurations_by_user.return_value = []
+        visit_occurrence_repository.get_visit_occurrence.return_value = None
+        person_repository.get_person.return_value = None
+        observation_repository.get_observations_by_type.return_value = []
+        case_service = CaseService(
+            visit_occurrence_repository=visit_occurrence_repository,
+            concept_repository=concept_repository,
+            measurement_repository=measurement_repository,
+            observation_repository=observation_repository,
+            person_repository=person_repository,
+            drug_exposure_repository=drug_exposure_repository,
+            configuration_repository=configuration_repository,
+            system_config_repository=system_config_repository,
+
+        )
+
+        assert case_service.get_cases_by_user("user@example.com") == []
+
+    def test_get_cases_by_user_single_case(self, mocker):
+
+        (
+            concept_repository,
+            configuration_repository,
+            drug_exposure_repository,
+            measurement_repository,
+            observation_repository,
+            person_repository,
+            visit_occurrence_repository,
+            system_config_repository,
+        ) = mock_repos(mocker)
+        configuration_repository.get_configuration_by_id.return_value = None
+        case_service = CaseService(
+            visit_occurrence_repository=visit_occurrence_repository,
+            concept_repository=concept_repository,
+            measurement_repository=measurement_repository,
+            observation_repository=observation_repository,
+            person_repository=person_repository,
+            drug_exposure_repository=drug_exposure_repository,
+            configuration_repository=configuration_repository,
+            system_config_repository=system_config_repository,
+        )
+        # Mocking data for a single case
+        configuration_repository.get_case_configurations_by_user.return_value = [(1, 101)]
+        visit_occurrence_repository.get_visit_occurrence.return_value = mocker.Mock(person_id=1)
+        person_repository.get_person.return_value = mocker.Mock(year_of_birth=1984, gender_concept_id=2)
+        concept_repository.get_concept.return_value = concept_fixture(concept_id=2, concept_name='Male')
+        observation_repository.get_observations_by_type.return_value = [
+            observation_fixture(concept_id=1, value_as_string="Headache")
+        ]
+        mocker.patch('src.cases.service.case_service.get_age', return_value="36")
+
+        result = case_service.get_cases_by_user("user@example.com")
+        expected = [CaseSummary(config_id=101, case_id=1, age="36", gender='Male', patient_chief_complaint='Headache')]
+
+        assert len(result) == 1
+        assert result[0].__dict__ == expected[0].__dict__
+
+    def test_get_cases_by_user_multiple_cases(self, mocker):
+
         (
             concept_repository,
             configuration_repository,
@@ -861,16 +934,72 @@ class TestGetCaseReview:
             system_config_repository=system_config_repository,
         )
 
-        case_review = case_service.get_case_review(1, 1)
-
-        assert case_review == [
-            TreeNode(
-                "BACKGROUND",
-                [
-                    TreeNode(
-                        "Patient Demographics",
-                        [TreeNode("Age", "36"), TreeNode("Gender", "test")],
-                    )
-                ],
-            )
+        # Prepare data and mocks for multiple cases
+        configuration_repository.get_case_configurations_by_user.return_value = [(1, 101), (2, 102)]
+        visit_occurrence_repository.get_visit_occurrence.side_effect = [
+            mocker.Mock(person_id=1), mocker.Mock(person_id=2)
         ]
+        person_repository.get_person.side_effect = [
+            mocker.Mock(year_of_birth=1984, gender_concept_id=1),
+            mocker.Mock(year_of_birth=1990, gender_concept_id=2)
+        ]
+        concept_repository.get_concept.side_effect = [
+            concept_fixture(concept_id=1, concept_name='Male'),
+            concept_fixture(concept_id=2, concept_name='Female')
+        ]
+        observation_repository.get_observations_by_type.side_effect = [
+            [observation_fixture(concept_id=1, value_as_string="Cough")],
+            [observation_fixture(concept_id=2, value_as_string="Fever")]
+        ]
+        mocker.patch('src.cases.service.case_service.get_age', side_effect=["36", "30"])
+
+        results = case_service.get_cases_by_user("user@example.com")
+        expected = [
+            CaseSummary(config_id=101, case_id=1, age="36", gender='Male', patient_chief_complaint='Cough'),
+            CaseSummary(config_id=102, case_id=2, age="30", gender='Female', patient_chief_complaint='Fever')
+        ]
+
+        assert len(results) == len(expected)
+        for result, expect in zip(results, expected):
+            assert result.__dict__ == expect.__dict__
+
+    def test_get_cases_by_user_with_multiple_chief_complaint(self, mocker):
+        (
+            concept_repository,
+            configuration_repository,
+            drug_exposure_repository,
+            measurement_repository,
+            observation_repository,
+            person_repository,
+            visit_occurrence_repository,
+            system_config_repository,
+        ) = mock_repos(mocker)
+        configuration_repository.get_configuration_by_id.return_value = None
+        case_service = CaseService(
+            visit_occurrence_repository=visit_occurrence_repository,
+            concept_repository=concept_repository,
+            measurement_repository=measurement_repository,
+            observation_repository=observation_repository,
+            person_repository=person_repository,
+            drug_exposure_repository=drug_exposure_repository,
+            configuration_repository=configuration_repository,
+            system_config_repository=system_config_repository,
+        )
+        # Setup complex observation data
+        complex_observations = [
+            observation_fixture(concept_id=1, value_as_string="Pain"),
+            observation_fixture(concept_id=2, value_as_string="Nausea"),
+            observation_fixture(concept_id=3, value_as_string=None)
+        ]
+        case_service.configuration_repository.get_case_configurations_by_user.return_value = [(1, 101)]
+        case_service.visit_occurrence_repository.get_visit_occurrence.return_value = mocker.Mock(person_id=1)
+        case_service.person_repository.get_person.return_value = mocker.Mock(year_of_birth=1984, gender_concept_id=1)
+        case_service.concept_repository.get_concept.return_value = concept_fixture(concept_id=1, concept_name='Male')
+        case_service.observation_repository.get_observations_by_type.return_value = complex_observations
+        mocker.patch('src.cases.service.case_service.get_age', return_value="36")
+
+        result = case_service.get_cases_by_user("user@example.com")
+        expected_patient_complaint = 'Pain, Nausea'
+
+        assert len(result) == 1
+        assert result[0].patient_chief_complaint == expected_patient_complaint
