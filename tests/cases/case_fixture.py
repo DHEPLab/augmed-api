@@ -55,6 +55,7 @@ def person_fixture(person_id=1, gender_concept_id=2, race_concept_id=3):
         day_of_birth=1,
         race_concept_id=race_concept_id,
         ethnicity_concept_id=12,
+        person_source_value='sunwukong'
     )
 
 

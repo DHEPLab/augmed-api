@@ -9,3 +9,10 @@ class TreeNode:
 
     def add_node(self, children):
         self.values.append(children)
+
+
+@dataclass
+class Case:
+    personName: str
+    caseNumber: str
+    details: list[TreeNode]

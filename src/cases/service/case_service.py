@@ -1,5 +1,6 @@
 from collections import defaultdict
 
+from src.cases.model.case import Case
 from src.cases.controller.response.case_summary import CaseSummary
 from src.cases.model.case import TreeNode
 from src.cases.repository.concept_repository import ConceptRepository
@@ -77,6 +78,7 @@ class CaseService:
         configuration_repository: ConfigurationRepository,
         system_config_repository: SystemConfigRepository,
     ):
+        self.person = None
         self.visit_occurrence_repository = visit_occurrence_repository
         self.concept_repository = concept_repository
         self.measurement_repository = measurement_repository
@@ -204,6 +206,7 @@ class CaseService:
         person = self.person_repository.get_person(visit_occurrence.person_id)
         age = get_age(person, visit_occurrence)
         gender = self.get_concept_name(person.gender_concept_id)
+        self.person = person
         return TreeNode(
             "Patient Demographics", [TreeNode("Age", age), TreeNode("Gender", gender)]
         )
@@ -230,14 +233,15 @@ class CaseService:
 
     def get_case_review(self, case_id, config_id):
         configuration = self.configuration_repository.get_configuration_by_id(config_id)
-        case_details = self.get_case_detail(case_id)
         path_configurations = configuration.path_config if configuration else None
+        case_details = self.get_case_detail(case_id)
 
         if path_configurations:
             for item in path_configurations:
                 if item.get("style"):
                     attach_style(item, case_details)
-        return case_details
+
+        return Case(self.person.person_source_value, str(case_id), case_details)
 
     def get_cases_by_user(self, user_email):
         case_config_pairs = (

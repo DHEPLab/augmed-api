@@ -1,4 +1,5 @@
-from cases.controller.response.case_summary import CaseSummary
+from src.cases.model.case import Case
+from src.cases.controller.response.case_summary import CaseSummary
 from src.cases.model.case import TreeNode
 from src.cases.repository.concept_repository import ConceptRepository
 from src.cases.repository.drug_exposure_repository import \
@@ -826,18 +827,63 @@ class TestGetCaseReview:
 
         case_review = case_service.get_case_review(1, 1)
 
-        assert case_review == [
-            TreeNode(
-                "BACKGROUND",
-                [
-                    TreeNode(
-                        "Patient Demographics",
-                        [TreeNode("Age", "36"), TreeNode("Gender", "test")],
-                        {"collapse": True},
-                    )
-                ],
-            )
-        ]
+        assert case_review == Case(
+            personName='sunwukong',
+            caseNumber='1',
+            details=[
+                TreeNode(
+                    "BACKGROUND",
+                    [
+                        TreeNode(
+                            "Patient Demographics",
+                            [TreeNode("Age", "36"), TreeNode("Gender", "test")],
+                            {"collapse": True},
+                        )
+                    ],
+                )
+            ]
+        )
+
+    def test_get_case_review_without_configuration(self, mocker):
+        (
+            concept_repository,
+            configuration_repository,
+            drug_exposure_repository,
+            measurement_repository,
+            observation_repository,
+            person_repository,
+            visit_occurrence_repository,
+            system_config_repository,
+        ) = mock_repos(mocker)
+        configuration_repository.get_configuration_by_id.return_value = None
+        case_service = CaseService(
+            visit_occurrence_repository=visit_occurrence_repository,
+            concept_repository=concept_repository,
+            measurement_repository=measurement_repository,
+            observation_repository=observation_repository,
+            person_repository=person_repository,
+            drug_exposure_repository=drug_exposure_repository,
+            configuration_repository=configuration_repository,
+            system_config_repository=system_config_repository,
+        )
+
+        case_review = case_service.get_case_review(1, 1)
+
+        assert case_review == Case(
+            personName='sunwukong',
+            caseNumber='1',
+            details=[
+                TreeNode(
+                    "BACKGROUND",
+                    [
+                        TreeNode(
+                            "Patient Demographics",
+                            [TreeNode("Age", "36"), TreeNode("Gender", "test")],
+                        )
+                    ],
+                )
+            ]
+        )
 
 
 class TestGetCaseSummary:

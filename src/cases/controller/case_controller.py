@@ -40,9 +40,9 @@ case_service = CaseService(
 
 
 @case_blueprint.route("/cases/<int:case_id>", methods=["GET"])
-# @jwt_validation_required()
+@jwt_validation_required()
 def get_case_detail(case_id):
-    config_id = request.args.get("config", type=int)
+    config_id = request.args.get("config")
     case_review = case_service.get_case_review(case_id, config_id)
     return jsonify(ApiResponse.success(case_review)), 200
 
