@@ -1,3 +1,5 @@
+from typing import List, Tuple
+
 from src.user.model.configuration import Configuration
 
 
@@ -20,3 +22,12 @@ class ConfigurationRepository:
 
     def get_configuration_by_id(self, config_id):
         return self.session.get(Configuration, config_id)
+
+    def get_case_configurations_by_user(self, user_email: str) -> List[Tuple[int, int]]:
+        configurations = (
+            self.session.query(Configuration.case_id, Configuration.id)
+            .filter(Configuration.user_email == user_email)
+            .all()
+        )
+
+        return [(config.case_id, config.id) for config in configurations]

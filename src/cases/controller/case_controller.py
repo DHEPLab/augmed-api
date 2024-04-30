@@ -1,6 +1,8 @@
 from flask import Blueprint, jsonify, request
 
 from src import db
+from src.cases.controller.response.get_case_summaries_response import \
+    GetCaseSummaryResponse
 from src.cases.repository.concept_repository import ConceptRepository
 from src.cases.repository.drug_exposure_repository import \
     DrugExposureRepository
@@ -15,6 +17,8 @@ from src.common.repository.system_config_repository import \
     SystemConfigRepository
 from src.user.repository.configuration_repository import \
     ConfigurationRepository
+from src.user.utils import auth_utils
+from src.user.utils.auth_utils import jwt_validation_required
 
 case_blueprint = Blueprint("case", __name__)
 visit_occurrence_repository = VisitOccurrenceRepository(db.session)
@@ -43,3 +47,11 @@ def get_case_detail(case_id):
     config_id = request.args.get("config", type=int)
     case_review = case_service.get_case_review(case_id, config_id)
     return jsonify(ApiResponse.success(case_review)), 200
+
+
+@case_blueprint.route("/cases", methods=["GET"])
+@jwt_validation_required()
+def get_cases_by_user():
+    user_email = auth_utils.get_user_email_from_jwt()
+    summaries = GetCaseSummaryResponse(case_service.get_cases_by_user(user_email))
+    return jsonify(ApiResponse.success(summaries)), 200

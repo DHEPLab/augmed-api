@@ -1,5 +1,7 @@
 from collections import defaultdict
 
+from src.cases.controller.response.get_case_summaries_response import \
+    CaseSummary
 from src.cases.model.case import TreeNode
 from src.cases.repository.concept_repository import ConceptRepository
 from src.cases.repository.drug_exposure_repository import \
@@ -237,3 +239,37 @@ class CaseService:
                 if item.get("style"):
                     attach_style(item, case_details)
         return case_details
+
+    def get_cases_by_user(self, user_email):
+        case_config_pairs = (
+            self.configuration_repository.get_case_configurations_by_user(user_email)
+        )
+        cases_summary_list = []
+        chief_complaint_concept_ids = ["38000282"]
+
+        for case_id, config_id in case_config_pairs:
+            visit_occurrence = self.visit_occurrence_repository.get_visit_occurrence(
+                case_id
+            )
+
+            person = self.person_repository.get_person(visit_occurrence.person_id)
+            age = get_age(person, visit_occurrence)
+            gender = self.get_concept_name(person.gender_concept_id)
+            observations = self.observation_repository.get_observations_by_type(
+                case_id, chief_complaint_concept_ids
+            )
+            patient_chief_complaint = [
+                self.get_value_of_observation(obs)
+                for obs in observations
+                if self.get_value_of_observation(obs)
+            ]
+            case_summary = CaseSummary(
+                config_id=config_id,
+                case_id=case_id,
+                age=age,
+                gender=gender,
+                patient_chief_complaint=patient_chief_complaint.__str__(),
+            )
+            cases_summary_list.append(case_summary)
+
+        return cases_summary_list
