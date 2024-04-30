@@ -626,6 +626,47 @@ class TestGetValue:
         # then
         assert value == "test : 10"
 
+    def test_get_value_of_observation_with_unit_source(self, mocker):
+        # Given
+        (
+            concept_repository,
+            configuration_repository,
+            drug_exposure_repository,
+            measurement_repository,
+            observation_repository,
+            person_repository,
+            visit_occurrence_repository,
+            system_config_repository,
+        ) = mock_repos(mocker)
+
+        case_service = CaseService(
+            visit_occurrence_repository=visit_occurrence_repository,
+            concept_repository=concept_repository,
+            measurement_repository=measurement_repository,
+            observation_repository=observation_repository,
+            person_repository=person_repository,
+            drug_exposure_repository=drug_exposure_repository,
+            configuration_repository=configuration_repository,
+            system_config_repository=system_config_repository,
+        )
+        observation_family_history_with_qualifier = observation_fixture(
+            concept_id=4167217,
+            unit_source_value='10',
+            unit_concept_id=32,
+            observation_type_concept_id=0,
+            observation_id=5,
+            person_id=1,
+            visit_id=1,
+        )
+
+        # when
+        value = case_service.get_value_of_observation(
+            observation_family_history_with_qualifier
+        )
+
+        # then
+        assert value == "10 test"
+
     def test_get_value_of_measurement_with_number(self, mocker):
         # Given
         (
@@ -707,6 +748,47 @@ class TestGetValue:
 
         # then
         assert value == "test test test"
+
+    def test_get_value_of_measurement_with_unit_source_value(self, mocker):
+        # Given
+        (
+            concept_repository,
+            configuration_repository,
+            drug_exposure_repository,
+            measurement_repository,
+            observation_repository,
+            person_repository,
+            visit_occurrence_repository,
+            system_config_repository,
+        ) = mock_repos(mocker)
+
+        case_service = CaseService(
+            visit_occurrence_repository=visit_occurrence_repository,
+            concept_repository=concept_repository,
+            measurement_repository=measurement_repository,
+            observation_repository=observation_repository,
+            person_repository=person_repository,
+            drug_exposure_repository=drug_exposure_repository,
+            configuration_repository=configuration_repository,
+            system_config_repository=system_config_repository,
+        )
+        measurement_vital_signs_bp_with_concept = measurement_fixture(
+            concept_id=43,
+            unit_source_value='44',
+            operator_concept_id=41,
+            unit_concept_id=42,
+            measurement_id=2,
+            person_id=1,
+            visit_id=1,
+        )
+
+        # when
+        value = case_service.get_value_of_measurement(
+            measurement_vital_signs_bp_with_concept
+        )
+
+        # then
+        assert value == "test 44 test"
 
 
 class TestGetCaseReview:

@@ -141,6 +141,8 @@ class CaseService:
             value = str(measurement.value_as_number)
         elif measurement.value_as_concept_id:
             value = self.get_concept_name(measurement.value_as_concept_id)
+        elif measurement.unit_source_value:
+            value = measurement.unit_source_value
         if value and measurement.unit_concept_id:
             value = value + " " + self.get_concept_name(measurement.unit_concept_id)
         if value and measurement.operator_concept_id:
@@ -175,6 +177,8 @@ class CaseService:
             value = str(observation.value_as_number)
         elif observation.value_as_concept_id:
             value = self.get_concept_name(observation.value_as_concept_id)
+        elif observation.unit_source_value:
+            value = observation.unit_source_value
         if value and observation.unit_concept_id:
             value = value + " " + self.get_concept_name(observation.unit_concept_id)
         if value and observation.qualifier_concept_id:

@@ -92,6 +92,7 @@ def observation_fixture(
     value_as_concept_id=None,
     qualifier_concept_id=None,
     unit_concept_id=None,
+    unit_source_value=None,
     observation_type_concept_id=0,
     observation_id=1,
     person_id=1,
@@ -108,6 +109,7 @@ def observation_fixture(
         value_as_concept_id=value_as_concept_id,
         qualifier_concept_id=qualifier_concept_id,
         unit_concept_id=unit_concept_id,
+        unit_source_value=unit_source_value,
         visit_occurrence_id=visit_id,
     )
 
@@ -118,6 +120,7 @@ def measurement_fixture(
     value_as_number=None,
     value_as_concept_id=None,
     unit_concept_id=None,
+    unit_source_value=None,
     measurement_id=1,
     person_id=1,
     visit_id=1,
@@ -132,6 +135,7 @@ def measurement_fixture(
         value_as_number=value_as_number,
         value_as_concept_id=value_as_concept_id,
         unit_concept_id=unit_concept_id,
+        unit_source_value=unit_source_value,
         visit_occurrence_id=visit_id,
     )
 
