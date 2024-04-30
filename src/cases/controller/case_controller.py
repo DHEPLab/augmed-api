@@ -1,8 +1,6 @@
 from flask import Blueprint, jsonify, request
 
 from src import db
-from src.cases.controller.response.get_case_summaries_response import \
-    GetCaseSummaryResponse
 from src.cases.repository.concept_repository import ConceptRepository
 from src.cases.repository.drug_exposure_repository import \
     DrugExposureRepository
@@ -53,5 +51,5 @@ def get_case_detail(case_id):
 @jwt_validation_required()
 def get_cases_by_user():
     user_email = auth_utils.get_user_email_from_jwt()
-    summaries = GetCaseSummaryResponse(case_service.get_cases_by_user(user_email))
+    summaries = case_service.get_cases_by_user(user_email)
     return jsonify(ApiResponse.success(summaries)), 200

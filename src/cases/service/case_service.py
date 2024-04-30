@@ -1,7 +1,6 @@
 from collections import defaultdict
 
-from src.cases.controller.response.get_case_summaries_response import \
-    CaseSummary
+from src.cases.controller.response.case_summary import CaseSummary
 from src.cases.model.case import TreeNode
 from src.cases.repository.concept_repository import ConceptRepository
 from src.cases.repository.drug_exposure_repository import \

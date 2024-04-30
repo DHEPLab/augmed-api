@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import List
 
 
 @dataclass
@@ -9,8 +8,3 @@ class CaseSummary:
     patient_chief_complaint: str
     age: str
     gender: str
-
-
-@dataclass
-class GetCaseSummaryResponse:
-    summaries: List[CaseSummary]
