@@ -258,7 +258,7 @@ class CaseService:
             self.configuration_repository.get_case_configurations_by_user(user_email)
         )
         cases_summary_list = []
-        chief_complaint_concept_ids = ["38000280"]
+        chief_complaint_concept_ids = ["38000282"]
 
         for case_id, config_id in case_config_pairs:
             visit_occurrence = self.visit_occurrence_repository.get_visit_occurrence(
@@ -272,9 +272,9 @@ class CaseService:
                 case_id, chief_complaint_concept_ids
             )
             patient_chief_complaint = [
-                self.get_value_of_observation(obs)
+                self.get_concept_name(obs)
                 for obs in observations
-                if self.get_value_of_observation(obs)
+                if self.get_concept_name(obs)
             ]
             case_summary = CaseSummary(
                 config_id=config_id,
