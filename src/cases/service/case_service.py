@@ -258,7 +258,7 @@ class CaseService:
             self.configuration_repository.get_case_configurations_by_user(user_email)
         )
         cases_summary_list = []
-        chief_complaint_concept_ids = ["38000282"]
+        chief_complaint_concept_ids = ["38000280"]
 
         for case_id, config_id in case_config_pairs:
             visit_occurrence = self.visit_occurrence_repository.get_visit_occurrence(
