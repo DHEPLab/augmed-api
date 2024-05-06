@@ -271,11 +271,11 @@ class CaseService:
             observations = self.observation_repository.get_observations_by_type(
                 case_id, chief_complaint_concept_ids
             )
-            patient_chief_complaint = []
+            patient_chief_complaint = set()
             for obs in observations:
                 concept_name = self.get_concept_name(obs.observation_concept_id)
                 if concept_name:
-                    patient_chief_complaint.append(concept_name)
+                    patient_chief_complaint.add(concept_name)
 
             case_summary = CaseSummary(
                 config_id=config_id,
