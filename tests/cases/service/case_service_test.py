@@ -1,8 +1,9 @@
 import re
+
 import pytest
 
-from src.cases.model.case import Case
 from src.cases.controller.response.case_summary import CaseSummary
+from src.cases.model.case import Case
 from src.cases.model.case import TreeNode
 from src.cases.repository.concept_repository import ConceptRepository
 from src.cases.repository.drug_exposure_repository import \
@@ -923,6 +924,25 @@ class TestGetCaseReview:
 
 
 class TestGetCaseSummary:
+    def create_side_effect(self, concept_mapping):
+        def concept_side_effect(concept_id):
+            if concept_id in concept_mapping:
+                return concept_fixture(concept_id=concept_id, concept_name=concept_mapping[concept_id])
+            return concept_fixture()
+
+        return concept_side_effect
+
+    def create_observation_side_effect(self, observation_mapping):
+        def observation_side_effect(case_id, concept_ids):
+            results = []
+            for concept_id in concept_ids:
+                key = (case_id, int(concept_id))
+                if key in observation_mapping:
+                    results.extend(observation_mapping[key])
+            return results
+
+        return observation_side_effect
+
     def test_get_cases_by_user_no_cases(self, mocker):
         (
             concept_repository,
@@ -954,7 +974,6 @@ class TestGetCaseSummary:
         assert case_service.get_cases_by_user("user@example.com") == []
 
     def test_get_cases_by_user_single_case(self, mocker):
-
         (
             concept_repository,
             configuration_repository,
@@ -965,7 +984,24 @@ class TestGetCaseSummary:
             visit_occurrence_repository,
             system_config_repository,
         ) = mock_repos(mocker)
-        configuration_repository.get_configuration_by_id.return_value = None
+
+        concept_mapping = {
+            2: 'Male',
+            3: 'Headache'
+        }
+        concept_repository.get_concept.side_effect = self.create_side_effect(concept_mapping)
+
+        configuration_repository.get_case_configurations_by_user.return_value = [(1, 101)]
+        visit_occurrence_repository.get_visit_occurrence.return_value = mocker.Mock(person_id=1)
+        person_repository.get_person.return_value = mocker.Mock(year_of_birth=1984, gender_concept_id=2)
+        observation_mapping = {
+            (1, 38000282): [observation_fixture(concept_id=3, observation_type_concept_id=38000282, visit_id=1)],
+        }
+
+        observation_repository.get_observations_by_type.side_effect = self.create_observation_side_effect(
+            observation_mapping)
+        mocker.patch('src.cases.service.case_service.get_age', return_value="36")
+
         case_service = CaseService(
             visit_occurrence_repository=visit_occurrence_repository,
             concept_repository=concept_repository,
@@ -976,16 +1012,6 @@ class TestGetCaseSummary:
             configuration_repository=configuration_repository,
             system_config_repository=system_config_repository,
         )
-        # Mocking data for a single case
-        configuration_repository.get_case_configurations_by_user.return_value = [(1, 101)]
-        visit_occurrence_repository.get_visit_occurrence.return_value = mocker.Mock(person_id=1)
-        person_repository.get_person.return_value = mocker.Mock(year_of_birth=1984, gender_concept_id=2)
-        concept_repository.get_concept.return_value = concept_fixture(concept_id=2, concept_name='Male')
-        observation_repository.get_observations_by_type.return_value = [
-            observation_fixture(concept_id=1, value_as_string="Headache")
-        ]
-        mocker.patch('src.cases.service.case_service.get_age', return_value="36")
-
         result = case_service.get_cases_by_user("user@example.com")
         expected = [CaseSummary(config_id=101, case_id=1, age="36", gender='Male', patient_chief_complaint='Headache')]
 
@@ -993,7 +1019,6 @@ class TestGetCaseSummary:
         assert result[0].__dict__ == expected[0].__dict__
 
     def test_get_cases_by_user_multiple_cases(self, mocker):
-
         (
             concept_repository,
             configuration_repository,
@@ -1025,14 +1050,21 @@ class TestGetCaseSummary:
             mocker.Mock(year_of_birth=1984, gender_concept_id=1),
             mocker.Mock(year_of_birth=1990, gender_concept_id=2)
         ]
-        concept_repository.get_concept.side_effect = [
-            concept_fixture(concept_id=1, concept_name='Male'),
-            concept_fixture(concept_id=2, concept_name='Female')
-        ]
-        observation_repository.get_observations_by_type.side_effect = [
-            [observation_fixture(concept_id=1, value_as_string="Cough")],
-            [observation_fixture(concept_id=2, value_as_string="Fever")]
-        ]
+        concept_mapping = {
+            1: 'Male',
+            2: 'Female',
+            3: 'Cough',
+            4: 'Fever'
+        }
+        concept_repository.get_concept.side_effect = self.create_side_effect(concept_mapping)
+
+        observation_mapping = {
+            (1, 38000282): [observation_fixture(concept_id=3, observation_type_concept_id=38000282, visit_id=1)],
+            (2, 38000282): [observation_fixture(concept_id=4, observation_type_concept_id=38000282, visit_id=2)]
+        }
+        observation_repository.get_observations_by_type.side_effect = self.create_observation_side_effect(
+            observation_mapping)
+
         mocker.patch('src.cases.service.case_service.get_age', side_effect=["36", "30"])
 
         results = case_service.get_cases_by_user("user@example.com")
@@ -1068,20 +1100,27 @@ class TestGetCaseSummary:
             system_config_repository=system_config_repository,
         )
         # Setup complex observation data
-        complex_observations = [
-            observation_fixture(concept_id=1, value_as_string="Pain"),
-            observation_fixture(concept_id=2, value_as_string="Nausea"),
-            observation_fixture(concept_id=3, value_as_string=None)
-        ]
+        observation_mapping = {
+            (1, 38000282): [observation_fixture(concept_id=3, observation_type_concept_id=38000282, visit_id=1),
+                            observation_fixture(concept_id=4, observation_type_concept_id=38000282, visit_id=1)]
+        }
+        observation_repository.get_observations_by_type.side_effect = self.create_observation_side_effect(
+            observation_mapping)
         case_service.configuration_repository.get_case_configurations_by_user.return_value = [(1, 101)]
         case_service.visit_occurrence_repository.get_visit_occurrence.return_value = mocker.Mock(person_id=1)
         case_service.person_repository.get_person.return_value = mocker.Mock(year_of_birth=1984, gender_concept_id=1)
-        case_service.concept_repository.get_concept.return_value = concept_fixture(concept_id=1, concept_name='Male')
-        case_service.observation_repository.get_observations_by_type.return_value = complex_observations
+        concept_mapping = {
+            1: 'Male',
+            2: 'Female',
+            3: 'Cough',
+            4: 'Fever'
+        }
+        concept_repository.get_concept.side_effect = self.create_side_effect(concept_mapping)
+
         mocker.patch('src.cases.service.case_service.get_age', return_value="36")
 
         result = case_service.get_cases_by_user("user@example.com")
-        expected_patient_complaint = 'Pain, Nausea'
+        expected_patient_complaint = 'Cough, Fever'
 
         assert len(result) == 1
         assert result[0].patient_chief_complaint == expected_patient_complaint
