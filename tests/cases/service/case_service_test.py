@@ -1,3 +1,6 @@
+import re
+import pytest
+
 from src.cases.model.case import Case
 from src.cases.controller.response.case_summary import CaseSummary
 from src.cases.model.case import TreeNode
@@ -13,6 +16,7 @@ from src.cases.service.case_service import (CaseService, add_if_value_present,
                                             attach_style, get_age,
                                             get_value_of_rows, group_by,
                                             is_leaf_node)
+from src.common.exception.BusinessException import BusinessException, BusinessExceptionEnum
 from src.common.model.system_config import SystemConfig
 from src.common.repository.system_config_repository import \
     SystemConfigRepository
@@ -142,6 +146,7 @@ def mock_repos(mocker):
     configuration_repository = mocker.Mock(ConfigurationRepository)
     concept_repository = mocker.Mock(ConceptRepository)
     system_config_repository = mocker.Mock(SystemConfigRepository)
+    mocker.patch('src.cases.service.case_service.get_user_email_from_jwt', return_value='goodbye@sunwukong.com')
 
     visit_occurrence_repository.get_visit_occurrence.return_value = (
         visit_occurrence_fixture()
@@ -152,6 +157,17 @@ def mock_repos(mocker):
     observation_repository.get_observations_by_type.return_value = []
     measurement_repository.get_measurements.return_value = []
     measurement_repository.get_measurements_of_parents.return_value = []
+    configuration_repository.get_configuration_by_id.return_value = Configuration(
+        path_config=[
+            {
+                "path": "BACKGROUND.Patient Demographics",
+                "style": {"collapse": True},
+            },
+            {"path": "no path", "style": {"collapse": True}},
+        ],
+        user_email='goodbye@sunwukong.com',
+        case_id=1
+    )
     system_config_repository.get_config_by_id.return_value = SystemConfig(
         id="page_config",
         json_config={
@@ -805,15 +821,6 @@ class TestGetCaseReview:
             visit_occurrence_repository,
             system_config_repository,
         ) = mock_repos(mocker)
-        configuration_repository.get_configuration_by_id.return_value = Configuration(
-            path_config=[
-                {
-                    "path": "BACKGROUND.Patient Demographics",
-                    "style": {"collapse": True},
-                },
-                {"path": "no path", "style": {"collapse": True}},
-            ]
-        )
         case_service = CaseService(
             visit_occurrence_repository=visit_occurrence_repository,
             concept_repository=concept_repository,
@@ -825,7 +832,7 @@ class TestGetCaseReview:
             system_config_repository=system_config_repository,
         )
 
-        case_review = case_service.get_case_review(1, 1)
+        case_review = case_service.get_case_review(1)
 
         assert case_review == Case(
             personName='sunwukong',
@@ -844,7 +851,51 @@ class TestGetCaseReview:
             ]
         )
 
-    def test_get_case_review_without_configuration(self, mocker):
+    def test_get_case_review_without_path_config(self, mocker):
+        (
+            concept_repository,
+            configuration_repository,
+            drug_exposure_repository,
+            measurement_repository,
+            observation_repository,
+            person_repository,
+            visit_occurrence_repository,
+            system_config_repository,
+        ) = mock_repos(mocker)
+        configuration_repository.get_configuration_by_id.return_value = Configuration(
+            user_email='goodbye@sunwukong.com',
+            case_id=1
+        )
+        case_service = CaseService(
+            visit_occurrence_repository=visit_occurrence_repository,
+            concept_repository=concept_repository,
+            measurement_repository=measurement_repository,
+            observation_repository=observation_repository,
+            person_repository=person_repository,
+            drug_exposure_repository=drug_exposure_repository,
+            configuration_repository=configuration_repository,
+            system_config_repository=system_config_repository,
+        )
+
+        case_review = case_service.get_case_review(1)
+
+        assert case_review == Case(
+            personName='sunwukong',
+            caseNumber='1',
+            details=[
+                TreeNode(
+                    "BACKGROUND",
+                    [
+                        TreeNode(
+                            "Patient Demographics",
+                            [TreeNode("Age", "36"), TreeNode("Gender", "test")],
+                        )
+                    ],
+                )
+            ]
+        )
+
+    def test_throw_error_when_configuration_not_found(self, mocker):
         (
             concept_repository,
             configuration_repository,
@@ -867,23 +918,8 @@ class TestGetCaseReview:
             system_config_repository=system_config_repository,
         )
 
-        case_review = case_service.get_case_review(1, 1)
-
-        assert case_review == Case(
-            personName='sunwukong',
-            caseNumber='1',
-            details=[
-                TreeNode(
-                    "BACKGROUND",
-                    [
-                        TreeNode(
-                            "Patient Demographics",
-                            [TreeNode("Age", "36"), TreeNode("Gender", "test")],
-                        )
-                    ],
-                )
-            ]
-        )
+        with pytest.raises(BusinessException, match=re.compile(BusinessExceptionEnum.NoAccessToCaseReview.name)):
+            case_service.get_case_review(1)
 
 
 class TestGetCaseSummary:

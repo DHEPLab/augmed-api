@@ -2,11 +2,19 @@ import json
 
 from src.common.model.system_config import SystemConfig
 from src.cases.controller.response.case_summary import CaseSummary
+from src.user.model.configuration import Configuration
 from tests.cases.case_fixture import input_case
 
 
 def test_get_case_review(client, session, mocker):
     input_case(session)
+    session.add(
+        Configuration(
+            user_email='goodbye@sunwukong.com',
+            case_id=1,
+            id=1
+        )
+    )
     session.add(
         SystemConfig(
             id="page_config",
@@ -33,8 +41,9 @@ def test_get_case_review(client, session, mocker):
     )
     session.flush()
     mocker.patch('src.user.utils.auth_utils.validate_jwt_and_refresh', return_value=None)
+    mocker.patch('src.cases.service.case_service.get_user_email_from_jwt', return_value='goodbye@sunwukong.com')
 
-    response = client.get("/api/cases/1")
+    response = client.get("/api/case-reviews/1")
 
     assert response.status_code == 200
     data = response.get_json()["data"]

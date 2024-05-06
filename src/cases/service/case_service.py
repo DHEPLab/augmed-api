@@ -1,8 +1,7 @@
 from collections import defaultdict
 
-from src.cases.model.case import Case
 from src.cases.controller.response.case_summary import CaseSummary
-from src.cases.model.case import TreeNode
+from src.cases.model.case import Case, TreeNode
 from src.cases.repository.concept_repository import ConceptRepository
 from src.cases.repository.drug_exposure_repository import \
     DrugExposureRepository
@@ -11,10 +10,13 @@ from src.cases.repository.observation_repository import ObservationRepository
 from src.cases.repository.person_repository import PersonRepository
 from src.cases.repository.visit_occurrence_repository import \
     VisitOccurrenceRepository
+from src.common.exception.BusinessException import (BusinessException,
+                                                    BusinessExceptionEnum)
 from src.common.repository.system_config_repository import \
     SystemConfigRepository
 from src.user.repository.configuration_repository import \
     ConfigurationRepository
+from src.user.utils.auth_utils import get_user_email_from_jwt
 
 
 def group_by(source_list, key_selector):
@@ -231,17 +233,25 @@ class CaseService:
     def get_page_configuration(self):
         return self.system_config_repository.get_config_by_id("page_config").json_config
 
-    def get_case_review(self, case_id, config_id):
-        configuration = self.configuration_repository.get_configuration_by_id(config_id)
+    def get_case_review(self, case_config_id):
+        configuration = self.configuration_repository.get_configuration_by_id(
+            case_config_id
+        )
+        current_user = get_user_email_from_jwt()
+        if not configuration or configuration.user_email != current_user:
+            raise BusinessException(BusinessExceptionEnum.NoAccessToCaseReview)
+
         path_configurations = configuration.path_config if configuration else None
-        case_details = self.get_case_detail(case_id)
+        case_details = self.get_case_detail(configuration.case_id)
 
         if path_configurations:
             for item in path_configurations:
                 if item.get("style"):
                     attach_style(item, case_details)
 
-        return Case(self.person.person_source_value, str(case_id), case_details)
+        return Case(
+            self.person.person_source_value, str(configuration.case_id), case_details
+        )
 
     def get_cases_by_user(self, user_email):
         case_config_pairs = (

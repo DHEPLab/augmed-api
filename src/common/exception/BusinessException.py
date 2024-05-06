@@ -26,6 +26,7 @@ class BusinessExceptionEnum(Enum):
     )
     NoFilePart = ("1008", "No file part in the request.")
     NoFileSelected = ("1009", "No file selected.")
+    NoAccessToCaseReview = ("1010", "No access to review case.")
 
     def __init__(self, code, message):
         self._code = code
