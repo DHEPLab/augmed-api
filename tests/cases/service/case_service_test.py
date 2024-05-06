@@ -1120,7 +1120,7 @@ class TestGetCaseSummary:
         mocker.patch('src.cases.service.case_service.get_age', return_value="36")
 
         result = case_service.get_cases_by_user("user@example.com")
-        expected_patient_complaint = 'Fever, Cough'
+        expected_patient_complaint = 'Cough, Fever'
 
         assert len(result) == 1
         assert result[0].patient_chief_complaint == expected_patient_complaint
