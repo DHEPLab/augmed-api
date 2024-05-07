@@ -27,6 +27,14 @@ class BusinessExceptionEnum(Enum):
     NoFilePart = ("1008", "No file part in the request.")
     NoFileSelected = ("1009", "No file selected.")
     NoAccessToCaseReview = ("1010", "No access to review case.")
+    InvalidUserEmail = (
+        "1011",
+        "Invalid user email in config file.",
+    )
+    InvalidCaseId = (
+        "1012",
+        "Invalid case id in config file.",
+    )
 
     def __init__(self, code, message):
         self._code = code

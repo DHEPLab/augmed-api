@@ -21,7 +21,6 @@ class ExcelConfigurationParser:
             )
         ]
         for row in self.sheet.iter_rows(min_row=2, values_only=True):
-
             if not any(row):
                 continue  # Skip fully blank lines
 
@@ -46,7 +45,6 @@ class ExcelConfigurationParser:
             return current_config
 
         else:
-            # 否则，这是一个重复的行，添加到当前配置
             current_config = self._create_new_config(user, case)
             self._add_path_config_to_last(current_config, path, collapse, highlight)
             configurations.append(current_config)
@@ -58,7 +56,7 @@ class ExcelConfigurationParser:
     def _create_new_config(self, user, case) -> Configuration:
         # 创建新的 Configuration 实例时，确保 user 和 case 不是 None
         user_email = user if user is not None else ""
-        case_id = case if case is not None else 0
+        case_id = case if case is not None else -999
         return Configuration(
             user_email=user_email, case_id=int(case_id), path_config=[]
         )
