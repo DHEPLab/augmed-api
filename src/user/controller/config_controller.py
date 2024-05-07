@@ -8,7 +8,6 @@ from src.common.model.ApiResponse import ApiResponse
 from src.user.repository.configuration_repository import \
     ConfigurationRepository
 from src.user.service.configuration_service import ConfigurationService
-from src.user.utils.auth_utils import jwt_validation_required
 
 config_blueprint = Blueprint("config", __name__)
 config_repository = ConfigurationRepository(db.session)
@@ -16,7 +15,6 @@ config_service = ConfigurationService(repository=config_repository)
 
 
 @config_blueprint.route("/config/upload", methods=["POST"])
-@jwt_validation_required()
 def upload_config():
     if "file" not in request.files:
         return jsonify(ApiResponse.fail(BusinessExceptionEnum.NoFilePart)), 400
