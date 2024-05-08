@@ -36,14 +36,14 @@ class ExcelConfigurationParser:
         return configurations
 
     def _parse_row(
-        self,
-        row,
-        row_data,
-        headers,
-        user_index,
-        case_index,
-        current_config,
-        configurations,
+            self,
+            row,
+            row_data,
+            headers,
+            user_index,
+            case_index,
+            current_config,
+            configurations,
     ):
         data_dict = dict(zip(headers, row_data))
 
@@ -53,37 +53,46 @@ class ExcelConfigurationParser:
         user = self._resolve_merged_cells(user_cell)
         case = self._resolve_merged_cells(case_cell)
 
+        if user is None:
+            user = current_config.user_email if current_config else None
+        if case is None:
+            case = current_config.case_id if current_config else None
+
         if not user:
-            # Log error but continue processing
             print("Invalid user email in config file.")
             return current_config
 
         try:
             case_id = int(case)
         except (ValueError, TypeError):
-            # Log error but continue processing
             print("Invalid case id in config file.")
             return current_config
 
-        # Create or update the configuration if necessary
-        current_config = self._get_or_create_config(
-            user, case_id, current_config, configurations
-        )
+        if (
+                current_config is None
+                or current_config.user_email != user
+                or current_config.case_id != case_id
+        ):
+            current_config = Configuration(
+                user_email=user, case_id=case_id, path_config=[]
+            )
+            configurations.append(current_config)
 
         path = data_dict.get("Path")
         collapse = data_dict.get("Collapse")
         highlight = data_dict.get("Highlight")
         if path:
             style = self._build_style_dict(collapse, highlight)
-            current_config.path_config.append({"path": path, "style": style})
+            if style:
+                current_config.path_config.append({"path": path, "style": style})
 
         return current_config
 
     def _get_or_create_config(self, user, case_id, current_config, configurations):
         if (
-            current_config is None
-            or current_config.user_email != user
-            or current_config.case_id != case_id
+                current_config is None
+                or current_config.user_email != user
+                or current_config.case_id != case_id
         ):
             current_config = Configuration(
                 user_email=user, case_id=case_id, path_config=[]
