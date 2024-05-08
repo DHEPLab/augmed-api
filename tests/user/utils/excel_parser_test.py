@@ -13,6 +13,9 @@ def test_should_parse_excell_stream_correctly_when_all_config_are_set():
     ws.append(['User', 'Case No.', 'Path', 'Collapse', 'Highlight'])
     # Data for multiple users and cases
     ws.append(['usera@example.com', '1', 'Background.abc', True, True])
+    ws.merge_cells(start_row=2, start_column=1, end_row=3, end_column=1)
+    ws.merge_cells(start_row=2, start_column=2, end_row=3, end_column=2)
+
     ws.append([None, None, 'background.xxx', True, False])
     ws.append(['userb@example.com', '1', 'Background.patient demo', False, False])
     excel_stream = BytesIO()
@@ -55,6 +58,8 @@ def test_should_ignore_none_config():
     ws.append(['usera@example.com', '1', 'Background.abc', None, True])
     ws.append([None, None, 'background.xxx', True, None])
     ws.append([None, None, 'Background.patient demo', None, None])
+    ws.merge_cells(start_row=2, start_column=1, end_row=4, end_column=1)
+    ws.merge_cells(start_row=2, start_column=2, end_row=4, end_column=2)
     excel_stream = BytesIO()
     wb.save(excel_stream)
     excel_stream.seek(0)

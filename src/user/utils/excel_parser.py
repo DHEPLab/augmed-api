@@ -2,7 +2,9 @@ from io import BytesIO
 from typing import List
 
 from openpyxl import load_workbook
+from openpyxl.utils.cell import range_boundaries
 
+from src.common.exception.BusinessException import BusinessException
 from src.user.model.configuration import Configuration
 
 
@@ -13,59 +15,90 @@ class ExcelConfigurationParser:
 
     def parse(self) -> List[Configuration]:
         configurations = []
-        current_config = None
-        header = [
-            cell
-            for cell in next(
-                self.sheet.iter_rows(min_row=1, max_row=1, values_only=True)
-            )
-        ]
-        for row in self.sheet.iter_rows(min_row=2, values_only=True):
-            if not any(row):
-                continue  # Skip fully blank lines
+        headers = [cell.value for cell in self.sheet[1]]
+        user_index = headers.index("User")
+        case_index = headers.index("Case No.")
 
-            row_data = dict(zip(header, row))
-            user = row_data.get("User")
-            case = row_data.get("Case No.")
-            path = row_data.get("Path")
-            collapse = row_data.get("Collapse")
-            highlight = row_data.get("Highlight")
-            current_config = self._process_row(
-                current_config, configurations, user, case, path, collapse, highlight
+        current_config = None
+
+        for row in self.sheet.iter_rows(min_row=2, max_row=self.sheet.max_row):
+            row_data = [cell.value for cell in row]
+            current_config = self._parse_row(
+                row,
+                row_data,
+                headers,
+                user_index,
+                case_index,
+                current_config,
+                configurations,
             )
 
         return configurations
 
-    def _process_row(
-        self, current_config, configurations, user, case, path, collapse, highlight
+    def _parse_row(
+        self,
+        row,
+        row_data,
+        headers,
+        user_index,
+        case_index,
+        current_config,
+        configurations,
     ):
-        if self._is_part_of_merged_cells(user, case, path):
-            if current_config:
-                self._add_path_config_to_last(current_config, path, collapse, highlight)
+        data_dict = dict(zip(headers, row_data))
+
+        user_cell = row[user_index]
+        case_cell = row[case_index]
+
+        user = self._resolve_merged_cells(user_cell)
+        case = self._resolve_merged_cells(case_cell)
+
+        if not user:
+            # Log error but continue processing
+            print("Invalid user email in config file.")
             return current_config
 
-        else:
-            current_config = self._create_new_config(user, case)
-            self._add_path_config_to_last(current_config, path, collapse, highlight)
-            configurations.append(current_config)
+        try:
+            case_id = int(case)
+        except (ValueError, TypeError):
+            # Log error but continue processing
+            print("Invalid case id in config file.")
             return current_config
 
-    def _is_part_of_merged_cells(self, user, case, path):
-        return user is None and case is None and path is not None
-
-    def _create_new_config(self, user, case) -> Configuration:
-        # 创建新的 Configuration 实例时，确保 user 和 case 不是 None
-        user_email = user if user is not None else ""
-        case_id = case if case is not None else -999
-        return Configuration(
-            user_email=user_email, case_id=int(case_id), path_config=[]
+        # Create or update the configuration if necessary
+        current_config = self._get_or_create_config(
+            user, case_id, current_config, configurations
         )
 
-    def _add_path_config_to_last(self, config, path, collapse, highlight):
-        if path is not None and config:
+        path = data_dict.get("Path")
+        collapse = data_dict.get("Collapse")
+        highlight = data_dict.get("Highlight")
+        if path:
             style = self._build_style_dict(collapse, highlight)
-            if style:
-                config.path_config.append({"path": path, "style": style})
+            current_config.path_config.append({"path": path, "style": style})
+
+        return current_config
+
+    def _get_or_create_config(self, user, case_id, current_config, configurations):
+        if (
+            current_config is None
+            or current_config.user_email != user
+            or current_config.case_id != case_id
+        ):
+            current_config = Configuration(
+                user_email=user, case_id=case_id, path_config=[]
+            )
+            configurations.append(current_config)
+        return current_config
+
+    def _resolve_merged_cells(self, cell):
+        if cell.value is not None:
+            return cell.value
+        for range_ in self.sheet.merged_cells.ranges:
+            if cell.coordinate in range_:
+                min_col, min_row, _, _ = range_boundaries(str(range_))
+                return self.sheet.cell(row=min_row, column=min_col).value
+        return None
 
     def _build_style_dict(self, collapse, highlight) -> dict:
         style = {}
@@ -78,4 +111,8 @@ class ExcelConfigurationParser:
 
 def parse_excel_stream_to_configurations(excel_stream: BytesIO) -> List[Configuration]:
     parser = ExcelConfigurationParser(excel_stream)
-    return parser.parse()
+    try:
+        return parser.parse()
+    except BusinessException as e:
+        print(f"Error: {e}")
+        return []
