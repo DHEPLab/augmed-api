@@ -24,43 +24,67 @@ class ExcelConfigurationParser:
 
         for row in self.sheet.iter_rows(min_row=2, max_row=self.sheet.max_row):
             row_data = [cell.value for cell in row]
-            is_merged_user = self._is_merged_cell(row[user_index])
-            is_merged_case = self._is_merged_cell(row[case_index])
 
-            user = self._resolve_merged_cells(row[user_index])
-            case = self._resolve_merged_cells(row[case_index])
+            user, case = self._validate_and_extract_user_case(
+                row, user_index, case_index
+            )
+            case_id = self._validate_and_convert_case_id(case)
 
-            if not user:
-                raise BusinessException(BusinessExceptionEnum.InvalidUserEmail)
-            if not case:
-                raise BusinessException(BusinessExceptionEnum.InvalidCaseId)
-
-            try:
-                case_id = int(case)
-            except (ValueError, TypeError):
-                raise BusinessException(BusinessExceptionEnum.InvalidCaseId)
-
-            if (
-                not current_config
-                or current_config.user_email != user
-                or current_config.case_id != case_id
-                or not (is_merged_user and is_merged_case)
+            if self._should_create_new_config(
+                current_config, user, case_id, row, user_index, case_index
             ):
-                current_config = Configuration(
-                    user_email=user, case_id=case_id, path_config=[]
-                )
+                current_config = self._create_new_config(user, case_id)
                 configurations.append(current_config)
 
-            path = row_data[headers.index("Path")]
-            collapse = row_data[headers.index("Collapse")]
-            highlight = row_data[headers.index("Highlight")]
-
-            if path:
-                style = self._build_style_dict(collapse, highlight)
-                if style:
-                    current_config.path_config.append({"path": path, "style": style})
+            self._process_path_config(current_config, row_data, headers)
 
         return configurations
+
+    def _validate_and_extract_user_case(self, row, user_index, case_index):
+        user_cell = row[user_index]
+        case_cell = row[case_index]
+
+        user = self._resolve_merged_cells(user_cell)
+        if not user:
+            raise BusinessException(BusinessExceptionEnum.InvalidUserEmail)
+
+        case = self._resolve_merged_cells(case_cell)
+        if not case:
+            raise BusinessException(BusinessExceptionEnum.InvalidCaseId)
+
+        return user, case
+
+    def _validate_and_convert_case_id(self, case):
+        try:
+            return int(case)
+        except (ValueError, TypeError):
+            raise BusinessException(BusinessExceptionEnum.InvalidCaseId)
+
+    def _should_create_new_config(
+        self, current_config, user, case_id, row, user_index, case_index
+    ):
+        is_merged_user = self._is_merged_cell(row[user_index])
+        is_merged_case = self._is_merged_cell(row[case_index])
+
+        return (
+            not current_config
+            or current_config.user_email != user
+            or current_config.case_id != case_id
+            or not (is_merged_user and is_merged_case)
+        )
+
+    def _create_new_config(self, user, case_id):
+        return Configuration(user_email=user, case_id=case_id, path_config=[])
+
+    def _process_path_config(self, current_config, row_data, headers):
+        path = row_data[headers.index("Path")]
+        collapse = row_data[headers.index("Collapse")]
+        highlight = row_data[headers.index("Highlight")]
+
+        if path:
+            style = self._build_style_dict(collapse, highlight)
+            if style:
+                current_config.path_config.append({"path": path, "style": style})
 
     def _resolve_merged_cells(self, cell):
         if cell.value is not None:
