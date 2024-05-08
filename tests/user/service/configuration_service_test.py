@@ -65,13 +65,13 @@ def test_process_excel_file_success(mocker, mock_repo, valid_excel_file, config_
 
 def test_parser_error(mocker, mock_repo, valid_excel_file):
     mocker.patch('src.user.service.configuration_service.parse_excel_stream_to_configurations',
-                 side_effect=Exception("Parse failed"))
+                 side_effect=BusinessException(BusinessExceptionEnum.InvalidCaseId))
     service = ConfigurationService(repository=mock_repo)
 
     with pytest.raises(BusinessException) as exc_info:
         service.process_excel_file(valid_excel_file)
 
-    assert exc_info.value.error == BusinessExceptionEnum.ConfigFileIncorrect
+    assert exc_info.value.error == BusinessExceptionEnum.InvalidCaseId
 
 
 def test_database_cleaning_error(mocker, mock_repo, valid_excel_file):

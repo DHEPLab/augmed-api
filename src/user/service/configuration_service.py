@@ -17,8 +17,8 @@ class ConfigurationService:
         # Step 1: parse excel
         try:
             configurations = parse_excel_stream_to_configurations(file_stream)
-        except Exception as e:
-            raise BusinessException(BusinessExceptionEnum.ConfigFileIncorrect) from e
+        except BusinessException as e:
+            raise e
 
         responses = []
         # Step 2: clean db
