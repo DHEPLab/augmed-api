@@ -1,7 +1,9 @@
 from io import BytesIO
 
+import pytest
 from openpyxl import Workbook
 
+from src.common.exception.BusinessException import BusinessException
 from src.user.utils.excel_parser import parse_excel_stream_to_configurations
 
 
@@ -162,3 +164,35 @@ def test_should_keep_duplicate_user_case_relationship():
     assert result[2].case_id == 1
     assert len(result[1].path_config) == 0
     assert result[2].user_email == 'usera@example.com'
+
+
+def test_invalid_user_email_raises_exception():
+    wb = Workbook()
+    ws = wb.active
+    ws.append(['User', 'Case No.', 'Path', 'Collapse', 'Highlight'])
+    ws.append([None, '1', 'Background.patient demo', None, None])  # Invalid user
+
+    excel_stream = BytesIO()
+    wb.save(excel_stream)
+    excel_stream.seek(0)
+
+    with pytest.raises(BusinessException) as excinfo:
+        parse_excel_stream_to_configurations(excel_stream)
+
+    assert "Invalid user email in config file." in str(excinfo.value.error.value)
+
+
+def test_invalid_case_id_raises_exception():
+    wb = Workbook()
+    ws = wb.active
+    ws.append(['User', 'Case No.', 'Path', 'Collapse', 'Highlight'])
+    ws.append(['usera@example.com', 'abc', 'Background.patient demo', None, None])  # Invalid case ID
+
+    excel_stream = BytesIO()
+    wb.save(excel_stream)
+    excel_stream.seek(0)
+
+    with pytest.raises(BusinessException) as excinfo:
+        parse_excel_stream_to_configurations(excel_stream)
+
+    assert "Invalid case id in config file." in str(excinfo.value.error.value)
