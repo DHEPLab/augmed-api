@@ -2,8 +2,7 @@ from io import BytesIO
 
 from werkzeug.exceptions import InternalServerError
 
-from src.common.exception.BusinessException import (BusinessException,
-                                                    BusinessExceptionEnum)
+from src.common.exception.BusinessException import BusinessException
 from src.user.repository.configuration_repository import \
     ConfigurationRepository
 from src.user.utils.excel_parser import parse_excel_stream_to_configurations
@@ -32,10 +31,6 @@ class ConfigurationService:
             user_case_key = f"{config.user_email}-{config.case_id}"
             result = {"user_case_key": user_case_key}
             try:
-                if config.user_email == "":
-                    raise BusinessException(BusinessExceptionEnum.InvalidUserEmail)
-                if config.case_id == -999:
-                    raise BusinessException(BusinessExceptionEnum.InvalidUserEmail)
                 self.repository.save_configuration(config)
                 result["status"] = "added"
             except Exception:

@@ -25,7 +25,9 @@ def test_should_parse_excell_stream_correctly_when_all_config_are_set():
     excel_stream.seek(0)
 
     result = parse_excel_stream_to_configurations(excel_stream)
-    result_dicts = [config.to_dict() for config in result]
+
+    #result_dicts = [config.__dict__ for config in result]
+    result_dicts = [config.to_dict()for config in result]
 
     # Define expected results
     expected_results = [
@@ -149,7 +151,6 @@ def test_should_keep_duplicate_user_case_relationship():
     excel_stream.seek(0)
 
     result = parse_excel_stream_to_configurations(excel_stream)
-    for r in result: print(r.__dict__)
     assert len(result) == 3
     assert result[0].user_email == 'usera@example.com'
     assert result[0].case_id == 1
