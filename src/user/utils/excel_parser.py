@@ -2,9 +2,10 @@ from io import BytesIO
 from typing import List
 
 from openpyxl import load_workbook
-from openpyxl.utils.cell import range_boundaries
+from openpyxl.utils import range_boundaries
 
-from src.common.exception.BusinessException import BusinessException
+from src.common.exception.BusinessException import (BusinessException,
+                                                    BusinessExceptionEnum)
 from src.user.model.configuration import Configuration
 
 
@@ -23,82 +24,43 @@ class ExcelConfigurationParser:
 
         for row in self.sheet.iter_rows(min_row=2, max_row=self.sheet.max_row):
             row_data = [cell.value for cell in row]
-            current_config = self._parse_row(
-                row,
-                row_data,
-                headers,
-                user_index,
-                case_index,
-                current_config,
-                configurations,
-            )
+            is_merged_user = self._is_merged_cell(row[user_index])
+            is_merged_case = self._is_merged_cell(row[case_index])
+
+            user = self._resolve_merged_cells(row[user_index])
+            case = self._resolve_merged_cells(row[case_index])
+
+            if not user:
+                raise BusinessException(BusinessExceptionEnum.InvalidUserEmail)
+            if not case:
+                raise BusinessException(BusinessExceptionEnum.InvalidCaseId)
+
+            try:
+                case_id = int(case)
+            except (ValueError, TypeError):
+                raise BusinessException(BusinessExceptionEnum.InvalidCaseId)
+
+            if (
+                not current_config
+                or current_config.user_email != user
+                or current_config.case_id != case_id
+                or not (is_merged_user and is_merged_case)
+            ):
+                current_config = Configuration(
+                    user_email=user, case_id=case_id, path_config=[]
+                )
+                configurations.append(current_config)
+
+            path = row_data[headers.index("Path")]
+            collapse = row_data[headers.index("Collapse")]
+            highlight = row_data[headers.index("Highlight")]
+
+            if path:
+                style = self._build_style_dict(collapse, highlight)
+                if style:
+                    current_config.path_config.append({"path": path, "style": style})
 
         return configurations
-
-    def _parse_row(
-            self,
-            row,
-            row_data,
-            headers,
-            user_index,
-            case_index,
-            current_config,
-            configurations,
-    ):
-        data_dict = dict(zip(headers, row_data))
-
-        user_cell = row[user_index]
-        case_cell = row[case_index]
-
-        user = self._resolve_merged_cells(user_cell)
-        case = self._resolve_merged_cells(case_cell)
-
-        if user is None:
-            user = current_config.user_email if current_config else None
-        if case is None:
-            case = current_config.case_id if current_config else None
-
-        if not user:
-            print("Invalid user email in config file.")
-            return current_config
-
-        try:
-            case_id = int(case)
-        except (ValueError, TypeError):
-            print("Invalid case id in config file.")
-            return current_config
-
-        if (
-                current_config is None
-                or current_config.user_email != user
-                or current_config.case_id != case_id
-        ):
-            current_config = Configuration(
-                user_email=user, case_id=case_id, path_config=[]
-            )
-            configurations.append(current_config)
-
-        path = data_dict.get("Path")
-        collapse = data_dict.get("Collapse")
-        highlight = data_dict.get("Highlight")
-        if path:
-            style = self._build_style_dict(collapse, highlight)
-            if style:
-                current_config.path_config.append({"path": path, "style": style})
-
-        return current_config
-
-    def _get_or_create_config(self, user, case_id, current_config, configurations):
-        if (
-                current_config is None
-                or current_config.user_email != user
-                or current_config.case_id != case_id
-        ):
-            current_config = Configuration(
-                user_email=user, case_id=case_id, path_config=[]
-            )
-            configurations.append(current_config)
-        return current_config
 
     def _resolve_merged_cells(self, cell):
         if cell.value is not None:
@@ -108,6 +70,12 @@ class ExcelConfigurationParser:
                 min_col, min_row, _, _ = range_boundaries(str(range_))
                 return self.sheet.cell(row=min_row, column=min_col).value
         return None
+
+    def _is_merged_cell(self, cell):
+        for range_ in self.sheet.merged_cells.ranges:
+            if cell.coordinate in range_:
+                return True
+        return False
 
     def _build_style_dict(self, collapse, highlight) -> dict:
         style = {}
@@ -120,8 +88,4 @@ class ExcelConfigurationParser:
 
 def parse_excel_stream_to_configurations(excel_stream: BytesIO) -> List[Configuration]:
     parser = ExcelConfigurationParser(excel_stream)
-    try:
-        return parser.parse()
-    except BusinessException as e:
-        print(f"Error: {e}")
-        return []
+    return parser.parse()

@@ -135,8 +135,11 @@ def test_should_keep_duplicate_user_case_relationship():
     ws.append(['User', 'Case No.', 'Path', 'Collapse', 'Highlight'])
     # Data for multiple users and cases
     ws.append(['usera@example.com', '1', 'Background.patient demo', None, None])
-    ws.append(['usera@example.com', '1', 'Background.patient demo', None, None])
     ws.append([None, None, 'Background.drug', None, None])
+    ws.merge_cells(start_row=2, start_column=1, end_row=3, end_column=1)
+    ws.merge_cells(start_row=2, start_column=2, end_row=3, end_column=2)
+    ws.append(['usera@example.com', '1', 'Background.patient demo', None, None])
+
     ws.append(['usera@example.com', '1', None, None, None])
 
     excel_stream = BytesIO()
@@ -144,7 +147,7 @@ def test_should_keep_duplicate_user_case_relationship():
     excel_stream.seek(0)
 
     result = parse_excel_stream_to_configurations(excel_stream)
-
+    for r in result: print(r.__dict__)
     assert len(result) == 3
     assert result[0].user_email == 'usera@example.com'
     assert result[0].case_id == 1
