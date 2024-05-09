@@ -23,6 +23,8 @@ class ExcelConfigurationParser:
         current_config = None
 
         for row in self.sheet.iter_rows(min_row=2, max_row=self.sheet.max_row):
+            if not any(cell.value is not None for cell in row):
+                continue
             row_data = [cell.value for cell in row]
 
             user, case = self._validate_and_extract_user_case(
