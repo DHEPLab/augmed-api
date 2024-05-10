@@ -41,6 +41,9 @@ from src.cases.model.vocabularies import vocabulary
 
 from src.common.model.system_config import SystemConfig
 
+# diagnose
+from src.diagnose.model.diagnose import Diagonose
+
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
