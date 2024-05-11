@@ -42,7 +42,7 @@ from src.cases.model.vocabularies import vocabulary
 from src.common.model.system_config import SystemConfig
 
 # diagnose
-from src.diagnose.model.diagnose import Diagonose
+from src.diagnose.model.diagnose import Diagnose
 
 
 # this is the Alembic Config object, which provides
