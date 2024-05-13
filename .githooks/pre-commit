@@ -13,6 +13,15 @@ black src
 echo "Running isort to sort imports..."
 isort src
 
+# detect secrets
+echo "Running Yelp/detect-secrets..."
+git diff --staged --name-only -z | xargs -0 detect-secrets-hook --baseline .secrets.baseline
+detect_secret_code=$?
+if [ $detect_secret_code -ne 0 ]; then
+  echo "${RED}detect-secrets failed. Please check secrets or upgrade baseline before committing.${RESET}"
+  exit 1
+fi
+
 # Run lint check
 echo "Running flake8 lint checks..."
 lint_output=$(flake8 src)

@@ -34,3 +34,7 @@ test: install
 clean:
 	pipenv --rm
 	docker stop postgres_container
+
+.PHONY: detect-secrets
+detect-secrets:
+	git ls-files -z | xargs -0 detect-secrets-hook --baseline .secrets.baseline

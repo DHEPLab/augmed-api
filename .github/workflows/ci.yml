@@ -25,6 +25,8 @@ jobs:
       - name: format
         run: |
           make format
+      - name: check-secrets
+        uses: secret-scanner/action@0.0.2
       - name: Lint with flake8
         run: |
           make lint
