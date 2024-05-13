@@ -14,6 +14,7 @@ from src.common.exception.BusinessException import (BusinessException,
                                                     BusinessExceptionEnum)
 from src.common.repository.system_config_repository import \
     SystemConfigRepository
+from src.diagnose.repository.diagnose_repository import DiagnoseRepository
 from src.user.repository.configuration_repository import \
     ConfigurationRepository
 from src.user.utils.auth_utils import get_user_email_from_jwt
@@ -79,6 +80,7 @@ class CaseService:
         drug_exposure_repository: DrugExposureRepository,
         configuration_repository: ConfigurationRepository,
         system_config_repository: SystemConfigRepository,
+        diagnose_repository: DiagnoseRepository,
     ):
         self.person = None
         self.visit_occurrence_repository = visit_occurrence_repository
@@ -89,6 +91,7 @@ class CaseService:
         self.drug_exposure_repository = drug_exposure_repository
         self.configuration_repository = configuration_repository
         self.system_config_repository = system_config_repository
+        self.diagnose_repository = diagnose_repository
 
     def get_case_detail(self, case_id):
         page_config = self.get_page_configuration()
@@ -253,40 +256,61 @@ class CaseService:
             self.person.person_source_value, str(configuration.case_id), case_details
         )
 
-    def get_cases_by_user(self, user_email):
+    def __get_current_case_by_user(self, user_email) -> tuple:
         case_config_pairs = (
-            self.configuration_repository.get_case_configurations_by_user(user_email)
+            self.configuration_repository.get_case_configurations_by_user(
+                user_email=user_email
+            )
         )
+        print("case_config_pairs", case_config_pairs)
+        completed_case_list = self.diagnose_repository.get_diagnosed_case_list_by_user(
+            user_email=user_email
+        )
+        print("completed_case_list", completed_case_list)
+        pending_case_list = []
+
+        for case_id, config_id in case_config_pairs:
+            if case_id not in completed_case_list:
+                pending_case_list.append((case_id, config_id))
+        if pending_case_list:
+            return pending_case_list[0]
+        else:
+            return None, None
+
+    def get_cases_by_user(self, user_email) -> list[CaseSummary]:
+        case_id, config_id = self.__get_current_case_by_user(user_email=user_email)
+        if not case_id or not config_id:
+            return []
+
         cases_summary_list = []
         page_config = self.get_page_configuration()
         chief_complaint_concept_ids = page_config["PATIENT COMPLAINT"][
             "Chief Complaint"
         ]
 
-        for case_id, config_id in case_config_pairs:
-            visit_occurrence = self.visit_occurrence_repository.get_visit_occurrence(
-                case_id
-            )
+        visit_occurrence = self.visit_occurrence_repository.get_visit_occurrence(
+            case_id
+        )
 
-            person = self.person_repository.get_person(visit_occurrence.person_id)
-            age = get_age(person, visit_occurrence)
-            gender = self.get_concept_name(person.gender_concept_id)
-            observations = self.observation_repository.get_observations_by_type(
-                case_id, chief_complaint_concept_ids
-            )
-            patient_chief_complaint = []
-            for obs in observations:
-                concept_name = self.get_concept_name(obs.observation_concept_id)
-                if concept_name and concept_name not in patient_chief_complaint:
-                    patient_chief_complaint.append(concept_name)
+        person = self.person_repository.get_person(visit_occurrence.person_id)
+        age = get_age(person, visit_occurrence)
+        gender = self.get_concept_name(person.gender_concept_id)
+        observations = self.observation_repository.get_observations_by_type(
+            case_id, chief_complaint_concept_ids
+        )
+        patient_chief_complaint = []
+        for obs in observations:
+            concept_name = self.get_concept_name(obs.observation_concept_id)
+            if concept_name and concept_name not in patient_chief_complaint:
+                patient_chief_complaint.append(concept_name)
 
-            case_summary = CaseSummary(
-                config_id=config_id,
-                case_id=case_id,
-                age=age,
-                gender=gender,
-                patient_chief_complaint=", ".join(patient_chief_complaint),
-            )
-            cases_summary_list.append(case_summary)
+        case_summary = CaseSummary(
+            config_id=config_id,
+            case_id=case_id,
+            age=age,
+            gender=gender,
+            patient_chief_complaint=", ".join(patient_chief_complaint),
+        )
+        cases_summary_list.append(case_summary)
 
         return cases_summary_list

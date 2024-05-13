@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify
 
+from diagnose.repository.diagnose_repository import DiagnoseRepository
 from src import db
 from src.cases.repository.concept_repository import ConceptRepository
 from src.cases.repository.drug_exposure_repository import \
@@ -27,6 +28,7 @@ person_repository = PersonRepository(db.session)
 drug_exposure_repository = DrugExposureRepository(db.session)
 configuration_repository = ConfigurationRepository(db.session)
 system_config_repository = SystemConfigRepository(db.session)
+diagose_repository = DiagnoseRepository(db.session)
 case_service = CaseService(
     visit_occurrence_repository=visit_occurrence_repository,
     concept_repository=concept_repository,
@@ -36,6 +38,7 @@ case_service = CaseService(
     drug_exposure_repository=drug_exposure_repository,
     configuration_repository=configuration_repository,
     system_config_repository=system_config_repository,
+    diagnose_repository=diagose_repository,
 )
 
 
