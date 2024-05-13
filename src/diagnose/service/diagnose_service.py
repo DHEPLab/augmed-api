@@ -5,7 +5,7 @@ from src.diagnose.model.diagosis import DiagnoseFormData
 from src.diagnose.repository.diagnose_repository import DiagnoseRepository
 from src.user.repository.configuration_repository import \
     ConfigurationRepository
-from src.user.utils.auth_utils import get_user_email_from_jwt
+from src.user.utils import auth_utils
 
 
 class DiagnoseService:
@@ -18,7 +18,7 @@ class DiagnoseService:
         self.configuration_repository = configuration_repository
 
     def add_diagnose_response(self, task_id: int, form_data: DiagnoseFormData):
-        user_eamil = get_user_email_from_jwt()
+        user_eamil = auth_utils.get_user_email_from_jwt()
 
         configuration = self.configuration_repository.get_configuration_by_id(task_id)
         if not configuration or configuration.user_email != user_eamil:
@@ -33,6 +33,4 @@ class DiagnoseService:
             other=form_data.other,
         )
 
-        self.diagnose_repository.add_diagonose(diagnose)
-
-        return diagnose
+        return self.diagnose_repository.add_diagonose(diagnose)
