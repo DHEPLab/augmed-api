@@ -9,7 +9,11 @@ class Diagnose(db.Model):
     __tablename__ = "diagnose"
 
     id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    task_id: int = db.Column(db.Integer, nullable=True)
+    task_id: str = db.Column(
+        db.String,
+        db.ForeignKey("configuration.id"),
+        nullable=True,
+    )
     case_id: int = db.Column(db.Integer, nullable=True)
     user_email: str = db.Column(db.String(128), nullable=True)
     display_configuration = db.Column(db.JSON, nullable=True)

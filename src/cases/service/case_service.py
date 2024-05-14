@@ -262,20 +262,14 @@ class CaseService:
                 user_email=user_email
             )
         )
-        print("case_config_pairs", case_config_pairs)
         completed_case_list = self.diagnose_repository.get_diagnosed_case_list_by_user(
             user_email=user_email
         )
-        print("completed_case_list", completed_case_list)
-        pending_case_list = []
 
         for case_id, config_id in case_config_pairs:
-            if case_id not in completed_case_list:
-                pending_case_list.append((case_id, config_id))
-        if pending_case_list:
-            return pending_case_list[0]
-        else:
-            return None, None
+            if config_id not in completed_case_list:
+                return case_id, config_id
+        return None, None
 
     def get_cases_by_user(self, user_email) -> list[CaseSummary]:
         case_id, config_id = self.__get_current_case_by_user(user_email=user_email)

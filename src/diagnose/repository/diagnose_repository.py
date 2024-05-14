@@ -14,7 +14,7 @@ class DiagnoseRepository:
         self.session.flush()
         return diagnose
 
-    def get_diagnosed_case_list_by_user(self, user_email: str) -> List[int]:
+    def get_diagnosed_case_list_by_user(self, user_email: str) -> List[str]:
         statement = (
             select(Diagnose.task_id)
             .select_from(Diagnose)

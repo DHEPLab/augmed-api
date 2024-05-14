@@ -1144,7 +1144,7 @@ class TestGetCaseSummary:
         )
 
         # Prepare data and mocks for multiple cases
-        configuration_repository.get_case_configurations_by_user.return_value = [(1, 101), (2, 102), (3, 103)]
+        configuration_repository.get_case_configurations_by_user.return_value = [(1, '101'), (2, '102'), (3, '103')]
         visit_occurrence_repository.get_visit_occurrence.side_effect = [
             mocker.Mock(person_id=1), mocker.Mock(person_id=2), mocker.Mock(person_id=3)
         ]
@@ -1168,12 +1168,12 @@ class TestGetCaseSummary:
         }
         observation_repository.get_observations_by_type.side_effect = self.create_observation_side_effect(
             observation_mapping)
-        diagnosis_repository.get_diagnosed_case_list_by_user.return_value = [1]
+        diagnosis_repository.get_diagnosed_case_list_by_user.return_value = ['101']
         mocker.patch('src.cases.service.case_service.get_age', side_effect=["36"])
 
         results = case_service.get_cases_by_user("user@example.com")
         expected = [
-            CaseSummary(config_id=102, case_id=2, age="36", gender='Female', patient_chief_complaint='Fever')]
+            CaseSummary(config_id='102', case_id=2, age="36", gender='Female', patient_chief_complaint='Fever')]
 
         assert len(results) == len(expected)
         for result, expect in zip(results, expected):

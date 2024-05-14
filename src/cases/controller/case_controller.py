@@ -1,6 +1,5 @@
 from flask import Blueprint, jsonify
 
-from diagnose.repository.diagnose_repository import DiagnoseRepository
 from src import db
 from src.cases.repository.concept_repository import ConceptRepository
 from src.cases.repository.drug_exposure_repository import \
@@ -14,6 +13,7 @@ from src.cases.service.case_service import CaseService
 from src.common.model.ApiResponse import ApiResponse
 from src.common.repository.system_config_repository import \
     SystemConfigRepository
+from src.diagnose.repository.diagnose_repository import DiagnoseRepository
 from src.user.repository.configuration_repository import \
     ConfigurationRepository
 from src.user.utils import auth_utils
@@ -42,7 +42,7 @@ case_service = CaseService(
 )
 
 
-@case_blueprint.route("/case-reviews/<int:case_config_id>", methods=["GET"])
+@case_blueprint.route("/case-reviews/<string:case_config_id>", methods=["GET"])
 @jwt_validation_required()
 def get_case_detail(case_config_id):
     case_review = case_service.get_case_review(case_config_id)
