@@ -33,4 +33,4 @@ class DiagnoseService:
             other=form_data.other,
         )
 
-        return self.diagnose_repository.add_diagonose(diagnose)
+        return self.diagnose_repository.add_diagnose(diagnose)

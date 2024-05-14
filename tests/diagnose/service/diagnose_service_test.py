@@ -69,7 +69,7 @@ def test_add_diagnose_response(
 
     diagnose_service.add_diagnose_response(task_id, diagnose_form_data)
 
-    assert mock_diagnose_repo.add_diagonose.called
+    assert mock_diagnose_repo.add_diagnose.called
 
 
 def test_add_diagnose_response_user_and_case_not_match(
