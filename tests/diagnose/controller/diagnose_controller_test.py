@@ -11,7 +11,7 @@ def before_each_tests(mocker):
 
 
 def test_save_diagnose_success(client, mocker):
-    task_id = 1
+    task_id = 'd523b88ae897538795ccfdb7c978b38f'
     data = {
         "diagnose": [{"diagnosis": 'diagnose', "rationale": 'rationale', "confidence": 100}],
         "other": ""
@@ -34,7 +34,7 @@ def test_save_diagnose_success(client, mocker):
 
 
 def test_save_diagnose_fail(client, mocker):
-    task_id = 1
+    task_id = 'd523b88ae897538795ccfdb7c978b38f'
     data = {
         "diagnose": [{"diagnosis": 'diagnose', "rationale": 'rationale', "confidence": 100}],
         "other": ""

@@ -17,7 +17,7 @@ diagnose_service = DiagnoseService(
 )
 
 
-@diagnose_blueprint.route("/diagnose/<int:task_id>", methods=["POST"])
+@diagnose_blueprint.route("/diagnose/<string:task_id>", methods=["POST"])
 @jwt_validation_required()
 def add_diagnose_response(task_id):
     json_data = request.get_json()
