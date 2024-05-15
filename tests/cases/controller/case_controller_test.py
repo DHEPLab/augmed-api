@@ -10,7 +10,8 @@ def test_get_case_review(client, session, mocker):
     input_case(session)
     config = Configuration(
         user_email='goodbye@sunwukong.com',
-        case_id=1
+        case_id=1,
+        id='1',
     )
     session.add(
         config

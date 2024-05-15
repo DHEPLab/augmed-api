@@ -38,7 +38,7 @@ def test_save_multiple_configurations(config_repository):
     # Saving multiple configurations
     configs = [
         Configuration(user_email='usera@example.com', case_id=1, path_config={'info': 'first'}),
-        Configuration(user_email='usera@example.com', case_id=2, path_config={'info': 'second'})
+        Configuration(user_email='usera@example.com', case_id=1, path_config=[])
     ]
     for config in configs:
         config_repository.save_configuration(config)
@@ -86,10 +86,8 @@ def test_should_avoid_duplicate_configurations(config_repository):
     assert first_save_result.__eq__(second_save_result)
 
 
-def should_generate_same_configuration_id_for_same_configuration(config_repository):
-    config = Configuration(user_email='usera@example.com', case_id=1)
-    config_id = config.id
-
-    new_config = Configuration(user_email='usera@example.com', case_id=1)
-    new_config_id = config_repository.get_configuration_by_id(config.id)
-    assert config_id.__eq__(new_config_id)
+def test_should_generate_same_configuration_id_for_same_configuration(config_repository):
+    config = config_repository.save_configuration(config=Configuration(user_email='usera@example.com', case_id=1))
+    config_repository.clean_configurations()
+    new_config_id = config_repository.save_configuration(Configuration(user_email='usera@example.com', case_id=1))
+    assert config.id.__eq__(new_config_id)
