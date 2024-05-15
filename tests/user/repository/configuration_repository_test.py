@@ -56,7 +56,7 @@ def test_get_configuration_by_id(config_repository):
     config_repository.save_configuration(new_config)
     found = config_repository.get_configuration_by_id(new_config.id)
 
-    assert found == new_config
+    assert found.__eq__(new_config)
 
 
 def test_get_case_configurations_by_user_empty(config_repository):

@@ -13,7 +13,7 @@ class ConfigurationRepository:
         self.session.flush()
 
     def save_configuration(self, config: Configuration):
-        self.session.add(config)
+        self.session.merge(config)
         self.session.flush()
         return config
 
