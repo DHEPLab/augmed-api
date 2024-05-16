@@ -11,7 +11,6 @@ class Diagnose(db.Model):
     id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
     task_id: str = db.Column(
         db.String,
-        db.ForeignKey("configuration.id"),
         nullable=True,
     )
     case_id: int = db.Column(db.Integer, nullable=True)
