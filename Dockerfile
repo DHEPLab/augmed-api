@@ -24,4 +24,4 @@ EXPOSE 5000
 WORKDIR ./src
 
 # Run the application
-CMD ["pipenv", "run", "flask", "run", "--host=0.0.0.0", "--debug"]
+CMD ["pipenv", "run", "flask", "run", "--host=0.0.0.0"]
