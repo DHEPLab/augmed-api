@@ -24,7 +24,6 @@ class ConfigurationService:
         try:
             self.repository.clean_configurations()
         except Exception as e:
-            print(e.__dict__)
             raise InternalServerError from e
 
         # Step 3: Save each configuration from the parsed data

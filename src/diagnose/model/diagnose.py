@@ -23,3 +23,4 @@ class Diagnose(db.Model):
     modified_timestamp: datetime = db.Column(
         db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
     )
+    __table_args__ = (db.UniqueConstraint("task_id", "case_id", "user_email"),)
