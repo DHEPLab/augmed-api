@@ -92,7 +92,7 @@ jobs:
       - name: Image scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          image-ref: '$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG'
           format: 'sarif'
           output: 'trivy-image-results.sarif'
           ignore-unfixed: true
