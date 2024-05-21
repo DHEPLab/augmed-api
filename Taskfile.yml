@@ -35,9 +35,8 @@ tasks:
 
   test:
     deps: [install]
-    env:
-      TESTCONTAINERS_RYUK_DISABLED: true
     cmds:
+      - export TESTCONTAINERS_RYUK_DISABLED=true
       - pipenv run pytest tests
     desc: "Run tests"
 

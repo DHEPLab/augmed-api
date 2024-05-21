@@ -10,7 +10,6 @@ install:
 
 .PHONY: run
 run: install
-	sh -c ' \
 		export PYTHONPATH=`pwd` && \
 		docker-compose up -d db && \
 		pipenv run python3 src/app.py \
@@ -28,7 +27,10 @@ lint: install
 
 .PHONY: test
 test: install
-	pipenv run pytest tests
+	sh -c ' \
+       	export TESTCONTAINERS_RYUK_DISABLED=true && \
+		pipenv run pytest tests\
+	'
 
 .PHONY: clean
 clean:
