@@ -29,6 +29,7 @@ lint: install
 test: install
 	sh -c ' \
        	export TESTCONTAINERS_RYUK_DISABLED=true && \
+       	export DOCKER_HOST=unix:///var/run/docker.sock && \
 		pipenv run pytest tests\
 	'
 
