@@ -19,6 +19,8 @@ jobs:
   test:
     needs: init
     runs-on: ubuntu-latest
+    env:
+      DOCKER_HOST: unix:///var/run/docker.sock
     
     steps:
       - uses: actions/checkout@v4
