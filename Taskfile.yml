@@ -1,0 +1,46 @@
+version: '3'
+
+tasks:
+  install:
+    cmds:
+      - pip3 install pipenv
+      - pipenv --python `which python3`
+      - pipenv install
+      - if [ ! -f .env ]; then cp .env.temp .env; fi
+    desc: "Install dependencies and setup environment"
+
+  start:
+    deps: [install, run]
+    desc: "Install dependencies and run the application"
+
+  run:
+    deps: [install]
+    cmds:
+      - export PYTHONPATH=`pwd`
+      - docker-compose up -d db
+      - pipenv run python3 src/app.py
+    desc: "Run the application"
+
+  format:
+    deps: [install]
+    cmds:
+      - pipenv run black src
+    desc: "Format source code"
+
+  lint:
+    deps: [install]
+    cmds:
+      - pipenv run flake8 src
+    desc: "Lint source code"
+
+  test:
+    deps: [install]
+    cmds:
+      - pipenv run pytest tests
+    desc: "Run tests"
+
+  clean:
+    cmds:
+      - pipenv --rm
+      - docker stop postgres_container
+    desc: "Clean the project environment"

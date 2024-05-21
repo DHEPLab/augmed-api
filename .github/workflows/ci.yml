@@ -11,28 +11,30 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      - uses: arduino/setup-task@v2
       - uses: actions/checkout@v4
       - name: Set up Environment & Install dependencies
         run: |
-          make install
+          task install
 
   test:
     needs: init
     runs-on: ubuntu-latest
     
     steps:
+      - uses: arduino/setup-task@v2
       - uses: actions/checkout@v4
       - name: format
         run: |
-          make format
+          task format
       - name: check-secrets
         uses: secret-scanner/action@0.0.2
       - name: Lint with flake8
         run: |
-          make lint
+          task lint
       - name: Run tests
         run: |
-          make test
+          task test
 
   codeql:
     needs: init
