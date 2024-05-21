@@ -19,13 +19,13 @@ flake8-pyproject = "*"
 pytest = "*"
 coverage = "*"
 pytest-cov = "*"
-gunicorn = "*"# ->tomcat, WSGI->severlet
 testcontainers-postgres = "*"
 flask-jwt-extended = "*"
 pytest-mock = "*"
 flask-json-schema = "*"
 testcontainers = "*"
 openpyxl = "*"
+
 
 [dev-packages]
 
