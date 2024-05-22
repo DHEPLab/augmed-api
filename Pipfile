@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-flask = "3.0.3"
+flask = "*"
 flask_sqlalchemy = "*"
 psycopg2-binary = "*"
 python-dotenv = "*"
@@ -25,7 +25,7 @@ pytest-mock = "*"
 flask-json-schema = "*"
 testcontainers = "*"
 openpyxl = "*"
-
+requests = "==2.31.0"
 
 [dev-packages]
 
