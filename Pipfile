@@ -26,6 +26,7 @@ flask-json-schema = "*"
 testcontainers = "*"
 openpyxl = "*"
 requests = "==2.31.0"
+#fix version due to problem of request, should upgrade after this issue fixed https://github.com/docker/docker-py/issues/3256
 
 [dev-packages]
 
