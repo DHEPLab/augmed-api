@@ -4,7 +4,7 @@ import pytest
 from openpyxl import Workbook
 
 from src.common.exception.BusinessException import BusinessException
-from src.user.utils.excel_parser import parse_excel_stream_to_configurations
+from src.user.utils.excel_parser import is_excel_file, parse_excel_stream_to_configurations
 
 
 def test_should_parse_excell_stream_correctly_when_all_config_are_set():
@@ -197,3 +197,13 @@ def test_invalid_case_id_raises_exception():
         parse_excel_stream_to_configurations(excel_stream)
 
     assert "Invalid case id in config file." in str(excinfo.value.error.value)
+
+
+def test_is_excel_file():
+    excels = ['test.xlsx', 'test.xls']
+    not_excels = ['test.numbers', 'test.txt', '', None]
+
+    for x in excels:
+        assert is_excel_file(x) is True
+    for x in not_excels:
+        assert is_excel_file(x) is False

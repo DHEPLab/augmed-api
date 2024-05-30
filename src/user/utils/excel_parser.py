@@ -1,3 +1,4 @@
+import os
 from io import BytesIO
 from typing import List
 
@@ -115,3 +116,11 @@ class ExcelConfigurationParser:
 def parse_excel_stream_to_configurations(excel_stream: BytesIO) -> List[Configuration]:
     parser = ExcelConfigurationParser(excel_stream)
     return parser.parse()
+
+
+def is_excel_file(filename: str | None):
+    if filename is None:
+        return False
+
+    _, extension = os.path.splitext(filename)
+    return extension in [".xlsx", ".xls"]
