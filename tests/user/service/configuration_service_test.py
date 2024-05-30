@@ -24,9 +24,10 @@ def valid_excel_file():
     ws['C1'] = 'Path'
     ws['D1'] = 'Collapse'
     ws['E1'] = 'Highlight'
+    ws['F1'] = 'Top'
     # Add some dummy data
-    ws.append(['usera@example.com', '1', 'Background.abc', 'TRUE', 'TRUE'])
-    ws.append(['userb@example.com', '2', 'Background.xyz', 'FALSE', 'TRUE'])
+    ws.append(['usera@example.com', '1', 'Background.abc', 'TRUE', 'TRUE', 1])
+    ws.append(['userb@example.com', '2', 'Background.xyz', 'FALSE', 'TRUE', None])
     # Save the workbook to a BytesIO object
     excel_stream = BytesIO()
     wb.save(excel_stream)
@@ -38,7 +39,7 @@ def valid_excel_file():
 def config_data():
     return [
         {"user_email": "usera@example.com", "case_id": 1, "path_config": [
-            {"path": "Background.abc", "style": {"Collapse": True, "Highlight": True}}
+            {"path": "Background.abc", "style": {"Collapse": True, "Highlight": True, "top": 1}}
         ]},
         {"user_email": "userb@example.com", "case_id": 2, "path_config": [
             {"path": "Background.xyz", "style": {"Collapse": False, "Highlight": True}}
@@ -60,7 +61,6 @@ def test_process_excel_file_success(mocker, mock_repo, valid_excel_file, config_
     assert response[1]["status"] == "added"
     mock_repo.clean_configurations.assert_called_once()
     assert mock_repo.save_configuration.call_count == len(config_data)
-
 
 
 def test_parser_error(mocker, mock_repo, valid_excel_file):

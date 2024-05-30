@@ -12,14 +12,14 @@ def test_should_parse_excell_stream_correctly_when_all_config_are_set():
     wb = Workbook()
     ws = wb.active
     # Headers
-    ws.append(['User', 'Case No.', 'Path', 'Collapse', 'Highlight'])
+    ws.append(['User', 'Case No.', 'Path', 'Collapse', 'Highlight', 'Top'])
     # Data for multiple users and cases
-    ws.append(['usera@example.com', '1', 'Background.abc', True, True])
+    ws.append(['usera@example.com', '1', 'Background.abc', True, True, 1])
     ws.merge_cells(start_row=2, start_column=1, end_row=3, end_column=1)
     ws.merge_cells(start_row=2, start_column=2, end_row=3, end_column=2)
 
-    ws.append([None, None, 'background.xxx', True, False])
-    ws.append(['userb@example.com', '1', 'Background.patient demo', False, False])
+    ws.append([None, None, 'background.xxx', True, False, 2])
+    ws.append(['userb@example.com', '1', 'Background.patient demo', False, False, 1.5])
     excel_stream = BytesIO()
     wb.save(excel_stream)
     excel_stream.seek(0)
@@ -35,15 +35,15 @@ def test_should_parse_excell_stream_correctly_when_all_config_are_set():
             'user_email': 'usera@example.com',
             'case_id': 1,
             'path_config': [
-                {'path': 'Background.abc', 'style': {'collapse': True, 'highlight': True}},
-                {'path': 'background.xxx', 'style': {'collapse': True, 'highlight': False}}
+                {'path': 'Background.abc', 'style': {'collapse': True, 'highlight': True, 'top': 1}},
+                {'path': 'background.xxx', 'style': {'collapse': True, 'highlight': False, 'top': 2}}
             ]
         },
         {
             'user_email': 'userb@example.com',
             'case_id': 1,
             'path_config': [
-                {'path': 'Background.patient demo', 'style': {'collapse': False, 'highlight': False}}
+                {'path': 'Background.patient demo', 'style': {'collapse': False, 'highlight': False, "top": 1.5}}
             ]
         }
     ]
@@ -57,11 +57,11 @@ def test_should_ignore_none_config():
     wb = Workbook()
     ws = wb.active
     # Headers
-    ws.append(['User', 'Case No.', 'Path', 'Collapse', 'Highlight'])
+    ws.append(['User', 'Case No.', 'Path', 'Collapse', 'Highlight', 'Top'])
     # Data for multiple users and cases
-    ws.append(['usera@example.com', '1', 'Background.abc', None, True])
-    ws.append([None, None, 'background.xxx', True, None])
-    ws.append([None, None, 'Background.patient demo', None, None])
+    ws.append(['usera@example.com', '1', 'Background.abc', None, True, None])
+    ws.append([None, None, 'background.xxx', True, None, None])
+    ws.append([None, None, 'Background.patient demo', None, None, None])
     ws.merge_cells(start_row=2, start_column=1, end_row=4, end_column=1)
     ws.merge_cells(start_row=2, start_column=2, end_row=4, end_column=2)
     excel_stream = BytesIO()
@@ -96,9 +96,9 @@ def test_should_ignore_none_config_while_keep_user_case_relationship():
     wb = Workbook()
     ws = wb.active
     # Headers
-    ws.append(['User', 'Case No.', 'Path', 'Collapse', 'Highlight'])
+    ws.append(['User', 'Case No.', 'Path', 'Collapse', 'Highlight', 'Top'])
     # Data for multiple users and cases
-    ws.append(['usera@example.com', '1', 'Background.patient demo', None, None])
+    ws.append(['usera@example.com', '1', 'Background.patient demo', None, None, None])
     excel_stream = BytesIO()
     wb.save(excel_stream)
     excel_stream.seek(0)
@@ -115,7 +115,7 @@ def test_should_ignore_blank_line():
     wb = Workbook()
     ws = wb.active
     # Headers
-    ws.append(['User', 'Case No.', 'Path', 'Collapse', 'Highlight'])
+    ws.append(['User', 'Case No.', 'Path', 'Collapse', 'Highlight', 'Top'])
     # Data for multiple users and cases
     ws.append(['usera@example.com', '1', 'Background.patient demo', None, None])
     ws.append([None, None, None, None, None])
@@ -136,15 +136,15 @@ def test_should_keep_duplicate_user_case_relationship():
     wb = Workbook()
     ws = wb.active
     # Headers
-    ws.append(['User', 'Case No.', 'Path', 'Collapse', 'Highlight'])
+    ws.append(['User', 'Case No.', 'Path', 'Collapse', 'Highlight', 'Top'])
     # Data for multiple users and cases
-    ws.append(['usera@example.com', '1', 'Background.patient demo', None, None])
-    ws.append([None, None, 'Background.drug', None, None])
+    ws.append(['usera@example.com', '1', 'Background.patient demo', None, None, None])
+    ws.append([None, None, 'Background.drug', None, None, None])
     ws.merge_cells(start_row=2, start_column=1, end_row=3, end_column=1)
     ws.merge_cells(start_row=2, start_column=2, end_row=3, end_column=2)
-    ws.append(['usera@example.com', '1', 'Background.patient demo', None, None])
+    ws.append(['usera@example.com', '1', 'Background.patient demo', None, None, None])
 
-    ws.append(['usera@example.com', '1', None, None, None])
+    ws.append(['usera@example.com', '1', None, None, None, None])
 
     excel_stream = BytesIO()
     wb.save(excel_stream)
@@ -170,8 +170,8 @@ def test_should_keep_duplicate_user_case_relationship():
 def test_invalid_user_email_raises_exception():
     wb = Workbook()
     ws = wb.active
-    ws.append(['User', 'Case No.', 'Path', 'Collapse', 'Highlight'])
-    ws.append([None, '1', 'Background.patient demo', None, None])  # Invalid user
+    ws.append(['User', 'Case No.', 'Path', 'Collapse', 'Highlight', 'Top'])
+    ws.append([None, '1', 'Background.patient demo', None, None, None])  # Invalid user
 
     excel_stream = BytesIO()
     wb.save(excel_stream)
@@ -186,8 +186,8 @@ def test_invalid_user_email_raises_exception():
 def test_invalid_case_id_raises_exception():
     wb = Workbook()
     ws = wb.active
-    ws.append(['User', 'Case No.', 'Path', 'Collapse', 'Highlight'])
-    ws.append(['usera@example.com', 'abc', 'Background.patient demo', None, None])  # Invalid case ID
+    ws.append(['User', 'Case No.', 'Path', 'Collapse', 'Highlight', 'Top'])
+    ws.append(['usera@example.com', 'abc', 'Background.patient demo', None, None, None])  # Invalid case ID
 
     excel_stream = BytesIO()
     wb.save(excel_stream)

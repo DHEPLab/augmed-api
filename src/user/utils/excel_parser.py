@@ -83,9 +83,10 @@ class ExcelConfigurationParser:
         path = row_data[headers.index("Path")]
         collapse = row_data[headers.index("Collapse")]
         highlight = row_data[headers.index("Highlight")]
+        top = row_data[headers.index("Top")]
 
         if path:
-            style = self._build_style_dict(collapse, highlight)
+            style = self._build_style_dict(collapse, highlight, top)
             if style:
                 current_config.path_config.append({"path": path, "style": style})
 
@@ -104,12 +105,14 @@ class ExcelConfigurationParser:
                 return True
         return False
 
-    def _build_style_dict(self, collapse, highlight) -> dict:
+    def _build_style_dict(self, collapse, highlight, top) -> dict:
         style = {}
         if collapse is not None:
             style["collapse"] = collapse
         if highlight is not None:
             style["highlight"] = highlight
+        if top is not None:
+            style["top"] = top
         return style
 
 
