@@ -1160,7 +1160,6 @@ class TestGetCaseSummary:
             diagnose_repository=diagnosis_repository
         )
         result = case_service.get_cases_by_user("user@example.com")
-        print(result)
         expected = [CaseSummary(config_id=101, case_id=1, age="36", gender='Male', patient_chief_complaint='Headache')]
 
         assert len(result) == 1
