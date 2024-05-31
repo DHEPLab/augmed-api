@@ -1,4 +1,5 @@
 from collections import defaultdict
+from operator import itemgetter
 
 from src.cases.controller.response.case_summary import CaseSummary
 from src.cases.model.case import Case, TreeNode
@@ -46,7 +47,7 @@ def get_age(person, visit_occurrence):
     return str(visit_occurrence.visit_start_date.year - person.year_of_birth)
 
 
-def attach_style(display_configuration, case_details):
+def attach_style(display_configuration, case_details, important_infos):
     paths = display_configuration["path"].split(".")
     level = 0
     nodes = case_details
@@ -59,6 +60,14 @@ def attach_style(display_configuration, case_details):
                 found = True
                 if level == len(paths):
                     node.style = display_configuration["style"]
+                    if node.style.get("top"):
+                        important_infos.append(
+                            {
+                                "key": "ignore" if level == 2 else node.key,
+                                "values": node.values,
+                                "weight": node.style["top"],
+                            }
+                        )
                 break
         if not found:
             break
@@ -247,13 +256,22 @@ class CaseService:
         path_configurations = configuration.path_config if configuration else None
         case_details = self.get_case_detail(configuration.case_id)
 
+        important_infos = []
         if path_configurations:
             for item in path_configurations:
                 if item.get("style"):
-                    attach_style(item, case_details)
+                    attach_style(item, case_details, important_infos)
+
+        important_infos.sort(key=itemgetter("weight"))
+        sorted_important_infos = map(
+            lambda e: TreeNode(e["key"], e["values"]), important_infos
+        )
 
         return Case(
-            self.person.person_source_value, str(configuration.case_id), case_details
+            self.person.person_source_value,
+            str(configuration.case_id),
+            case_details,
+            list(sorted_important_infos),
         )
 
     def __get_current_case_by_user(self, user_email) -> tuple:

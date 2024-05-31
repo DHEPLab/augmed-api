@@ -105,11 +105,11 @@ class TestAttachStyle:
             ),
             TreeNode("another", "xxx"),
         ]
-        display_config = {"path": "levelOne", "style": "style"}
+        display_config = {"path": "levelOne", "style": {'collapse': True}}
 
-        attach_style(display_config, case_details)
+        attach_style(display_config, case_details, [])
 
-        assert case_details[0].style == "style"
+        assert case_details[0].style == {'collapse': True}
 
     def test_attach_style_to_configuration_when_path_found_in_nested_layer(self):
         case_details = [
@@ -118,11 +118,11 @@ class TestAttachStyle:
             ),
             TreeNode("another", "xxx"),
         ]
-        display_config = {"path": "levelOne.levelTwo.levelTree", "style": "style"}
+        display_config = {"path": "levelOne.levelTwo.levelTree", "style": {'collapse': True}}
 
-        attach_style(display_config, case_details)
+        attach_style(display_config, case_details, [])
 
-        assert case_details[0].values[0].values[0].style == "style"
+        assert case_details[0].values[0].values[0].style == {'collapse': True}
 
     def test_not_attach_style_to_configuration_when_path_not_found(self):
         case_details = [
@@ -130,13 +130,49 @@ class TestAttachStyle:
                 "levelOne", [TreeNode("levelTwo", [TreeNode("levelTree", "text")])]
             ),
         ]
-        display_config = {"path": "levelOne.levelTwo.xxx", "style": "style"}
+        display_config = {"path": "levelOne.levelTwo.xxx", "style": {'collapse': True}}
 
-        attach_style(display_config, case_details)
+        attach_style(display_config, case_details, [])
 
         assert case_details[0].style is None
         assert case_details[0].values[0].style is None
         assert case_details[0].values[0].values[0].style is None
+
+    def test_append_import_info_when_config_top_area_at_second_layer(self):
+        case_details = [
+            TreeNode(
+                "levelOne", [TreeNode("levelTwo", [TreeNode("levelTree", "text")])]
+            ),
+            TreeNode("another", "xxx"),
+        ]
+        display_config = {"path": "levelOne.levelTwo", "style": {'top': 1}}
+        important_infos = []
+
+        attach_style(display_config, case_details, important_infos)
+
+        assert important_infos == [{
+            'key': 'ignore',
+            'values': [TreeNode("levelTree", "text")],
+            'weight': 1
+        }]
+
+    def test_append_import_info_when_config_top_area_at_third_layer(self):
+        case_details = [
+            TreeNode(
+                "levelOne", [TreeNode("levelTwo", [TreeNode("levelTree", "text")])]
+            ),
+            TreeNode("another", "xxx"),
+        ]
+        display_config = {"path": "levelOne.levelTwo.levelTree", "style": {'top': 1}}
+        important_infos = []
+
+        attach_style(display_config, case_details, important_infos)
+
+        assert important_infos == [{
+            'key': 'levelTree',
+            'values': 'text',
+            'weight': 1
+        }]
 
 
 def mock_repos(mocker):
@@ -882,7 +918,8 @@ class TestGetCaseReview:
                         )
                     ],
                 )
-            ]
+            ],
+            importantInfos=[]
         )
 
     def test_get_case_review_without_path_config(self, mocker):
@@ -928,7 +965,8 @@ class TestGetCaseReview:
                         )
                     ],
                 )
-            ]
+            ],
+            importantInfos=[]
         )
 
     def test_throw_error_when_configuration_not_found(self, mocker):
@@ -958,6 +996,75 @@ class TestGetCaseReview:
 
         with pytest.raises(BusinessException, match=re.compile(BusinessExceptionEnum.NoAccessToCaseReview.name)):
             case_service.get_case_review(1)
+
+    def test_get_case_review_when_path_config_top_area(self, mocker):
+        (
+            concept_repository,
+            configuration_repository,
+            drug_exposure_repository,
+            measurement_repository,
+            observation_repository,
+            person_repository,
+            visit_occurrence_repository,
+            system_config_repository,
+            diagnosis_repository,
+        ) = mock_repos(mocker)
+        configuration_repository.get_configuration_by_id.return_value = Configuration(
+            user_email='goodbye@sunwukong.com',
+            case_id=1,
+            path_config=[
+                {
+                    "path": "BACKGROUND.Patient Demographics",
+                    "style": {"collapse": True, "top": 3},
+                },
+                {
+                    "path": "BACKGROUND.Patient Demographics.Age",
+                    "style": {"top": 2},
+                },
+                {
+                    "path": "BACKGROUND.Patient Demographics.Gender",
+                    "style": {"top": 1},
+                },
+            ],
+        )
+        case_service = CaseService(
+            visit_occurrence_repository=visit_occurrence_repository,
+            concept_repository=concept_repository,
+            measurement_repository=measurement_repository,
+            observation_repository=observation_repository,
+            person_repository=person_repository,
+            drug_exposure_repository=drug_exposure_repository,
+            configuration_repository=configuration_repository,
+            system_config_repository=system_config_repository,
+            diagnose_repository=diagnosis_repository
+        )
+
+        case_review = case_service.get_case_review(1)
+
+        assert case_review == Case(
+            personName='sunwukong',
+            caseNumber='1',
+            details=[
+                TreeNode(
+                    "BACKGROUND",
+                    [
+                        TreeNode(
+                            "Patient Demographics",
+                            [TreeNode("Age", "36", {"top": 2}), TreeNode("Gender", "test", {"top": 1})],
+                            {"collapse": True, "top": 3},
+                        )
+                    ],
+                )
+            ],
+            importantInfos=[
+                TreeNode("Gender", "test"),
+                TreeNode("Age", "36"),
+                TreeNode(
+                    "ignore",
+                    [TreeNode("Age", "36", {"top": 2}), TreeNode("Gender", "test", {"top": 1})],
+                )
+            ]
+        )
 
 
 class TestGetCaseSummary:
@@ -1053,6 +1160,7 @@ class TestGetCaseSummary:
             diagnose_repository=diagnosis_repository
         )
         result = case_service.get_cases_by_user("user@example.com")
+        print(result)
         expected = [CaseSummary(config_id=101, case_id=1, age="36", gender='Male', patient_chief_complaint='Headache')]
 
         assert len(result) == 1

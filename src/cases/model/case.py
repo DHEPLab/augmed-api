@@ -16,3 +16,4 @@ class Case:
     personName: str
     caseNumber: str
     details: list[TreeNode]
+    importantInfos: list[TreeNode]

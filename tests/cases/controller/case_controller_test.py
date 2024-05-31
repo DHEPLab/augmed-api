@@ -48,11 +48,12 @@ def test_get_case_review(client, session, mocker):
 
     assert response.status_code == 200
     data = response.get_json()["data"]
-    assert json.dumps(data) == expected_json()
+    assert data == expected_json()
 
 
 def expected_json():
-    return '{"caseNumber": "1", "details": [{"key": "BACKGROUND", "style": null, "values": [{"key": "Patient Demographics", "style": null, "values": [{"key": "Age", "style": null, "values": "36"}, {"key": "Gender", "style": null, "values": "M"}]}, {"key": "Family History", "style": null, "values": ["family history", "10", "value", "10 per day", "qualifier : 10"]}, {"key": "Social History", "style": null, "values": [{"key": "Smoke", "style": null, "values": "nosmoke"}]}]}, {"key": "PATIENT COMPLAINT", "style": null, "values": [{"key": "Chief Complaint", "style": null, "values": [{"key": "Nested of Chief complaint", "style": null, "values": "duration"}]}, {"key": "Current Symptoms", "style": null, "values": [{"key": "1 of Current symptoms", "style": null, "values": "duration"}, {"key": "2 of Current symptoms", "style": null, "values": "duration"}]}]}, {"key": "PHYSICAL EXAMINATION", "style": null, "values": [{"key": "Vital signs", "style": null, "values": [{"key": "Pulse rate", "style": null, "values": "operator 10 unit"}, {"key": "BP", "style": null, "values": "operator value unit"}]}, {"key": "Abdominal", "style": null, "values": "10"}]}], "personName": "sunwukong"}'
+    with open('tests/cases/controller/expected_response.json') as f:
+        return json.load(f)
 
 
 def test_get_case_summary(client, mocker, session):
