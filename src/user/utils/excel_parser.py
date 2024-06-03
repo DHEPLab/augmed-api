@@ -33,6 +33,8 @@ class ExcelConfigurationParser:
             )
             case_id = self._validate_and_convert_case_id(case)
 
+            self._validate_path_and_top(row_data, headers)
+
             if self._should_create_new_config(
                 current_config, user, case_id, row, user_index, case_index
             ):
@@ -62,6 +64,18 @@ class ExcelConfigurationParser:
             return int(case)
         except (ValueError, TypeError):
             raise BusinessException(BusinessExceptionEnum.InvalidCaseId)
+
+    def _validate_path_and_top(self, row_data, headers):
+        path = row_data[headers.index("Path")]
+        top = row_data[headers.index("Top")]
+
+        if top is not None:
+            # The top config only allow number as input.
+            if not isinstance(top, (int, float)):
+                raise BusinessException(BusinessExceptionEnum.ConfigFileIncorrect)
+            # The top config can not set on root node.
+            if len(str(path).split(".")) < 2:
+                raise BusinessException(BusinessExceptionEnum.ConfigFileIncorrect)
 
     def _should_create_new_config(
         self, current_config, user, case_id, row, user_index, case_index

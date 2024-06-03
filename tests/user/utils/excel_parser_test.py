@@ -207,3 +207,35 @@ def test_is_excel_file():
         assert is_excel_file(x) is True
     for x in not_excels:
         assert is_excel_file(x) is False
+
+
+def test_invalid_non_number_top_config_should_raises_exception():
+    wb = Workbook()
+    ws = wb.active
+    ws.append(['User', 'Case No.', 'Path', 'Collapse', 'Highlight', 'Top'])
+    ws.append(['uset@test.com', '1', 'Background.patient demo', None, None, 'NAN'])
+
+    excel_stream = BytesIO()
+    wb.save(excel_stream)
+    excel_stream.seek(0)
+
+    with pytest.raises(BusinessException) as excinfo:
+        parse_excel_stream_to_configurations(excel_stream)
+
+    assert "Error while processing Excel file, please check again." in str(excinfo.value.error.value)
+
+
+def test_invalid_top_config_on_root_node_should_raises_exception():
+    wb = Workbook()
+    ws = wb.active
+    ws.append(['User', 'Case No.', 'Path', 'Collapse', 'Highlight', 'Top'])
+    ws.append(['uset@test.com', '1', 'Background', None, None, 1])
+
+    excel_stream = BytesIO()
+    wb.save(excel_stream)
+    excel_stream.seek(0)
+
+    with pytest.raises(BusinessException) as excinfo:
+        parse_excel_stream_to_configurations(excel_stream)
+
+    assert "Error while processing Excel file, please check again." in str(excinfo.value.error.value)
