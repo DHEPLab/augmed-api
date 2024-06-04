@@ -60,7 +60,7 @@ def attach_style(display_configuration, case_details, important_infos):
                 found = True
                 if level == len(paths):
                     node.style = display_configuration["style"]
-                    if node.style.get("top"):
+                    if node.style.get("top") or node.style.get("top") == 0:
                         important_infos.append(
                             {
                                 "key": "ignore" if level == 2 else node.key,

@@ -1023,7 +1023,7 @@ class TestGetCaseReview:
                 },
                 {
                     "path": "BACKGROUND.Patient Demographics.Gender",
-                    "style": {"top": 1},
+                    "style": {"top": 0},
                 },
             ],
         )
@@ -1050,7 +1050,7 @@ class TestGetCaseReview:
                     [
                         TreeNode(
                             "Patient Demographics",
-                            [TreeNode("Age", "36", {"top": 2}), TreeNode("Gender", "test", {"top": 1})],
+                            [TreeNode("Age", "36", {"top": 2}), TreeNode("Gender", "test", {"top": 0})],
                             {"collapse": True, "top": 3},
                         )
                     ],
@@ -1061,7 +1061,7 @@ class TestGetCaseReview:
                 TreeNode("Age", "36"),
                 TreeNode(
                     "ignore",
-                    [TreeNode("Age", "36", {"top": 2}), TreeNode("Gender", "test", {"top": 1})],
+                    [TreeNode("Age", "36", {"top": 2}), TreeNode("Gender", "test", {"top": 0})],
                 )
             ]
         )
