@@ -44,6 +44,9 @@ from src.common.model.system_config import SystemConfig
 # diagnose
 from src.diagnose.model.diagnose import Diagnose
 
+# config 
+from src.configration.model import diagnose_config
+
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

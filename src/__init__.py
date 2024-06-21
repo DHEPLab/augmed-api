@@ -21,6 +21,7 @@ def create_app(config_object=None):
         app.config.from_mapping(config_object)
     else:
         # Default configuration setup from config.py
+        # TODO: load from object not file ref.
         app.config.from_object("src.config.Config")
 
     schema.init_app(app)
