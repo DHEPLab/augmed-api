@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from src.common.exception.BusinessException import BusinessExceptionEnum
+from src.common.exception.BusinessException import BusinessException
 from src.common.model import ErrorCode
 
 
@@ -14,8 +14,8 @@ class Error:
         return cls(error.value, msg if msg else error.name)
 
     @classmethod
-    def erorr(cls, e: BusinessExceptionEnum):
-        return cls(e.code, e.message)
+    def erorr(cls, code: str, msg: str):
+        return cls(code, msg)
 
 
 @dataclass
@@ -32,5 +32,11 @@ class ApiResponse:
         return cls(None, Error.build(error, msg))
 
     @classmethod
-    def error(cls, e: BusinessExceptionEnum):
-        return cls(None, Error.erorr(e))
+    def error(cls, e: BusinessException):
+        code = e.error.code
+        msg = (
+            e.error.message
+            if e.detail is None
+            else f"{e.error.message} Error:{e.detail}"
+        )
+        return cls(None, Error.erorr(code, msg))

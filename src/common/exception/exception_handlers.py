@@ -11,7 +11,7 @@ from src.common.model.ErrorCode import ErrorCode
 def register_error_handlers(app):
     @app.errorhandler(BusinessException)
     def handle_business_exception(e: BusinessException):
-        return jsonify(ApiResponse.error(e.error)), 500
+        return jsonify(ApiResponse.error(e)), 500
 
     @app.errorhandler(InternalServerError)
     def handle_application_exception(error):

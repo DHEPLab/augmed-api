@@ -35,8 +35,9 @@ class BusinessExceptionEnum(Enum):
         "1012",
         "Invalid case id in config file.",
     )
+    InValidDiagnoseConfig = ("1020", "Invalid diagnose config.")
 
-    def __init__(self, code, message):
+    def __init__(self, code: str, message: str):
         self._code = code
         self._message = message
 
@@ -50,5 +51,8 @@ class BusinessExceptionEnum(Enum):
 
 
 class BusinessException(Exception):
-    def __init__(self, businessExceptionEnum: BusinessExceptionEnum):
+    def __init__(
+        self, businessExceptionEnum: BusinessExceptionEnum, detail: str = None
+    ):
         self.error = businessExceptionEnum
+        self.detail = detail
