@@ -45,7 +45,7 @@ from src.common.model.system_config import SystemConfig
 from src.diagnose.model.diagnose import Diagnose
 
 # config 
-from src.configration.model import diagnose_config
+from src.configration.model import answer_config
 
 
 # this is the Alembic Config object, which provides
