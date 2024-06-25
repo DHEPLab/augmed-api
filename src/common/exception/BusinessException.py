@@ -35,7 +35,11 @@ class BusinessExceptionEnum(Enum):
         "1012",
         "Invalid case id in config file.",
     )
-    InValidDiagnoseConfig = ("1020", "Invalid diagnose config.")
+    InValidDiagnoseConfig = ("1020", "Invalid answer config.")
+    NoAnswerConfigAvailable = (
+        "1021",
+        "No answer config available. Please configure it first.",
+    )
 
     def __init__(self, code: str, message: str):
         self._code = code
