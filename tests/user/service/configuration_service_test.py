@@ -1,7 +1,7 @@
-from io import BytesIO
+import csv
+from io import StringIO
 
 import pytest
-from openpyxl import Workbook
 from werkzeug.exceptions import InternalServerError
 
 from src.common.exception.BusinessException import BusinessException, BusinessExceptionEnum
@@ -15,44 +15,36 @@ def mock_repo(mocker):
 
 
 @pytest.fixture
-def valid_excel_file():
-    # Create a new workbook
-    wb = Workbook()
-    ws = wb.active
-    ws['A1'] = 'User'
-    ws['B1'] = 'Case No.'
-    ws['C1'] = 'Path'
-    ws['D1'] = 'Collapse'
-    ws['E1'] = 'Highlight'
-    ws['F1'] = 'Top'
+def valid_csv_file():
+    stream = StringIO()
+    writer = csv.writer(stream, delimiter=",")
+    # Headers
+    writer.writerow(['User', 'Case No.', 'Path', 'Collapse', 'Highlight', 'Top'])
     # Add some dummy data
-    ws.append(['usera@example.com', '1', 'Background.abc', 'TRUE', 'TRUE', 1])
-    ws.append(['userb@example.com', '2', 'Background.xyz', 'FALSE', 'TRUE', None])
-    # Save the workbook to a BytesIO object
-    excel_stream = BytesIO()
-    wb.save(excel_stream)
-    excel_stream.seek(0)  # Rewind the stream to the beginning
-    return excel_stream
+    writer.writerow(['usera@example.com', '1', 'Background.abc', 'TRUE', 'TRUE', 1])
+    writer.writerow(['userb@example.com', '2', 'Background.xyz', 'FALSE', 'TRUE', None])
+    stream.seek(0)  # Rewind the stream to the beginning
+    return stream
 
 
 @pytest.fixture
 def config_data():
     return [
         {"user_email": "usera@example.com", "case_id": 1, "path_config": [
-            {"path": "Background.abc", "style": {"Collapse": True, "Highlight": True, "top": 1}}
+            {"path": "Background.abc", "style": {"Collapse": 'TRUE', "Highlight": 'TRUE', "top": 1.0}}
         ]},
         {"user_email": "userb@example.com", "case_id": 2, "path_config": [
-            {"path": "Background.xyz", "style": {"Collapse": False, "Highlight": True}}
+            {"path": "Background.xyz", "style": {"Collapse": 'FALSE', "Highlight": 'TRUE'}}
         ]}
     ]
 
 
-def test_process_excel_file_success(mocker, mock_repo, valid_excel_file, config_data):
+def test_process_csv_file_success(mocker, mock_repo, valid_csv_file, config_data):
     # Setup the mock to return our prepared config data
-    mocker.patch('src.user.utils.excel_parser.parse_excel_stream_to_configurations', return_value=config_data)
+    mocker.patch('src.user.utils.csv_parser.parse_csv_stream_to_configurations', return_value=config_data)
     service = ConfigurationService(repository=mock_repo)
 
-    response = service.process_excel_file(valid_excel_file)
+    response = service.process_csv_file(valid_csv_file)
     # Assertions to check if the response is as expected
     assert len(response) == len(config_data)
     assert response[0]["user_case_key"] == "usera@example.com-1"
@@ -63,34 +55,34 @@ def test_process_excel_file_success(mocker, mock_repo, valid_excel_file, config_
     assert mock_repo.save_configuration.call_count == len(config_data)
 
 
-def test_parser_error(mocker, mock_repo, valid_excel_file):
-    mocker.patch('src.user.service.configuration_service.parse_excel_stream_to_configurations',
+def test_parser_error(mocker, mock_repo, valid_csv_file):
+    mocker.patch('src.user.service.configuration_service.parse_csv_stream_to_configurations',
                  side_effect=BusinessException(BusinessExceptionEnum.InvalidCaseId))
     service = ConfigurationService(repository=mock_repo)
 
     with pytest.raises(BusinessException) as exc_info:
-        service.process_excel_file(valid_excel_file)
+        service.process_csv_file(valid_csv_file)
 
     assert exc_info.value.error == BusinessExceptionEnum.InvalidCaseId
 
 
-def test_database_cleaning_error(mocker, mock_repo, valid_excel_file):
-    mocker.patch('src.user.utils.excel_parser.parse_excel_stream_to_configurations', return_value=[])
+def test_database_cleaning_error(mocker, mock_repo, valid_csv_file):
+    mocker.patch('src.user.utils.csv_parser.parse_csv_stream_to_configurations', return_value=[])
     mock_repo.clean_configurations.side_effect = Exception("Database cleanup failed")
     service = ConfigurationService(repository=mock_repo)
 
     with pytest.raises(InternalServerError):
-        service.process_excel_file(valid_excel_file)
+        service.process_csv_file(valid_csv_file)
 
 
-def test_database_save_error(mocker, mock_repo, valid_excel_file):
+def test_database_save_error(mocker, mock_repo, valid_csv_file):
     config_data = [{"user_email": "usera@example.com", "case_id": 1, "path_config": []}]
-    mocker.patch('src.user.utils.excel_parser.parse_excel_stream_to_configurations', return_value=config_data)
+    mocker.patch('src.user.utils.csv_parser.parse_csv_stream_to_configurations', return_value=config_data)
     mock_repo.clean_configurations.return_value = None
     mock_repo.save_configuration.side_effect = Exception("Save failed")
     service = ConfigurationService(repository=mock_repo)
 
-    response = service.process_excel_file(valid_excel_file)
+    response = service.process_csv_file(valid_csv_file)
 
     assert response[0]["user_case_key"] == 'usera@example.com-1'
     assert response[0]["status"] == 'failed'

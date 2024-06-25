@@ -63,8 +63,8 @@ def build_style_dict(collapse, highlight, top) -> dict:
 
 
 class CsvConfigurationParser:
-    def __init__(self, excel_stream: StringIO):
-        csv_reader = csv.DictReader(excel_stream, delimiter=",")
+    def __init__(self, csv_stream: StringIO):
+        csv_reader = csv.DictReader(csv_stream, delimiter=",")
         self.csv_data = []
         for row in csv_reader:
             self.csv_data.append(row)
@@ -104,8 +104,8 @@ class CsvConfigurationParser:
                 self.current_config.path_config.append({"path": path, "style": style})
 
 
-def parse_csv_stream_to_configurations(excel_stream: StringIO) -> List[Configuration]:
-    parser = CsvConfigurationParser(excel_stream)
+def parse_csv_stream_to_configurations(csv_stream: StringIO) -> List[Configuration]:
+    parser = CsvConfigurationParser(csv_stream)
     return parser.parse()
 
 

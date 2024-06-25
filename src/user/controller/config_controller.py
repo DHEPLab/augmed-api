@@ -29,5 +29,5 @@ def upload_config():
         )
 
     file_stream = StringIO(file.read().decode())
-    response_data = config_service.process_excel_file(file_stream)
+    response_data = config_service.process_csv_file(file_stream)
     return jsonify(ApiResponse.success(response_data)), 200

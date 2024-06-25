@@ -12,8 +12,8 @@ class ConfigurationService:
     def __init__(self, repository: ConfigurationRepository):
         self.repository = repository
 
-    def process_excel_file(self, file_stream: StringIO) -> list[dict[str, str]]:
-        # Step 1: parse excel
+    def process_csv_file(self, file_stream: StringIO) -> list[dict[str, str]]:
+        # Step 1: parse csv
         try:
             configurations = parse_csv_stream_to_configurations(file_stream)
         except BusinessException as e:

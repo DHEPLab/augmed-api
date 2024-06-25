@@ -3,9 +3,9 @@ from io import BytesIO
 
 def test_successful_file_upload(client, mocker):
     data = {
-        'file': (BytesIO(b'content of the file'), 'test.xlsx')
+        'file': (BytesIO(b'content of the file'), 'test.csv')
     }
-    mocker.patch('src.user.service.configuration_service.ConfigurationService.process_excel_file',
+    mocker.patch('src.user.service.configuration_service.ConfigurationService.process_csv_file',
                  return_value={"user@example.com-1": "added"})
     mocker.patch('src.user.utils.auth_utils.validate_jwt_and_refresh', return_value=None)
 
@@ -35,9 +35,9 @@ def test_invalid_file_extension(client, mocker):
 
 def test_error_during_file_processing(client, mocker):
     data = {
-        'file': (BytesIO(b'content of the file'), 'test.xlsx')
+        'file': (BytesIO(b'content of the file'), 'test.csv')
     }
-    mocker.patch('src.user.service.configuration_service.ConfigurationService.process_excel_file',
+    mocker.patch('src.user.service.configuration_service.ConfigurationService.process_csv_file',
                  side_effect=Exception("Processing failed"))
     mocker.patch('src.user.utils.auth_utils.validate_jwt_and_refresh', return_value=None)
 

@@ -18,11 +18,11 @@ class BusinessExceptionEnum(Enum):
     UserPasswordIncorrect = ("1005", "Incorrect password. Please try again.")
     ConfigFileIncorrect = (
         "1006",
-        "Error while processing Excel file, please check again.",
+        "Error while processing csv file, please check again.",
     )
     InvalidFileExtension = (
         "1007",
-        "Invalid file extension. Only .xlsx or .xls files are allowed.",
+        "Invalid file extension. Only .csv are allowed.",
     )
     NoFilePart = ("1008", "No file part in the request.")
     NoFileSelected = ("1009", "No file selected.")
