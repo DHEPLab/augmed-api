@@ -14,7 +14,7 @@ class AnswerConfigurationService:
     def add_new_answer_config(self, config: list[dict]):
         if len(config) == 0:
             raise BusinessException(
-                BusinessExceptionEnum.InValidDiagnoseConfig,
+                BusinessExceptionEnum.InValidAnswerConfig,
                 "Answer config can not be empty list.",
             )
 

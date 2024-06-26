@@ -36,5 +36,5 @@ class TestValidateFactory(unittest.TestCase):
     def test_invalid_type(self):
         item = {"type": "InvalidType"}
          
-        with pytest.raises(BusinessException, match=re.compile(BusinessExceptionEnum.InValidDiagnoseConfig.name)):
+        with pytest.raises(BusinessException, match=re.compile(BusinessExceptionEnum.InValidAnswerConfig.name)):
             validate_factory(item)

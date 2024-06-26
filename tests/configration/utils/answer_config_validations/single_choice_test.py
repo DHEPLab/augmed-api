@@ -21,7 +21,7 @@ class TestSingleChoiceTypeValidate(unittest.TestCase):
         with self.assertRaises(BusinessException) as cm:
             single_choice_type_validate(data)
 
-        self.assertEqual(cm.exception.error, BusinessExceptionEnum.InValidDiagnoseConfig)
+        self.assertEqual(cm.exception.error, BusinessExceptionEnum.InValidAnswerConfig)
         self.assertEqual(cm.exception.detail, "A question title is required in single choice.")
 
     def test_missing_options(self):
@@ -31,7 +31,7 @@ class TestSingleChoiceTypeValidate(unittest.TestCase):
         with self.assertRaises(BusinessException) as cm:
             single_choice_type_validate(data)
 
-        self.assertEqual(cm.exception.error, BusinessExceptionEnum.InValidDiagnoseConfig)
+        self.assertEqual(cm.exception.error, BusinessExceptionEnum.InValidAnswerConfig)
         self.assertEqual(cm.exception.detail, "Choice question must contain at least 2 options.")
 
     def test_options_not_list(self):
@@ -42,7 +42,7 @@ class TestSingleChoiceTypeValidate(unittest.TestCase):
         with self.assertRaises(BusinessException) as cm:
             single_choice_type_validate(data)
 
-        self.assertEqual(cm.exception.error, BusinessExceptionEnum.InValidDiagnoseConfig)
+        self.assertEqual(cm.exception.error, BusinessExceptionEnum.InValidAnswerConfig)
         self.assertEqual(cm.exception.detail, "Choice question must contain at least 2 options.")
 
     def test_options_length_less_than_two(self):
@@ -53,5 +53,5 @@ class TestSingleChoiceTypeValidate(unittest.TestCase):
         with self.assertRaises(BusinessException) as cm:
             single_choice_type_validate(data)
 
-        self.assertEqual(cm.exception.error, BusinessExceptionEnum.InValidDiagnoseConfig)
+        self.assertEqual(cm.exception.error, BusinessExceptionEnum.InValidAnswerConfig)
         self.assertEqual(cm.exception.detail, "Choice question must contain at least 2 options.")

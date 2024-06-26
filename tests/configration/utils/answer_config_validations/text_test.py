@@ -19,5 +19,5 @@ class TestTextTypeValidate(unittest.TestCase):
         with self.assertRaises(BusinessException) as cm:
             text_type_validate(data)
 
-        self.assertEqual(cm.exception.error, BusinessExceptionEnum.InValidDiagnoseConfig)
+        self.assertEqual(cm.exception.error, BusinessExceptionEnum.InValidAnswerConfig)
         self.assertEqual(cm.exception.detail, "A question title is required in text.")

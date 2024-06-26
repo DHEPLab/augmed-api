@@ -5,6 +5,6 @@ from src.common.exception.BusinessException import (BusinessException,
 def paragraph_type_validate(data: dict):
     if "title" not in data:
         raise BusinessException(
-            BusinessExceptionEnum.InValidDiagnoseConfig,
+            BusinessExceptionEnum.InValidAnswerConfig,
             "A question title is required in paragraph.",
         )
