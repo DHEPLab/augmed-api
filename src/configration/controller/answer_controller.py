@@ -14,7 +14,7 @@ answer_service = AnswerConfigurationService(answer_repository)
 
 
 @admin_answer_config_blueprint.route("/config/answer", methods=["POST"])
-def add_diagnose_config():
+def add_answer_config():
     body = request.get_json()
 
     id = answer_service.add_new_answer_config(body)

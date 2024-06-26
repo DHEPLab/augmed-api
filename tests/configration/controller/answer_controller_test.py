@@ -18,7 +18,7 @@ def test_config():
     }]
 
 
-def test_add_diagnose_config_success(client, mocker, test_config):  
+def test_add_answer_config_success(client, mocker, test_config):  
     id = uuid.uuid4()
 
     mocker.patch(
@@ -37,7 +37,7 @@ def test_add_diagnose_config_success(client, mocker, test_config):
     } == response.json
 
 
-def test_add_diagnose_config_failed_by_empty_config(client):
+def test_add_answer_config_failed_by_empty_config(client):
     empty_config = []
 
     response = client.post("/admin/config/answer", data=json.dumps(empty_config), content_type='application/json')
