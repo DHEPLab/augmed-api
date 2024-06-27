@@ -14,9 +14,9 @@ def test_should_parse_csv_stream_correctly_when_all_config_are_set():
     # Headers
     writer.writerow(['User', 'Case No.', 'Path', 'Collapse', 'Highlight', 'Top'])
     # Data for multiple users and cases
-    writer.writerow(['usera@example.com', '1', 'Background.abc', True, True, 1])
-    writer.writerow(['usera@example.com', '1', 'background.xxx', True, False, 2])
-    writer.writerow(['userb@example.com', '1', 'Background.patient demo', False, False, 1.5])
+    writer.writerow(['usera@example.com', '1', 'Background.abc', 'TRUE', 'True', 1])
+    writer.writerow(['usera@example.com', '1', 'background.xxx', 'true', 'False', 2])
+    writer.writerow(['userb@example.com', '1', 'Background.patient demo', 'FALSE', 'false', 1.5])
     stream.seek(0)
 
     result = parse_csv_stream_to_configurations(stream)
@@ -28,15 +28,15 @@ def test_should_parse_csv_stream_correctly_when_all_config_are_set():
             'user_email': 'usera@example.com',
             'case_id': 1,
             'path_config': [
-                {'path': 'Background.abc', 'style': {'collapse': 'True', 'highlight': 'True', 'top': 1.0}},
-                {'path': 'background.xxx', 'style': {'collapse': 'True', 'highlight': 'False', 'top': 2.0}}
+                {'path': 'Background.abc', 'style': {'collapse': True, 'highlight': True, 'top': 1.0}},
+                {'path': 'background.xxx', 'style': {'collapse': True, 'highlight': False, 'top': 2.0}}
             ]
         },
         {
             'user_email': 'userb@example.com',
             'case_id': 1,
             'path_config': [
-                {'path': 'Background.patient demo', 'style': {'collapse': 'False', 'highlight': 'False', "top": 1.5}}
+                {'path': 'Background.patient demo', 'style': {'collapse': False, 'highlight': False, "top": 1.5}}
             ]
         }
     ]
@@ -68,11 +68,11 @@ def test_should_ignore_none_config():
     # Assert the configuration of paths
     expected_path_0 = {
         'path': 'Background.abc',
-        'style': {'highlight': 'True'}
+        'style': {'highlight': True}
     }
     expected_path_1 = {
         'path': 'background.xxx',
-        'style': {'collapse': 'True'}
+        'style': {'collapse': True}
     }
 
     # Check each path configuration for correctness

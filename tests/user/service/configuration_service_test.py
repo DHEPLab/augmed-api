@@ -31,10 +31,10 @@ def valid_csv_file():
 def config_data():
     return [
         {"user_email": "usera@example.com", "case_id": 1, "path_config": [
-            {"path": "Background.abc", "style": {"Collapse": 'TRUE', "Highlight": 'TRUE', "top": 1.0}}
+            {"path": "Background.abc", "style": {"Collapse": True, "Highlight": True, "top": 1.0}}
         ]},
         {"user_email": "userb@example.com", "case_id": 2, "path_config": [
-            {"path": "Background.xyz", "style": {"Collapse": 'FALSE', "Highlight": 'TRUE'}}
+            {"path": "Background.xyz", "style": {"Collapse": False, "Highlight": True}}
         ]}
     ]
 

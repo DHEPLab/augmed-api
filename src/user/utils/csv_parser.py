@@ -19,6 +19,10 @@ def is_empty(value):
     return value is None or value == ""
 
 
+def str_to_bool(value):
+    return True if value.lower() == "true" else False
+
+
 def validate_and_extract_user_case(row):
     user, case = row[H_USER], row[H_CASE]
 
@@ -54,9 +58,9 @@ def validate_and_convert_top(row):
 def build_style_dict(collapse, highlight, top) -> dict:
     style = {}
     if not is_empty(collapse):
-        style["collapse"] = collapse
+        style["collapse"] = str_to_bool(collapse)
     if not is_empty(highlight):
-        style["highlight"] = highlight
+        style["highlight"] = str_to_bool(highlight)
     if not is_empty(top):
         style["top"] = top
     return style
