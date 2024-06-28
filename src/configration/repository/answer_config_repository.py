@@ -19,3 +19,6 @@ class AnswerConfigurationRepository:
         )
 
         return answer_config
+
+    def get_answer_config(self, id: str) -> AnswerConfig:
+        return self.session.get(AnswerConfig, id)

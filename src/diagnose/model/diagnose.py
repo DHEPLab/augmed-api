@@ -1,6 +1,8 @@
 from datetime import datetime
 from typing import List
 
+from sqlalchemy.dialects.postgresql import UUID
+
 from src import db
 from src.diagnose.model.diagosis import Diagnosis
 
@@ -16,8 +18,10 @@ class Diagnose(db.Model):
     case_id: int = db.Column(db.Integer, nullable=True)
     user_email: str = db.Column(db.String(128), nullable=True)
     display_configuration = db.Column(db.JSON, nullable=True)
-    diagnosis: List[Diagnosis] = db.Column(db.JSON, nullable=False)
-    other = db.Column(db.String(1024), nullable=True)
+    answer_config_id = db.Column(UUID(as_uuid=True), nullable=True)
+    answer: dict = db.Column(db.JSON, nullable=True)
+    diagnosis: List[Diagnosis] = db.Column(db.JSON, nullable=True, comment="deprecated")
+    other = db.Column(db.String(1024), nullable=True, comment="deprecated")
 
     created_timestamp: datetime = db.Column(db.DateTime, default=datetime.utcnow)
     modified_timestamp: datetime = db.Column(

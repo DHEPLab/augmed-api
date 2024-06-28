@@ -1,3 +1,4 @@
+import uuid
 import pytest
 
 from src.configration.model.answer_config import AnswerConfig
@@ -33,3 +34,12 @@ def test_query_latest_answer_config(answer_config_repository):
 
 def test_query_latest_answer_config_with_empty(answer_config_repository):
     assert answer_config_repository.query_latest_answer_config() is None
+
+
+def test_get_answer_config(answer_config_repository):
+    not_exist_answer_config_id = uuid.uuid4()
+    assert answer_config_repository.get_answer_config(not_exist_answer_config_id) is None
+
+    config = AnswerConfig(config={"type": "MultipleChoice", "title": "title", "options": ["A", "B"]})
+    answer_config_repository.add_answer_config(config)
+    assert answer_config_repository.get_answer_config(config.id) is not None
