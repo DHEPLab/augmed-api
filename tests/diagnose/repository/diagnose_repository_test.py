@@ -25,8 +25,6 @@ def test_add_diagnose(diagnose_repository, configuration_repository):
         case_id=1,
         user_email="user@test.com",
         display_configuration=[],
-        diagnosis=[],
-        other=""
     )
 
     assert diagnose.id is None
@@ -48,8 +46,6 @@ def test_get_diagnosed_case_list_by_user(diagnose_repository, configuration_repo
         case_id=1,
         user_email="user1@test.com",
         display_configuration=[],
-        diagnosis=[],
-        other=""
     )
     diagnose_repository.add_diagnose(diagnose1)
 
@@ -58,8 +54,6 @@ def test_get_diagnosed_case_list_by_user(diagnose_repository, configuration_repo
         case_id=2,
         user_email="user2@test.com",
         display_configuration=[],
-        diagnosis=[],
-        other=""
     )
     diagnose_repository.add_diagnose(diagnose2)
 
@@ -74,8 +68,6 @@ def test_get_diagnosed_case_list_by_user(diagnose_repository, configuration_repo
         case_id=3,
         user_email="user1@test.com",
         display_configuration=[],
-        diagnosis=[],
-        other=""
     )
     diagnose_repository.add_diagnose(diagnose3)
 
