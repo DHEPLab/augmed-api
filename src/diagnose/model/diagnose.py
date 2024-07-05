@@ -6,7 +6,7 @@ from src import db
 
 
 class Diagnose(db.Model):
-    __tablename__ = "diagnose"
+    __tablename__ = "answer"
 
     id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)
     task_id: str = db.Column(
