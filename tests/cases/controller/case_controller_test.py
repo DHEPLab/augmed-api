@@ -2,13 +2,13 @@ import json
 
 from src.cases.controller.response.case_summary import CaseSummary
 from src.common.model.system_config import SystemConfig
-from src.user.model.configuration import Configuration
+from src.user.model.display_config import DisplayConfig
 from tests.cases.case_fixture import input_case
 
 
 def test_get_case_review(client, session, mocker):
     input_case(session)
-    config = Configuration(
+    config = DisplayConfig(
         user_email='goodbye@sunwukong.com',
         case_id=1,
         id='1',

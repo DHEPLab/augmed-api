@@ -22,9 +22,9 @@ from src.common.model.system_config import SystemConfig
 from src.common.repository.system_config_repository import \
     SystemConfigRepository
 from src.diagnose.repository.diagnose_repository import DiagnoseRepository
-from src.user.model.configuration import Configuration
-from src.user.repository.configuration_repository import \
-    ConfigurationRepository
+from src.user.model.display_config import DisplayConfig
+from src.user.repository.display_config_repository import \
+    DisplayConfigRepository
 from tests.cases.case_fixture import (concept_fixture, measurement_fixture,
                                       observation_fixture, person_fixture,
                                       visit_occurrence_fixture)
@@ -181,7 +181,7 @@ def mock_repos(mocker):
     observation_repository = mocker.Mock(ObservationRepository)
     person_repository = mocker.Mock(PersonRepository)
     drug_exposure_repository = mocker.Mock(DrugExposureRepository)
-    configuration_repository = mocker.Mock(ConfigurationRepository)
+    configuration_repository = mocker.Mock(DisplayConfigRepository)
     concept_repository = mocker.Mock(ConceptRepository)
     system_config_repository = mocker.Mock(SystemConfigRepository)
     diagnosis_repository = mocker.Mock(DiagnoseRepository)
@@ -197,7 +197,7 @@ def mock_repos(mocker):
     measurement_repository.get_measurements.return_value = []
     measurement_repository.get_measurements_of_parents.return_value = []
     diagnosis_repository.get_diagnosed_case_list_by_user.return_value = []
-    configuration_repository.get_configuration_by_id.return_value = Configuration(
+    configuration_repository.get_configuration_by_id.return_value = DisplayConfig(
         path_config=[
             {
                 "path": "BACKGROUND.Patient Demographics",
@@ -934,7 +934,7 @@ class TestGetCaseReview:
             system_config_repository,
             diagnosis_repository,
         ) = mock_repos(mocker)
-        configuration_repository.get_configuration_by_id.return_value = Configuration(
+        configuration_repository.get_configuration_by_id.return_value = DisplayConfig(
             user_email='goodbye@sunwukong.com',
             case_id=1
         )
@@ -1009,7 +1009,7 @@ class TestGetCaseReview:
             system_config_repository,
             diagnosis_repository,
         ) = mock_repos(mocker)
-        configuration_repository.get_configuration_by_id.return_value = Configuration(
+        configuration_repository.get_configuration_by_id.return_value = DisplayConfig(
             user_email='goodbye@sunwukong.com',
             case_id=1,
             path_config=[

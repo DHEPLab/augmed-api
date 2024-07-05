@@ -7,8 +7,8 @@ from src.configration.model.answer_config import AnswerConfig
 from src.configration.repository.answer_config_repository import AnswerConfigurationRepository
 from src.diagnose.repository.diagnose_repository import DiagnoseRepository
 from src.diagnose.service.diagnose_service import DiagnoseService
-from src.user.model.configuration import Configuration
-from src.user.repository.configuration_repository import ConfigurationRepository
+from src.user.model.display_config import DisplayConfig
+from src.user.repository.display_config_repository import DisplayConfigRepository
 
 
 @pytest.fixture
@@ -36,7 +36,7 @@ def mock_diagnose_repo(mocker):
 
 @pytest.fixture()
 def mock_configuration_repo(mocker):
-    return mocker.Mock(ConfigurationRepository)
+    return mocker.Mock(DisplayConfigRepository)
 
 
 @pytest.fixture()
@@ -57,7 +57,7 @@ def test_add_diagnose_response(
         mock_configuration_repo,
         mock_answer_config_repo
 ):
-    mock_configuration_repo.get_configuration_by_id.return_value = Configuration(
+    mock_configuration_repo.get_configuration_by_id.return_value = DisplayConfig(
         path_config=[],
         user_email=user_email,
         case_id=1
@@ -81,7 +81,7 @@ def test_add_diagnose_response_user_and_case_not_match(
         mock_configuration_repo,
         mock_answer_config_repo
 ):
-    mock_configuration_repo.get_configuration_by_id.return_value = Configuration(
+    mock_configuration_repo.get_configuration_by_id.return_value = DisplayConfig(
         path_config=[],
         user_email="user-not-match@test.com",
         case_id=1
@@ -101,7 +101,7 @@ def test_add_diagnose_response_failed_with_no_answer_config(
         mock_configuration_repo,
         mock_answer_config_repo
 ):
-    mock_configuration_repo.get_configuration_by_id.return_value = Configuration(
+    mock_configuration_repo.get_configuration_by_id.return_value = DisplayConfig(
         path_config=[],
         user_email=user_email,
         case_id=1

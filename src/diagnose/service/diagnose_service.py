@@ -4,8 +4,8 @@ from src.configration.repository.answer_config_repository import \
     AnswerConfigurationRepository
 from src.diagnose.model.diagnose import Diagnose
 from src.diagnose.repository.diagnose_repository import DiagnoseRepository
-from src.user.repository.configuration_repository import \
-    ConfigurationRepository
+from src.user.repository.display_config_repository import \
+    DisplayConfigRepository
 from src.user.utils import auth_utils
 
 
@@ -13,7 +13,7 @@ class DiagnoseService:
     def __init__(
         self,
         diagnose_repository: DiagnoseRepository,
-        configuration_repository: ConfigurationRepository,
+        configuration_repository: DisplayConfigRepository,
         answer_config_repository: AnswerConfigurationRepository,
     ):
         self.diagnose_repository = diagnose_repository

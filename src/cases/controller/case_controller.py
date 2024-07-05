@@ -14,8 +14,8 @@ from src.common.model.ApiResponse import ApiResponse
 from src.common.repository.system_config_repository import \
     SystemConfigRepository
 from src.diagnose.repository.diagnose_repository import DiagnoseRepository
-from src.user.repository.configuration_repository import \
-    ConfigurationRepository
+from src.user.repository.display_config_repository import \
+    DisplayConfigRepository
 from src.user.utils import auth_utils
 from src.user.utils.auth_utils import jwt_validation_required
 
@@ -26,7 +26,7 @@ measurement_repository = MeasurementRepository(db.session)
 observation_repository = ObservationRepository(db.session)
 person_repository = PersonRepository(db.session)
 drug_exposure_repository = DrugExposureRepository(db.session)
-configuration_repository = ConfigurationRepository(db.session)
+configuration_repository = DisplayConfigRepository(db.session)
 system_config_repository = SystemConfigRepository(db.session)
 diagose_repository = DiagnoseRepository(db.session)
 case_service = CaseService(

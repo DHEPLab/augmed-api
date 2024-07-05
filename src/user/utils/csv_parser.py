@@ -5,7 +5,7 @@ from typing import List
 
 from src.common.exception.BusinessException import (BusinessException,
                                                     BusinessExceptionEnum)
-from src.user.model.configuration import Configuration
+from src.user.model.display_config import DisplayConfig
 
 H_USER = "User"
 H_CASE = "Case No."
@@ -74,7 +74,7 @@ class CsvConfigurationParser:
             self.csv_data.append(row)
         self.current_config = None
 
-    def parse(self) -> List[Configuration]:
+    def parse(self) -> List[DisplayConfig]:
         configurations = []
 
         for row in self.csv_data:
@@ -83,7 +83,7 @@ class CsvConfigurationParser:
             top = validate_and_convert_top(row)
 
             if self._should_create_new_config(user, case_id):
-                self.current_config = Configuration(
+                self.current_config = DisplayConfig(
                     user_email=user, case_id=case_id, path_config=[]
                 )
                 configurations.append(self.current_config)
@@ -108,7 +108,7 @@ class CsvConfigurationParser:
                 self.current_config.path_config.append({"path": path, "style": style})
 
 
-def parse_csv_stream_to_configurations(csv_stream: StringIO) -> List[Configuration]:
+def parse_csv_stream_to_configurations(csv_stream: StringIO) -> List[DisplayConfig]:
     parser = CsvConfigurationParser(csv_stream)
     return parser.parse()
 

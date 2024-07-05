@@ -5,13 +5,13 @@ from flask import Blueprint, jsonify, request
 from src import db
 from src.common.exception.BusinessException import BusinessExceptionEnum
 from src.common.model.ApiResponse import ApiResponse
-from src.user.repository.configuration_repository import \
-    ConfigurationRepository
+from src.user.repository.display_config_repository import \
+    DisplayConfigRepository
 from src.user.service.configuration_service import ConfigurationService
 from src.user.utils.csv_parser import is_csv_file
 
 config_blueprint = Blueprint("config", __name__)
-config_repository = ConfigurationRepository(db.session)
+config_repository = DisplayConfigRepository(db.session)
 config_service = ConfigurationService(repository=config_repository)
 
 

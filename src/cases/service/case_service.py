@@ -16,8 +16,8 @@ from src.common.exception.BusinessException import (BusinessException,
 from src.common.repository.system_config_repository import \
     SystemConfigRepository
 from src.diagnose.repository.diagnose_repository import DiagnoseRepository
-from src.user.repository.configuration_repository import \
-    ConfigurationRepository
+from src.user.repository.display_config_repository import \
+    DisplayConfigRepository
 from src.user.utils.auth_utils import get_user_email_from_jwt
 
 
@@ -87,7 +87,7 @@ class CaseService:
         observation_repository: ObservationRepository,
         person_repository: PersonRepository,
         drug_exposure_repository: DrugExposureRepository,
-        configuration_repository: ConfigurationRepository,
+        configuration_repository: DisplayConfigRepository,
         system_config_repository: SystemConfigRepository,
         diagnose_repository: DiagnoseRepository,
     ):

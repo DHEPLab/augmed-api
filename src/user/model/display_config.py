@@ -1,8 +1,8 @@
 from src import db
 
 
-class Configuration(db.Model):
-    __tablename__ = "configuration"
+class DisplayConfig(db.Model):
+    __tablename__ = "display_config"
     id = db.Column(db.String, primary_key=True)
     user_email = db.Column(db.String)
     case_id = db.Column(db.Integer)

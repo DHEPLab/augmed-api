@@ -3,13 +3,13 @@ from io import StringIO
 from werkzeug.exceptions import InternalServerError
 
 from src.common.exception.BusinessException import BusinessException
-from src.user.repository.configuration_repository import \
-    ConfigurationRepository
+from src.user.repository.display_config_repository import \
+    DisplayConfigRepository
 from src.user.utils.csv_parser import parse_csv_stream_to_configurations
 
 
 class ConfigurationService:
-    def __init__(self, repository: ConfigurationRepository):
+    def __init__(self, repository: DisplayConfigRepository):
         self.repository = repository
 
     def process_csv_file(self, file_stream: StringIO) -> list[dict[str, str]]:

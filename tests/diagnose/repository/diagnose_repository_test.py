@@ -2,8 +2,8 @@ import pytest
 
 from src.diagnose.model.diagnose import Diagnose
 from src.diagnose.repository.diagnose_repository import DiagnoseRepository
-from src.user.model.configuration import Configuration
-from src.user.repository.configuration_repository import ConfigurationRepository
+from src.user.model.display_config import DisplayConfig
+from src.user.repository.display_config_repository import DisplayConfigRepository
 
 
 @pytest.fixture
@@ -13,11 +13,11 @@ def diagnose_repository(session):
 
 @pytest.fixture
 def configuration_repository(session):
-    return ConfigurationRepository(session)
+    return DisplayConfigRepository(session)
 
 
 def test_add_diagnose(diagnose_repository, configuration_repository):
-    config = Configuration(user_email="user@test.com", case_id=1, path_config={"key": "value"})
+    config = DisplayConfig(user_email="user@test.com", case_id=1, path_config={"key": "value"})
     configuration_repository.save_configuration(config)
 
     diagnose = Diagnose(
@@ -35,10 +35,10 @@ def test_add_diagnose(diagnose_repository, configuration_repository):
 
 
 def test_get_diagnosed_case_list_by_user(diagnose_repository, configuration_repository):
-    config1 = Configuration(user_email="user1@test.com", case_id=1, path_config={"key": "value"})
+    config1 = DisplayConfig(user_email="user1@test.com", case_id=1, path_config={"key": "value"})
     configuration_repository.save_configuration(config1)
 
-    config2 = Configuration(user_email="user2@test.com", case_id=2, path_config={"key": "value"})
+    config2 = DisplayConfig(user_email="user2@test.com", case_id=2, path_config={"key": "value"})
     configuration_repository.save_configuration(config2)
 
     diagnose1 = Diagnose(

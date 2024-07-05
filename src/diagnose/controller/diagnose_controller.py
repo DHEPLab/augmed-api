@@ -6,15 +6,15 @@ from src.configration.repository.answer_config_repository import \
     AnswerConfigurationRepository
 from src.diagnose.repository.diagnose_repository import DiagnoseRepository
 from src.diagnose.service.diagnose_service import DiagnoseService
-from src.user.repository.configuration_repository import \
-    ConfigurationRepository
+from src.user.repository.display_config_repository import \
+    DisplayConfigRepository
 from src.user.utils.auth_utils import jwt_validation_required
 
 diagnose_blueprint = Blueprint("diagnose", __name__)
 
 diagnose_service = DiagnoseService(
     diagnose_repository=DiagnoseRepository(db.session),
-    configuration_repository=ConfigurationRepository(db.session),
+    configuration_repository=DisplayConfigRepository(db.session),
     answer_config_repository=AnswerConfigurationRepository(db.session),
 )
 

@@ -5,13 +5,13 @@ import pytest
 from werkzeug.exceptions import InternalServerError
 
 from src.common.exception.BusinessException import BusinessException, BusinessExceptionEnum
-from src.user.repository.configuration_repository import ConfigurationRepository
+from src.user.repository.display_config_repository import DisplayConfigRepository
 from src.user.service.configuration_service import ConfigurationService
 
 
 @pytest.fixture
 def mock_repo(mocker):
-    return mocker.Mock(ConfigurationRepository)
+    return mocker.Mock(DisplayConfigRepository)
 
 
 @pytest.fixture
