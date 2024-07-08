@@ -1,26 +1,26 @@
+from src.answer.model.answer import Answer
+from src.answer.repository.answer_repository import AnswerRepository
 from src.common.exception.BusinessException import (BusinessException,
                                                     BusinessExceptionEnum)
 from src.configration.repository.answer_config_repository import \
     AnswerConfigurationRepository
-from src.diagnose.model.diagnose import Diagnose
-from src.diagnose.repository.diagnose_repository import DiagnoseRepository
 from src.user.repository.display_config_repository import \
     DisplayConfigRepository
 from src.user.utils import auth_utils
 
 
-class DiagnoseService:
+class AnswerService:
     def __init__(
         self,
-        diagnose_repository: DiagnoseRepository,
+        answer_repository: AnswerRepository,
         configuration_repository: DisplayConfigRepository,
         answer_config_repository: AnswerConfigurationRepository,
     ):
-        self.diagnose_repository = diagnose_repository
+        self.answer_repository = answer_repository
         self.configuration_repository = configuration_repository
         self.answer_config_repository = answer_config_repository
 
-    def add_diagnose_response(self, task_id: int, data: dict):
+    def add_answer_response(self, task_id: int, data: dict):
         user_eamil = auth_utils.get_user_email_from_jwt()
 
         answer = data["answer"]
@@ -37,7 +37,7 @@ class DiagnoseService:
         if answer_config is None:
             raise BusinessException(BusinessExceptionEnum.NoAnswerConfigAvailable)
 
-        diagnose = Diagnose(
+        diagnose = Answer(
             task_id=task_id,
             case_id=configuration.case_id,
             user_email=user_eamil,
@@ -46,4 +46,4 @@ class DiagnoseService:
             answer=answer,
         )
 
-        return self.diagnose_repository.add_diagnose(diagnose)
+        return self.answer_repository.add_answer(diagnose)

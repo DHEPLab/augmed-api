@@ -5,7 +5,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from src import db
 
 
-class Diagnose(db.Model):
+class Answer(db.Model):
     __tablename__ = "answer"
 
     id: int = db.Column(db.Integer, primary_key=True, autoincrement=True)

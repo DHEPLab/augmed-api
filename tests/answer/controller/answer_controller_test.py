@@ -3,7 +3,7 @@ from flask import json
 import pytest
 
 from src.common.exception.BusinessException import BusinessException, BusinessExceptionEnum
-from src.diagnose.model.diagnose import Diagnose
+from src.answer.model.answer import Answer
 
 
 @pytest.fixture(autouse=True)
@@ -19,15 +19,15 @@ def fake_request_body_data(mocker):
     }
 
 
-def test_save_diagnose_success(client, mocker, fake_request_body_data):
+def test_save_answer_success(client, mocker, fake_request_body_data):
     task_id = 'd523b88ae897538795ccfdb7c978b38f'
 
     mocker.patch(
-        'src.diagnose.service.diagnose_service.DiagnoseService.add_diagnose_response',
-        return_value=Diagnose(id=1)
+        'src.answer.service.answer_service.AnswerService.add_answer_response',
+        return_value=Answer(id=1)
     )
 
-    response = client.post(f"/api/diagnose/{task_id}", data=json.dumps(fake_request_body_data), content_type='application/json')
+    response = client.post(f"/api/answer/{task_id}", data=json.dumps(fake_request_body_data), content_type='application/json')
 
     assert response.status_code == 200
     assert {
@@ -38,15 +38,15 @@ def test_save_diagnose_success(client, mocker, fake_request_body_data):
     } == response.json
 
 
-def test_save_diagnose_fail(client, mocker, fake_request_body_data):
+def test_save_answer_fail(client, mocker, fake_request_body_data):
     task_id = 'd523b88ae897538795ccfdb7c978b38f'
 
     mocker.patch(
-        'src.diagnose.service.diagnose_service.DiagnoseService.add_diagnose_response',
+        'src.answer.service.answer_service.AnswerService.add_answer_response',
         side_effect=BusinessException(BusinessExceptionEnum.NoAccessToCaseReview)
     )
 
-    response = client.post(f"/api/diagnose/{task_id}", data=json.dumps(fake_request_body_data), content_type='application/json')
+    response = client.post(f"/api/answer/{task_id}", data=json.dumps(fake_request_body_data), content_type='application/json')
 
     assert response.status_code == 500
     assert {
@@ -55,15 +55,15 @@ def test_save_diagnose_fail(client, mocker, fake_request_body_data):
     } == response.json
 
 
-def test_save_diagnose_fail_with_no_answer_config(client, mocker, fake_request_body_data):
+def test_save_answer_fail_with_no_answer_config(client, mocker, fake_request_body_data):
     task_id = 'd523b88ae897538795ccfdb7c978b38f'
 
     mocker.patch(
-        'src.diagnose.service.diagnose_service.DiagnoseService.add_diagnose_response',
+        'src.answer.service.answer_service.AnswerService.add_answer_response',
         side_effect=BusinessException(BusinessExceptionEnum.NoAnswerConfigAvailable)
     )
 
-    response = client.post(f"/api/diagnose/{task_id}", data=json.dumps(fake_request_body_data), content_type='application/json')
+    response = client.post(f"/api/answer/{task_id}", data=json.dumps(fake_request_body_data), content_type='application/json')
 
     assert response.status_code == 500
     assert {

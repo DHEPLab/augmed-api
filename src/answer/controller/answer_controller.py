@@ -1,29 +1,29 @@
 from flask import Blueprint, jsonify, request
 
 from src import db
+from src.answer.repository.answer_repository import AnswerRepository
+from src.answer.service.answer_service import AnswerService
 from src.common.model.ApiResponse import ApiResponse
 from src.configration.repository.answer_config_repository import \
     AnswerConfigurationRepository
-from src.diagnose.repository.diagnose_repository import DiagnoseRepository
-from src.diagnose.service.diagnose_service import DiagnoseService
 from src.user.repository.display_config_repository import \
     DisplayConfigRepository
 from src.user.utils.auth_utils import jwt_validation_required
 
-diagnose_blueprint = Blueprint("diagnose", __name__)
+answer_blueprint = Blueprint("answer", __name__)
 
-diagnose_service = DiagnoseService(
-    diagnose_repository=DiagnoseRepository(db.session),
+answer_service = AnswerService(
+    answer_repository=AnswerRepository(db.session),
     configuration_repository=DisplayConfigRepository(db.session),
     answer_config_repository=AnswerConfigurationRepository(db.session),
 )
 
 
-@diagnose_blueprint.route("/diagnose/<string:task_id>", methods=["POST"])
+@answer_blueprint.route("/answer/<string:task_id>", methods=["POST"])
 @jwt_validation_required()
-def add_diagnose_response(task_id):
+def add_answer_response(task_id):
     data = request.get_json()
 
-    diagnose_response = diagnose_service.add_diagnose_response(task_id, data)
+    answer_response = answer_service.add_answer_response(task_id, data)
 
-    return jsonify(ApiResponse.success({"id": diagnose_response.id})), 200
+    return jsonify(ApiResponse.success({"id": answer_response.id})), 200

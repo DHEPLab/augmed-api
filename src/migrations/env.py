@@ -41,8 +41,8 @@ from src.cases.model.vocabularies import vocabulary
 
 from src.common.model.system_config import SystemConfig
 
-# diagnose
-from src.diagnose.model.diagnose import Diagnose
+# answer
+from src.answer.model.answer import Answer
 
 # config 
 from src.configration.model import answer_config

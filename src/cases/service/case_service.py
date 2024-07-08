@@ -1,6 +1,7 @@
 from collections import defaultdict
 from operator import itemgetter
 
+from src.answer.repository.answer_repository import AnswerRepository
 from src.cases.controller.response.case_summary import CaseSummary
 from src.cases.model.case import Case, TreeNode
 from src.cases.repository.concept_repository import ConceptRepository
@@ -15,7 +16,6 @@ from src.common.exception.BusinessException import (BusinessException,
                                                     BusinessExceptionEnum)
 from src.common.repository.system_config_repository import \
     SystemConfigRepository
-from src.diagnose.repository.diagnose_repository import DiagnoseRepository
 from src.user.repository.display_config_repository import \
     DisplayConfigRepository
 from src.user.utils.auth_utils import get_user_email_from_jwt
@@ -89,7 +89,7 @@ class CaseService:
         drug_exposure_repository: DrugExposureRepository,
         configuration_repository: DisplayConfigRepository,
         system_config_repository: SystemConfigRepository,
-        diagnose_repository: DiagnoseRepository,
+        diagnose_repository: AnswerRepository,
     ):
         self.person = None
         self.visit_occurrence_repository = visit_occurrence_repository
@@ -280,7 +280,7 @@ class CaseService:
                 user_email=user_email
             )
         )
-        completed_case_list = self.diagnose_repository.get_diagnosed_case_list_by_user(
+        completed_case_list = self.diagnose_repository.get_answered_case_list_by_user(
             user_email=user_email
         )
 

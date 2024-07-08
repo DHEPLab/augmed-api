@@ -21,7 +21,7 @@ from src.common.exception.BusinessException import BusinessException, BusinessEx
 from src.common.model.system_config import SystemConfig
 from src.common.repository.system_config_repository import \
     SystemConfigRepository
-from src.diagnose.repository.diagnose_repository import DiagnoseRepository
+from src.answer.repository.answer_repository import AnswerRepository
 from src.user.model.display_config import DisplayConfig
 from src.user.repository.display_config_repository import \
     DisplayConfigRepository
@@ -184,7 +184,7 @@ def mock_repos(mocker):
     configuration_repository = mocker.Mock(DisplayConfigRepository)
     concept_repository = mocker.Mock(ConceptRepository)
     system_config_repository = mocker.Mock(SystemConfigRepository)
-    diagnosis_repository = mocker.Mock(DiagnoseRepository)
+    diagnosis_repository = mocker.Mock(AnswerRepository)
     mocker.patch('src.cases.service.case_service.get_user_email_from_jwt', return_value='goodbye@sunwukong.com')
 
     visit_occurrence_repository.get_visit_occurrence.return_value = (
@@ -196,7 +196,7 @@ def mock_repos(mocker):
     observation_repository.get_observations_by_type.return_value = []
     measurement_repository.get_measurements.return_value = []
     measurement_repository.get_measurements_of_parents.return_value = []
-    diagnosis_repository.get_diagnosed_case_list_by_user.return_value = []
+    diagnosis_repository.get_answered_case_list_by_user.return_value = []
     configuration_repository.get_configuration_by_id.return_value = DisplayConfig(
         path_config=[
             {
@@ -1275,7 +1275,7 @@ class TestGetCaseSummary:
         }
         observation_repository.get_observations_by_type.side_effect = self.create_observation_side_effect(
             observation_mapping)
-        diagnosis_repository.get_diagnosed_case_list_by_user.return_value = ['101']
+        diagnosis_repository.get_answered_case_list_by_user.return_value = ['101']
         mocker.patch('src.cases.service.case_service.get_age', side_effect=["36"])
 
         results = case_service.get_cases_by_user("user@example.com")

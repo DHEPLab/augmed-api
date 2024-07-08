@@ -37,11 +37,10 @@ def create_app(config_object=None):
             upgrade()
 
         # Import Blueprints after initializing db to avoid circular import
+        from src.answer.controller.answer_controller import answer_blueprint
         from src.cases.controller.case_controller import case_blueprint
         from src.configration.controller.answer_controller import (
             admin_answer_config_blueprint, answer_config_blueprint)
-        from src.diagnose.controller.diagnose_controller import \
-            diagnose_blueprint
         from src.health.healthCheckController import healthcheck_blueprint
         from src.user.controller.auth_controller import auth_blueprint
         from src.user.controller.config_controller import config_blueprint
@@ -55,7 +54,7 @@ def create_app(config_object=None):
         app.register_blueprint(auth_blueprint, url_prefix="/api")
         app.register_blueprint(healthcheck_blueprint, url_prefix="/api")
         app.register_blueprint(case_blueprint, url_prefix="/api")
-        app.register_blueprint(diagnose_blueprint, url_prefix="/api")
+        app.register_blueprint(answer_blueprint, url_prefix="/api")
 
         register_error_handlers(app)
 

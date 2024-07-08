@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify
 
 from src import db
+from src.answer.repository.answer_repository import AnswerRepository
 from src.cases.repository.concept_repository import ConceptRepository
 from src.cases.repository.drug_exposure_repository import \
     DrugExposureRepository
@@ -13,7 +14,6 @@ from src.cases.service.case_service import CaseService
 from src.common.model.ApiResponse import ApiResponse
 from src.common.repository.system_config_repository import \
     SystemConfigRepository
-from src.diagnose.repository.diagnose_repository import DiagnoseRepository
 from src.user.repository.display_config_repository import \
     DisplayConfigRepository
 from src.user.utils import auth_utils
@@ -28,7 +28,7 @@ person_repository = PersonRepository(db.session)
 drug_exposure_repository = DrugExposureRepository(db.session)
 configuration_repository = DisplayConfigRepository(db.session)
 system_config_repository = SystemConfigRepository(db.session)
-diagose_repository = DiagnoseRepository(db.session)
+diagose_repository = AnswerRepository(db.session)
 case_service = CaseService(
     visit_occurrence_repository=visit_occurrence_repository,
     concept_repository=concept_repository,
