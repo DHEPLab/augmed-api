@@ -3,7 +3,7 @@ from logging.config import fileConfig
 
 from flask import current_app
 from src.user.model import user
-from src.user.model import display_config
+from src.user.model import display_config, reset_password_token
 from alembic import context
 
 # clinical data

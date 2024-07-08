@@ -39,6 +39,6 @@ omit = [
 ]
 
 [tool.coverage.report]
-fail_under = 96.1
+fail_under = 96.2
 
 
