@@ -39,7 +39,7 @@ def create_app(config_object=None):
         # Import Blueprints after initializing db to avoid circular import
         from src.answer.controller.answer_controller import answer_blueprint
         from src.cases.controller.case_controller import case_blueprint
-        from src.configration.controller.answer_controller import (
+        from src.configration.controller.answer_config_controller import (
             admin_answer_config_blueprint, answer_config_blueprint)
         from src.health.healthCheckController import healthcheck_blueprint
         from src.user.controller.auth_controller import auth_blueprint

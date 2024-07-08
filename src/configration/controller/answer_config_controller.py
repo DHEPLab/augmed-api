@@ -4,7 +4,8 @@ from src import db
 from src.common.model.ApiResponse import ApiResponse
 from src.configration.repository.answer_config_repository import \
     AnswerConfigurationRepository
-from src.configration.service.answer_service import AnswerConfigurationService
+from src.configration.service.answer_config_service import \
+    AnswerConfigurationService
 
 admin_answer_config_blueprint = Blueprint("admin_answer_config", __name__)
 answer_config_blueprint = Blueprint("answer_config", __name__)

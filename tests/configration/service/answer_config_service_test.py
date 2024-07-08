@@ -4,7 +4,7 @@ import pytest
 
 from src.configration.model.answer_config import AnswerConfig
 from src.configration.repository.answer_config_repository import AnswerConfigurationRepository
-from src.configration.service.answer_service import AnswerConfigurationService
+from src.configration.service.answer_config_service import AnswerConfigurationService
 
 
 @pytest.fixture()

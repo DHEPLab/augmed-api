@@ -22,7 +22,7 @@ def test_add_answer_config_success(client, mocker, test_config):
     id = uuid.uuid4()
 
     mocker.patch(
-        'src.configration.service.answer_service.AnswerConfigurationService.add_new_answer_config',
+        'src.configration.service.answer_config_service.AnswerConfigurationService.add_new_answer_config',
         return_value=id
     )
 
@@ -57,7 +57,7 @@ def test_get_latest_answer_config_success(client, mocker, test_config):
     )
 
     mocker.patch(
-        'src.configration.service.answer_service.AnswerConfigurationService.get_latest_answer_config',
+        'src.configration.service.answer_config_service.AnswerConfigurationService.get_latest_answer_config',
         return_value=answer_config
     )
 
@@ -72,7 +72,7 @@ def test_get_latest_answer_config_success(client, mocker, test_config):
 
 def test_get_latest_answer_config_failed_by_no_answer_config(client, mocker, test_config):
     mocker.patch(
-        'src.configration.service.answer_service.AnswerConfigurationService.get_latest_answer_config',
+        'src.configration.service.answer_config_service.AnswerConfigurationService.get_latest_answer_config',
         side_effect=BusinessException(BusinessExceptionEnum.NoAnswerConfigAvailable)
     )
 
