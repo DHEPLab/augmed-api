@@ -1,5 +1,5 @@
 from base64 import b64encode
-from hashlib import scrypt
+from hashlib import scrypt, sha256
 from os import urandom
 
 
@@ -24,3 +24,9 @@ def pcrypt(password: str, salt: str):
 def verify(password: str, salt: str, digt: str):
     pwd = pcrypt(password, salt)
     return pwd == digt
+
+
+def hash_sha256(data: str):
+    sha256_hash = sha256()
+    sha256_hash.update(data.encode("utf-8"))
+    return sha256_hash.hexdigest()

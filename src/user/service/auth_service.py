@@ -1,3 +1,4 @@
+import secrets
 from datetime import datetime
 
 from flask_jwt_extended import create_access_token
@@ -5,16 +6,25 @@ from flask_jwt_extended import create_access_token
 from src.common.exception.BusinessException import (BusinessException,
                                                     BusinessExceptionEnum)
 from src.common.regexp.password import validate_password
+from src.common.service.email_service import send_email
 from src.user.controller.request.loginRequest import LoginRequest
 from src.user.controller.request.signupRequest import SignupRequest
 from src.user.controller.response.loginResponse import LoginResponse
+from src.user.model.reset_password_token import ResetPasswordToken
+from src.user.repository.reset_password_token_repository import \
+    ResetPasswordTokenRepository
 from src.user.repository.user_repository import UserRepository
-from src.user.utils.pcrypt import generate_salt, pcrypt, verify
+from src.user.utils.pcrypt import generate_salt, hash_sha256, pcrypt, verify
 
 
 class AuthService:
-    def __init__(self, user_repository: UserRepository):
+    def __init__(
+        self,
+        user_repository: UserRepository,
+        reset_password_request_repository: ResetPasswordTokenRepository,
+    ):
         self.user_repository = user_repository
+        self.reset_password_request_repository = reset_password_request_repository
 
     def login(self, login_request: LoginRequest) -> LoginResponse:
         user = self.user_repository.get_user_by_email(login_request.email)
@@ -50,3 +60,22 @@ class AuthService:
         )
 
         return self.user_repository.update_user(updated_user).id
+
+    def reset_password_request(self, email: str):
+        user = self.user_repository.get_user_by_email(email)
+
+        if not user:
+            raise BusinessException(BusinessExceptionEnum.UserNotInPilot)
+        if user.password is None:
+            raise BusinessException(BusinessExceptionEnum.UserEmailIsNotSignup)
+
+        token_url = secrets.token_urlsafe()
+
+        self.reset_password_request_repository.create_reset_password_token(
+            ResetPasswordToken(email=email, token=hash_sha256(token_url))
+        )
+
+        data = {"link": f"https://augmed.dhep.org/reset-password/{token_url}"}
+        SUBJECT = "Forgot your password?"
+        TO = [email]
+        return send_email(SUBJECT, TO, "reset_password.html", **data)

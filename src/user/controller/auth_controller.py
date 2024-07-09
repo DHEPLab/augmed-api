@@ -4,14 +4,20 @@ from src import db
 from src.common.model.ApiResponse import ApiResponse
 from src.user.controller.request.loginRequest import LoginRequest
 from src.user.controller.request.signupRequest import SignupRequest
+from src.user.repository.reset_password_token_repository import \
+    ResetPasswordTokenRepository
 from src.user.repository.user_repository import UserRepository
 from src.user.service.auth_service import AuthService
 
 auth_blueprint = Blueprint("auth", __name__)
 
 user_repository = UserRepository(db.session)
+reset_password_request_repository = ResetPasswordTokenRepository(db.session)
 
-auth_service = AuthService(user_repository=user_repository)
+auth_service = AuthService(
+    user_repository=user_repository,
+    reset_password_request_repository=reset_password_request_repository,
+)
 
 
 @auth_blueprint.route("/auth/login", methods=["POST"])
@@ -38,5 +44,19 @@ def signup() -> Response:
 
     response = json.jsonify(ApiResponse.success("Sign up successfully"))
     response.status_code = 201
+
+    return response
+
+
+@auth_blueprint.route("/auth/reset-password", methods=["POST"])
+def reset_password_request() -> Response:
+    req_data = request.get_json()
+
+    email_request = req_data["email"]
+
+    id = auth_service.reset_password_request(email_request)
+
+    response = json.jsonify(ApiResponse.success({"id": id}))
+    response.status_code = 200
 
     return response

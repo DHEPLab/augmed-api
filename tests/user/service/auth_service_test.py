@@ -4,7 +4,9 @@ from src.common.exception.BusinessException import BusinessException, BusinessEx
 from src.user.controller.request.signupRequest import SignupRequest
 
 from src.user.controller.request.loginRequest import LoginRequest
+from src.user.model.reset_password_token import ResetPasswordToken
 from src.user.model.user import User
+from src.user.repository.reset_password_token_repository import ResetPasswordTokenRepository
 from src.user.repository.user_repository import UserRepository
 from src.user.service.auth_service import AuthService
 from src.user.utils.pcrypt import pcrypt
@@ -31,6 +33,11 @@ def user_repository_mock(mocker, user):
 
 
 @pytest.fixture
+def reset_password_token_repo_mock(mocker):
+    return mocker.Mock(ResetPasswordTokenRepository)
+
+
+@pytest.fixture
 def invalid_singup_request():
     return SignupRequest("john@example.com", "simple password")
 
@@ -42,7 +49,7 @@ def valid_singup_request():
 
 def test_login_success(user_repository_mock, app, user):
     with app.app_context():
-        auth_service = AuthService(user_repository_mock)
+        auth_service = AuthService(user_repository_mock, reset_password_token_repo_mock)
         login_request = LoginRequest(email=user.email, password='password123')
         login_response = auth_service.login(login_request)
     assert login_response.access_token is not None
@@ -50,7 +57,7 @@ def test_login_success(user_repository_mock, app, user):
 
 def test_login_failure_with_not_invited_email(user_repository_mock, app):
     with app.app_context():
-        auth_service = AuthService(user_repository_mock)
+        auth_service = AuthService(user_repository_mock, reset_password_token_repo_mock)
         user_repository_mock.get_user_by_email.return_value = None
         wrong_email_login_request = LoginRequest(email='wrong@example.com', password='password123')
         with pytest.raises(BusinessException, match=re.compile(BusinessExceptionEnum.UserNotInPilot.name)):
@@ -59,7 +66,7 @@ def test_login_failure_with_not_invited_email(user_repository_mock, app):
 
 def test_login_failure_with_not_sign_up_email(user_repository_mock, app, user):
     with app.app_context():
-        auth_service = AuthService(user_repository_mock)
+        auth_service = AuthService(user_repository_mock, reset_password_token_repo_mock)
         user_repository_mock.get_user_by_email.return_value = user.copy(active=False)
         email_not_sign_up_login_request = LoginRequest(email=user.email, password='password123')
         with pytest.raises(BusinessException, match=re.compile(BusinessExceptionEnum.UserEmailIsNotSignup.name)):
@@ -68,29 +75,59 @@ def test_login_failure_with_not_sign_up_email(user_repository_mock, app, user):
 
 def test_login_failure_with_wrong_password(user_repository_mock, app, user):
     with app.app_context():
-        auth_service = AuthService(user_repository_mock)
+        auth_service = AuthService(user_repository_mock, reset_password_token_repo_mock)
         login_request = LoginRequest(email=user.email, password='password1234')
         with pytest.raises(BusinessException, match=re.compile(BusinessExceptionEnum.UserPasswordIncorrect.name)):
             auth_service.login(login_request)
 
 
 def test_signup_should_failed_when_user_password_is_invalid(user_repository_mock, invalid_singup_request):
-    auth_service = AuthService(user_repository_mock)
+    auth_service = AuthService(user_repository_mock, reset_password_token_repo_mock)
 
     with pytest.raises(BusinessException, match=re.compile(BusinessExceptionEnum.UserPasswordInvalid.name)):
         auth_service.signup(invalid_singup_request)
 
 
 def test_signup_should_failed_when_user_not_in_pilot(user_repository_mock, valid_singup_request):
-    auth_service = AuthService(user_repository_mock)
+    auth_service = AuthService(user_repository_mock, reset_password_token_repo_mock)
 
     with pytest.raises(BusinessException, match=re.compile(BusinessExceptionEnum.UserNotInPilot.name)):
         auth_service.signup(valid_singup_request)
 
 
 def test_signup_should_failed_when_user_already_signup(user, user_repository_mock, valid_singup_request):
-    auth_service = AuthService(user_repository_mock)
+    auth_service = AuthService(user_repository_mock, reset_password_token_repo_mock)
     user_repository_mock.query_user_by_email.return_value = user.copy(active=True)
 
     with pytest.raises(BusinessException, match=re.compile(BusinessExceptionEnum.UserEmailIsAlreadySignup.name)):
         auth_service.signup(valid_singup_request)
+
+
+def test_reset_password_request_success(mocker, user, user_repository_mock, reset_password_token_repo_mock):
+    auth_service = AuthService(user_repository_mock, reset_password_token_repo_mock)
+
+    user_repository_mock.get_user_by_email.return_value = user
+    reset_password_token_repo_mock.create_reset_password_token.return_value = ResetPasswordToken(
+        email=user.email,
+        token="test_token"
+    )
+
+    mocker.patch('src.user.service.auth_service.send_email', return_value="sended_email_id")
+
+    assert auth_service.reset_password_request(user.email) == "sended_email_id"
+
+
+def test_reset_password_request_should_failed_when_no_user(user, user_repository_mock):
+    auth_service = AuthService(user_repository_mock, reset_password_token_repo_mock)
+    user_repository_mock.get_user_by_email.return_value = None
+
+    with pytest.raises(BusinessException, match=re.compile(BusinessExceptionEnum.UserNotInPilot.name)):
+        auth_service.reset_password_request(user.email)
+
+
+def test_reset_password_request_should_failed_when_user_not_signup(user, user_repository_mock):
+    auth_service = AuthService(user_repository_mock, reset_password_token_repo_mock)
+    user_repository_mock.get_user_by_email.return_value = user.copy(password=None, salt=None, active=False)
+
+    with pytest.raises(BusinessException, match=re.compile(BusinessExceptionEnum.UserEmailIsNotSignup.name)):
+        auth_service.reset_password_request(user.email)

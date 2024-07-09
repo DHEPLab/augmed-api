@@ -40,6 +40,8 @@ class BusinessExceptionEnum(Enum):
         "1021",
         "No answer config available. Please configure it first.",
     )
+    RenderTemplateError = ("1030", "Template render error.")
+    SendEmailError = ("1040", "Email failed to send. Please try again.")
 
     def __init__(self, code: str, message: str):
         self._code = code

@@ -1,5 +1,6 @@
+import secrets
 import pytest
-from src.user.utils.pcrypt import generate_salt, pcrypt, verify
+from src.user.utils.pcrypt import generate_salt, hash_sha256, pcrypt, verify
 
 
 @pytest.fixture
@@ -40,3 +41,11 @@ def test_verify(test_password, salt, digt):
 
     assert verify(un_match_password, salt, digt) == False
     assert verify(test_password, un_match_salt, digt) == False
+
+
+def test_hash_sha256():
+    data = secrets.token_urlsafe()
+
+    hast_str = hash_sha256(data)
+
+    assert len(hast_str) == 64

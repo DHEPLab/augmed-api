@@ -2,6 +2,7 @@ import json
 
 import pytest
 
+from src.common.exception.BusinessException import BusinessException, BusinessExceptionEnum
 from src.user.controller.request.signupRequest import SignupRequest
 from src.user.controller.response.loginResponse import LoginResponse
 from src.user.model.user import User
@@ -23,7 +24,7 @@ def test_user():
 @pytest.fixture
 def pilot_user_request(test_user: User):
     return SignupRequest(
-        email= test_user.email,
+        email=test_user.email,
         password="9eNLBWpws6TCGk8_ibQn"
     )
 
@@ -124,4 +125,39 @@ def test_sign_up_failed_when_user_aready_sign_up(client,
             "code": "1003",
             "message": "Email is already sign up, please log in."
         }
+    } == response.json
+
+
+def test_reset_password_request(client, mocker):
+    mocker.patch('src.user.service.auth_service.AuthService.reset_password_request', return_value="email_id")
+    data = {
+        "email": "user@test.com",
+    }
+
+    response = client.post("/api/auth/reset-password", data=json.dumps(data), content_type='application/json')
+
+    assert response.status_code == 200
+    assert {
+        "data": {
+            "id": "email_id",
+        },
+        "error": None
+    } == response.json
+
+
+def test_reset_password_request_failed_with_no_user(client, mocker):
+    mocker.patch(
+        'src.user.service.auth_service.AuthService.reset_password_request',
+        side_effect=BusinessException(BusinessExceptionEnum.SendEmailError)
+    )
+    data = {
+        "email": "user@test.com",
+    }
+
+    response = client.post("/api/auth/reset-password", data=json.dumps(data), content_type='application/json')
+
+    assert response.status_code == 500
+    assert {
+        "data": None,
+        "error": {'code': '1040', 'message': 'Email failed to send. Please try again.'}
     } == response.json
