@@ -79,3 +79,21 @@ class AuthService:
         SUBJECT = "Forgot your password?"
         TO = [email]
         return send_email(SUBJECT, TO, "reset_password.html", **data)
+
+    def update_password(self, password, reset_token):
+        hashed_token = hash_sha256(reset_token)
+        reset_password_token = self.reset_password_request_repository.find_by_token(
+            hashed_token
+        )
+
+        if reset_password_token is None:
+            raise BusinessException(BusinessExceptionEnum.InValidResetToken)
+        if reset_password_token.is_expired():
+            raise BusinessException(BusinessExceptionEnum.ResetTokenExpired)
+
+        user = self.user_repository.query_user_by_email(reset_password_token.email)
+        salt = generate_salt()
+        updated_user = user.copy(salt=salt, password=pcrypt(password, salt))
+        self.user_repository.update_user(updated_user)
+
+        reset_password_token.active = False

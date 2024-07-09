@@ -20,3 +20,6 @@ class ResetPasswordToken(db.Model):
     expired_at: datetime = db.Column(
         db.DateTime, default=lambda: datetime.utcnow() + timedelta(days=2)
     )
+
+    def is_expired(self):
+        return datetime.utcnow() > self.expired_at

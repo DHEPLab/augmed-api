@@ -48,7 +48,7 @@ def signup() -> Response:
     return response
 
 
-@auth_blueprint.route("/auth/reset-password", methods=["POST"])
+@auth_blueprint.route("/auth/reset-password-request", methods=["POST"])
 def reset_password_request() -> Response:
     req_data = request.get_json()
 
@@ -60,3 +60,10 @@ def reset_password_request() -> Response:
     response.status_code = 200
 
     return response
+
+
+@auth_blueprint.route("/auth/reset-password", methods=["POST"])
+def reset_password():
+    req_data = request.get_json()
+    auth_service.update_password(req_data["password"], req_data["resetToken"])
+    return json.jsonify(ApiResponse.success("password updated")), 200
