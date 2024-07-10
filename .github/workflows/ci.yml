@@ -119,5 +119,3 @@ jobs:
           aws ecs update-service --cluster aim-ahead-cluster-dev --service aim-ahead-api-service-dev --force-new-deployment 2>&1 > /dev/null
         env:
           AWS_REGION: us-east-1
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

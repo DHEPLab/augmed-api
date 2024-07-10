@@ -33,7 +33,7 @@ def test_send_email_failed(mocker):
 
     mock_client = mocker.Mock()
     mock_client.send_email.side_effect = client_error
-    mocker.patch('boto3.client', return_value=mock_client)
+    mocker.patch('boto3.Session.client', return_value=mock_client)
 
     with pytest.raises(BusinessException, match=re.compile(BusinessExceptionEnum.SendEmailError.name)):
         send_email(SUBJECT, TO_ADDRESSES, html_template_name, **data)
@@ -49,6 +49,6 @@ def test_send_email_success(mocker):
     mock_client.send_email.return_value = {
         "MessageId": "email_id"
     }
-    mocker.patch('boto3.client', return_value=mock_client)
+    mocker.patch('boto3.Session.client', return_value=mock_client)
 
     assert send_email(SUBJECT, TO_ADDRESSES, html_template_name, **data) == "email_id"
