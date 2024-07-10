@@ -138,7 +138,7 @@ def test_reset_password_request(client, mocker):
         "email": "user@test.com",
     }
 
-    response = client.post("/api/auth/reset-password", data=json.dumps(data), content_type='application/json')
+    response = client.post("/api/auth/reset-password-request", data=json.dumps(data), content_type='application/json')
 
     assert response.status_code == 200
     assert {
@@ -158,7 +158,7 @@ def test_reset_password_request_failed_with_no_user(client, mocker):
         "email": "user@test.com",
     }
 
-    response = client.post("/api/auth/reset-password", data=json.dumps(data), content_type='application/json')
+    response = client.post("/api/auth/reset-password-request", data=json.dumps(data), content_type='application/json')
 
     assert response.status_code == 500
     assert {
