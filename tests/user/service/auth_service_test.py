@@ -1,4 +1,6 @@
 import re
+from datetime import datetime, timedelta
+
 import pytest
 from src.common.exception.BusinessException import BusinessException, BusinessExceptionEnum
 from src.user.controller.request.signupRequest import SignupRequest
@@ -131,3 +133,51 @@ def test_reset_password_request_should_failed_when_user_not_signup(user, user_re
 
     with pytest.raises(BusinessException, match=re.compile(BusinessExceptionEnum.UserEmailIsNotSignup.name)):
         auth_service.reset_password_request(user.email)
+
+
+def test_update_password_successfully(mocker, user):
+    # given
+    reset_password_token_repository = mocker.Mock(ResetPasswordTokenRepository)
+    reset_password_token = ResetPasswordToken(email='test@test.com', token='token', expired_at=datetime.utcnow() + timedelta(days=2))
+    reset_password_token_repository.find_by_token.return_value = reset_password_token
+
+    user_repository = mocker.Mock(UserRepository)
+    user_repository.query_user_by_email.return_value = user
+
+    mocker.patch('src.user.utils.pcrypt.generate_salt', return_value='generated_salt')
+    mocker.patch('src.user.utils.pcrypt.pcrypt', return_value='encoded_password')
+
+    # when
+    auth_service = AuthService(user_repository, reset_password_token_repository)
+    auth_service.update_password('password', 'token')
+
+    # Then
+    user_repository.update_user.assert_called_with(user.copy(salt='generated_salt', password='encoded_password'))
+    assert reset_password_token.active is False
+
+
+def test_throw_exception_when_reset_token_is_not_valid(mocker, user, user_repository_mock):
+    # given
+    reset_password_token_repository = mocker.Mock(ResetPasswordTokenRepository)
+    reset_password_token_repository.find_by_token.return_value = None
+
+    # when
+    auth_service = AuthService(user_repository_mock, reset_password_token_repository)
+
+    # Then
+    with pytest.raises(BusinessException, match=re.compile(BusinessExceptionEnum.InValidResetToken.name)):
+        auth_service.update_password('password', 'token')
+
+
+def test_throw_exception_when_reset_token_is_expired(mocker, user, user_repository_mock):
+    # given
+    reset_password_token_repository = mocker.Mock(ResetPasswordTokenRepository)
+    reset_password_token = ResetPasswordToken(email='test@test.com', token='token', expired_at=datetime.utcnow() + timedelta(days=-1))
+    reset_password_token_repository.find_by_token.return_value = reset_password_token
+
+    # when
+    auth_service = AuthService(user_repository_mock, reset_password_token_repository)
+
+    # Then
+    with pytest.raises(BusinessException, match=re.compile(BusinessExceptionEnum.ResetTokenExpired.name)):
+        auth_service.update_password('password', 'token')

@@ -16,10 +16,14 @@ def mock_auth_service(mocker):
     mocker.patch(
         'src.user.service.auth_service.AuthService.login',
         return_value=LoginResponse(access_token="fake_access_token"))
+    mocker.patch(
+        'src.user.service.auth_service.AuthService.update_password')
+
 
 @pytest.fixture
 def test_user():
     return User(name="john", email="john@exmaple.com",)
+
 
 @pytest.fixture
 def pilot_user_request(test_user: User):
@@ -161,3 +165,12 @@ def test_reset_password_request_failed_with_no_user(client, mocker):
         "data": None,
         "error": {'code': '1040', 'message': 'Email failed to send. Please try again.'}
     } == response.json
+
+
+def test_update_password(client, mock_auth_service):
+    request = {
+        "resetToken": "token",
+        "password": "password123"
+    }
+    response = client.post("/api/auth/reset-password", data=json.dumps(request), content_type='application/json')
+    assert response.status_code == 200

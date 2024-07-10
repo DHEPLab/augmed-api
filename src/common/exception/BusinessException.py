@@ -40,8 +40,14 @@ class BusinessExceptionEnum(Enum):
         "1021",
         "No answer config available. Please configure it first.",
     )
-    InValidResetToken = ("1022", "Invalid reset token")
-    ResetTokenExpired = ("1023", "Reset token expired")
+    InValidResetToken = (
+        "1022",
+        "Failed to reset password due to invalid token. Please resend reset password request.",
+    )
+    ResetTokenExpired = (
+        "1023",
+        "Failed to reset password due to expired token. Please resend reset password request.",
+    )
     RenderTemplateError = ("1030", "Template render error.")
     SendEmailError = ("1040", "Email failed to send. Please try again.")
 
