@@ -116,6 +116,8 @@ jobs:
 
       - name: Deploy to Amazon ECS
         run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws ecs update-service --cluster aim-ahead-cluster-dev --service aim-ahead-api-service-dev --force-new-deployment 2>&1 > /dev/null
         env:
           AWS_REGION: us-east-1
