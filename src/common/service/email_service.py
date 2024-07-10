@@ -27,13 +27,12 @@ def render_template(template_file, **kwargs):
 def send_email(
     subject: str, to_addresses: List[str], html_template_name: str, **kwargs
 ):
-    session = boto3.Session(
+    client = boto3.client(
+        "ses",
         aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
         aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
         region_name="us-east-1",
     )
-
-    client = session.client("ses")
 
     body_html = render_template(
         path.join(path.dirname(__file__), f"templates/{html_template_name}"), **kwargs
