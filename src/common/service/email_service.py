@@ -51,8 +51,10 @@ def send_email(
                 },
             },
         )
-    except ClientError as e:
-        print(e.response["Error"]["Message"])
+    except Exception as e:
+        if isinstance(e, ClientError):
+            print(e.response["Error"]["Message"])
+        print("Exception: ", e)
         raise BusinessException(BusinessExceptionEnum.SendEmailError)
     else:
         return response["MessageId"]

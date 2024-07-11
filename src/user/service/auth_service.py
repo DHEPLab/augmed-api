@@ -66,7 +66,7 @@ class AuthService:
 
         if not user:
             raise BusinessException(BusinessExceptionEnum.UserNotInPilot)
-        if user.password is None:
+        if not user.active:
             raise BusinessException(BusinessExceptionEnum.UserEmailIsNotSignup)
 
         token_url = secrets.token_urlsafe()
