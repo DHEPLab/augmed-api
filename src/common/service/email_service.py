@@ -55,6 +55,6 @@ def send_email(
         if isinstance(e, ClientError):
             print(e.response["Error"]["Message"])
         print("Exception: ", e)
-        raise BusinessException(BusinessExceptionEnum.SendEmailError)
+        raise BusinessException(BusinessExceptionEnum.SendEmailError, e)
     else:
         return response["MessageId"]
