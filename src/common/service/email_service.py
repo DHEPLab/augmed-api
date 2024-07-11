@@ -1,3 +1,4 @@
+import os
 from os import path
 from typing import List
 
@@ -26,7 +27,12 @@ def render_template(template_file, **kwargs):
 def send_email(
     subject: str, to_addresses: List[str], html_template_name: str, **kwargs
 ):
-    client = boto3.client("ses", region_name="us-east-1")
+    client = boto3.client(
+        "ses",
+        region_name="us-east-1",
+        aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
+        aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
+    )
 
     body_html = render_template(
         path.join(path.dirname(__file__), f"templates/{html_template_name}"), **kwargs
