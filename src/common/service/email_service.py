@@ -1,5 +1,4 @@
 import logging
-import os
 from os import path
 from typing import List
 
@@ -30,7 +29,6 @@ def send_email(
 ):
     session = boto3.session.Session(region_name="us-east-1")
     boto3.set_stream_logger("botocore", level=logging.DEBUG)
-    logging.info(f"env: {os.getenv("AWS_ACCESS_KEY_ID")}")
     client = session.client("ses")
 
     body_html = render_template(
