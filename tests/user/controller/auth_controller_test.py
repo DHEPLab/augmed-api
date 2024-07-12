@@ -106,7 +106,7 @@ def test_sign_up_failed_when_user_is_not_in_pilot(client,
         "data": None,
         "error": {
             "code": "1002",
-            "message": "It seems that you are not invited to Pilot group. Please contact dhep.lab@gmail.com"
+            "message": "It seems that you are not invited to the user group. Please contact dhep.lab@gmail.com"
         }
     } == response.json
 
