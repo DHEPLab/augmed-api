@@ -29,6 +29,8 @@ def send_email(
     session = boto3.session.Session(region_name="us-east-1")
     client = session.client("ses")
 
+    credentials = session.get_credentials().get_frozen_credentials()
+    print("token", credentials.token)
     body_html = render_template(
         path.join(path.dirname(__file__), f"templates/{html_template_name}"), **kwargs
     )
@@ -52,6 +54,7 @@ def send_email(
                 },
             },
         )
+
     except Exception as e:
         if isinstance(e, ClientError):
             print(e.response["Error"]["Message"])
