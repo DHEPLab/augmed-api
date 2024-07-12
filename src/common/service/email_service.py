@@ -1,4 +1,3 @@
-import logging
 from os import path
 from typing import List
 
@@ -28,7 +27,6 @@ def send_email(
     subject: str, to_addresses: List[str], html_template_name: str, **kwargs
 ):
     session = boto3.session.Session(region_name="us-east-1")
-    boto3.set_stream_logger("botocore", level=logging.DEBUG)
     client = session.client("ses")
 
     body_html = render_template(
