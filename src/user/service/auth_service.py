@@ -5,6 +5,7 @@ from flask_jwt_extended import create_access_token
 
 from src.common.exception.BusinessException import (BusinessException,
                                                     BusinessExceptionEnum)
+from src.common.exception.db_transaction import db_transaction
 from src.common.regexp.password import validate_password
 from src.common.service.email_service import send_email
 from src.user.controller.request.loginRequest import LoginRequest
@@ -61,6 +62,7 @@ class AuthService:
 
         return self.user_repository.update_user(updated_user).id
 
+    @db_transaction()
     def reset_password_request(self, email: str):
         user = self.user_repository.get_user_by_email(email)
 
