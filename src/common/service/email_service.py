@@ -9,7 +9,7 @@ from src.common.exception.BusinessException import (BusinessException,
                                                     BusinessExceptionEnum)
 
 CHARSET = "UTF-8"
-SENDER = "DHEP Lab <dhep.lab@gmail.com>"
+SENDER = "AugMed <dhep.lab@gmail.com>"
 
 
 def render_template(template_file, **kwargs):
