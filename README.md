@@ -1,4 +1,4 @@
-# AIM-AHEAD-API
+# AugMed-API
 
 ## Local Environment Setup
 
