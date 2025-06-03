@@ -1,0 +1,24 @@
+[
+  {
+    "type": "Text",
+    "title": "What is your diagnosis based on the information you currently have?",
+    "required": true
+  },
+  {
+    "type": "Paragraph",
+    "title": "What additional information do you require to make a final diagnosis?",
+    "required": true
+  },
+  {
+    "type": "SingleChoice",
+    "title": "What is your confidence?",
+    "options": ["High Confidence", "Medium Confidence", "Low Confidence"],
+    "required": false
+  },
+  {
+    "type": "MultipleChoice",
+    "title": "What medical field are you interested in?",
+    "options": ["Cardiology", "Neurology", "Orthopedics", "Radiology"],
+    "required": true
+  }
+]

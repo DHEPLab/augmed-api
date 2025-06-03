@@ -1,0 +1,7 @@
+{
+  "Background":           { "concept_ids": [] },
+  "Chief Complaint":      { "concept_ids": [] },
+  "Physical Examination": { "concept_ids": [] },
+  "Vitals":               { "concept_ids": [] },
+  "Labs":                 { "concept_ids": [] }
+}
