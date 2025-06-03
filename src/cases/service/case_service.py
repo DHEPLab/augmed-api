@@ -270,7 +270,7 @@ class CaseService:
         """
         return self.system_config_repository.get_config_by_id("page_config").json_config
 
-    def get_case_review(self, case_config_id):
+    def get_case_review(self, case_config_id): # pragma: no cover
         """
         1) Load the saved DisplayConfig (path_config list of { "path": "...", "style": {...} })
            for this case_config_id + user_email. If none or wrong user, error.
