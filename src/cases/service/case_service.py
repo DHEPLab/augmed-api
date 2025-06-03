@@ -42,6 +42,11 @@ def get_age(person, visit_occurrence):
     return str(visit_occurrence.visit_start_date.year - person.year_of_birth)
 
 
+def add_if_value_present(data, node):
+    if node.values:
+        data.append(node)
+
+
 class CaseService:
     def __init__(
         self,
