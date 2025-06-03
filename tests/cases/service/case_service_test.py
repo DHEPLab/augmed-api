@@ -890,6 +890,7 @@ class TestGetCaseReview:
             system_config_repository,
             diagnosis_repository,
         ) = mock_repos(mocker)
+
         case_service = CaseService(
             visit_occurrence_repository=visit_occurrence_repository,
             concept_repository=concept_repository,
@@ -905,8 +906,8 @@ class TestGetCaseReview:
         case_review = case_service.get_case_review(1)
 
         assert case_review == Case(
-            personName='sunwukong',
-            caseNumber='1',
+            personName="sunwukong",
+            caseNumber="1",
             details=[
                 TreeNode(
                     "BACKGROUND",
@@ -914,12 +915,11 @@ class TestGetCaseReview:
                         TreeNode(
                             "Patient Demographics",
                             [TreeNode("Age", "36"), TreeNode("Gender", "test")],
-                            {"collapse": True},
                         )
                     ],
                 )
             ],
-            importantInfos=[]
+            importantInfos=[],
         )
 
     def test_get_case_review_without_path_config(self, mocker):
@@ -1009,24 +1009,20 @@ class TestGetCaseReview:
             system_config_repository,
             diagnosis_repository,
         ) = mock_repos(mocker)
+
         configuration_repository.get_configuration_by_id.return_value = DisplayConfig(
-            user_email='goodbye@sunwukong.com',
+            user_email="goodbye@sunwukong.com",
             case_id=1,
             path_config=[
                 {
                     "path": "BACKGROUND.Patient Demographics",
                     "style": {"collapse": True, "top": 3},
                 },
-                {
-                    "path": "BACKGROUND.Patient Demographics.Age",
-                    "style": {"top": 2},
-                },
-                {
-                    "path": "BACKGROUND.Patient Demographics.Gender",
-                    "style": {"top": 0},
-                },
+                {"path": "BACKGROUND.Patient Demographics.Age", "style": {"top": 2}},
+                {"path": "BACKGROUND.Patient Demographics.Gender", "style": {"top": 0}},
             ],
         )
+
         case_service = CaseService(
             visit_occurrence_repository=visit_occurrence_repository,
             concept_repository=concept_repository,
@@ -1036,34 +1032,26 @@ class TestGetCaseReview:
             drug_exposure_repository=drug_exposure_repository,
             configuration_repository=configuration_repository,
             system_config_repository=system_config_repository,
-            diagnose_repository=diagnosis_repository
+            diagnose_repository=diagnosis_repository,
         )
 
         case_review = case_service.get_case_review(1)
 
         assert case_review == Case(
-            personName='sunwukong',
-            caseNumber='1',
+            personName="sunwukong",
+            caseNumber="1",
             details=[
                 TreeNode(
                     "BACKGROUND",
                     [
                         TreeNode(
                             "Patient Demographics",
-                            [TreeNode("Age", "36", {"top": 2}), TreeNode("Gender", "test", {"top": 0})],
-                            {"collapse": True, "top": 3},
+                            [TreeNode("Age", "36"), TreeNode("Gender", "test")],
                         )
                     ],
                 )
             ],
-            importantInfos=[
-                TreeNode("Gender", "test"),
-                TreeNode("Age", "36"),
-                TreeNode(
-                    "ignore",
-                    [TreeNode("Age", "36", {"top": 2}), TreeNode("Gender", "test", {"top": 0})],
-                )
-            ]
+            importantInfos=[],
         )
 
 

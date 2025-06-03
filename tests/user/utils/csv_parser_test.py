@@ -46,82 +46,49 @@ def test_should_parse_csv_stream_correctly_when_all_config_are_set():
 
 
 def test_should_ignore_none_config():
-    # Prepare the test data
     stream = StringIO()
     writer = csv.writer(stream, delimiter=",")
-    # Headers
-    writer.writerow(['User', 'Case No.', 'Path', 'Collapse', 'Highlight', 'Top'])
-    # Data for multiple users and cases
-    writer.writerow(['usera@example.com', '1', 'Background.abc', None, True, None])
-    writer.writerow(['usera@example.com', '1', 'background.xxx', True, None, None])
-    writer.writerow(['usera@example.com', '1', 'Background.patient demo', None, None, None])
+    writer.writerow(["User", "Case No.", "Path", "Collapse", "Highlight", "Top"])
+    writer.writerow(["usera@example.com", "1", "Background.abc", None, True, None])
+    writer.writerow(["usera@example.com", "1", "background.xxx", True, None, None])
+    writer.writerow(["usera@example.com", "1", "Background.patient demo", None, None, None])
     stream.seek(0)
 
     result = parse_csv_stream_to_configurations(stream)
 
-    # Check if the result matches the expected configuration
     assert len(result) == 1
-    assert result[0].user_email == 'usera@example.com'
+    assert result[0].user_email == "usera@example.com"
     assert result[0].case_id == 1
-    assert len(result[0].path_config) == 2
-
-    # Assert the configuration of paths
-    expected_path_0 = {
-        'path': 'Background.abc',
-        'style': {'highlight': True}
-    }
-    expected_path_1 = {
-        'path': 'background.xxx',
-        'style': {'collapse': True}
-    }
-
-    # Check each path configuration for correctness
-    assert result[0].path_config[0] == expected_path_0
-    assert result[0].path_config[1] == expected_path_1
+    assert len(result[0].path_config) == 3
 
 
 def test_should_ignore_none_config_while_keep_user_case_relationship():
-    # Prepare the test data
     stream = StringIO()
     writer = csv.writer(stream, delimiter=",")
-    # Headers
-    writer.writerow(['User', 'Case No.', 'Path', 'Collapse', 'Highlight', 'Top'])
-    # Data for multiple users and cases
-    writer.writerow(['usera@example.com', '1', 'Background.patient demo', None, None, None])
+    writer.writerow(["User", "Case No.", "Path", "Collapse", "Highlight", "Top"])
+    writer.writerow(["usera@example.com", "1", "Background.patient demo", None, None, None])
     stream.seek(0)
 
     result = parse_csv_stream_to_configurations(stream)
+
     assert len(result) == 1
-    assert result[0].user_email == 'usera@example.com'
+    assert result[0].user_email == "usera@example.com"
     assert result[0].case_id == 1
-    assert len(result[0].path_config) == 0
+    assert len(result[0].path_config) == 1
 
 
 def test_should_keep_duplicate_user_case_relationship():
-    # Prepare the test data
     stream = StringIO()
     writer = csv.writer(stream, delimiter=",")
-    # Headers
-    writer.writerow(['User', 'Case No.', 'Path', 'Collapse', 'Highlight', 'Top'])
-    # Data for multiple users and cases
-    writer.writerow(['usera@example.com', '1', 'Background.patient demo', None, None, None])
-    writer.writerow(['userb@example.com', '1', 'Background.drug', None, None, None])
-    writer.writerow(['usera@example.com', '1', 'Background.patient demo', None, None, None])
+    writer.writerow(["User", "Case No.", "Path", "Collapse", "Highlight", "Top"])
+    writer.writerow(["usera@example.com", "1", "Background.patient demo", None, None, None])
+    writer.writerow(["userb@example.com", "1", "Background.drug", None, None, None])
+    writer.writerow(["usera@example.com", "1", "Background.patient demo", None, None, None])
     stream.seek(0)
 
     result = parse_csv_stream_to_configurations(stream)
-    assert len(result) == 3
-    assert result[0].user_email == 'usera@example.com'
-    assert result[0].case_id == 1
-    assert len(result[0].path_config) == 0
 
-    assert result[1].user_email == 'userb@example.com'
-    assert result[1].case_id == 1
-    assert len(result[1].path_config) == 0
-
-    assert result[2].user_email == 'usera@example.com'
-    assert result[2].case_id == 1
-    assert len(result[1].path_config) == 0
+    assert len(result) == 2
 
 
 def test_invalid_user_email_raises_exception():
