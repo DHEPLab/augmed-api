@@ -42,6 +42,32 @@ def get_age(person, visit_occurrence):
     return str(visit_occurrence.visit_start_date.year - person.year_of_birth)
 
 
+def attach_style(display_configuration, case_details, important_infos):
+    paths = display_configuration["path"].split(".")
+    level = 0
+    nodes = case_details
+    while level < len(paths):
+        found = False
+        for node in nodes:
+            if node.key == paths[level]:
+                nodes = node.values
+                level = level + 1
+                found = True
+                if level == len(paths):
+                    node.style = display_configuration["style"]
+                    if node.style.get("top") is not None:
+                        important_infos.append(
+                            {
+                                "key": "ignore" if level == 2 else node.key,
+                                "values": node.values,
+                                "weight": node.style["top"],
+                            }
+                        )
+                break
+        if not found:
+            break
+
+
 def add_if_value_present(data, node):
     if node.values:
         data.append(node)
@@ -49,16 +75,16 @@ def add_if_value_present(data, node):
 
 class CaseService:
     def __init__(
-        self,
-        visit_occurrence_repository: VisitOccurrenceRepository,
-        concept_repository: ConceptRepository,
-        measurement_repository: MeasurementRepository,
-        observation_repository: ObservationRepository,
-        person_repository: PersonRepository,
-        drug_exposure_repository: DrugExposureRepository,
-        configuration_repository: DisplayConfigRepository,
-        system_config_repository: SystemConfigRepository,
-        diagnose_repository: AnswerRepository,
+            self,
+            visit_occurrence_repository: VisitOccurrenceRepository,
+            concept_repository: ConceptRepository,
+            measurement_repository: MeasurementRepository,
+            observation_repository: ObservationRepository,
+            person_repository: PersonRepository,
+            drug_exposure_repository: DrugExposureRepository,
+            configuration_repository: DisplayConfigRepository,
+            system_config_repository: SystemConfigRepository,
+            diagnose_repository: AnswerRepository,
     ):
         self.person = None
         self.visit_occurrence_repository = visit_occurrence_repository
@@ -176,7 +202,7 @@ class CaseService:
             value = value + " " + self.get_concept_name(observation.unit_concept_id)
         if value and observation.qualifier_concept_id:
             value = (
-                self.get_concept_name(observation.qualifier_concept_id) + " : " + value
+                    self.get_concept_name(observation.qualifier_concept_id) + " : " + value
             )
         return value
 
@@ -287,7 +313,7 @@ class CaseService:
                 # malformed, skip
                 continue
             parent_key = ".".join(segments[:-1])  # e.g. "BACKGROUND.Family History"
-            leaf_text = segments[-1]              # e.g. "Diabetes: Yes"
+            leaf_text = segments[-1]  # e.g. "Diabetes: Yes"
             parent_to_entries[parent_key].append({
                 "leaf": leaf_text,
                 "style": style_dict,
