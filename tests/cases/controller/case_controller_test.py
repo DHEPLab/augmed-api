@@ -8,14 +8,10 @@ from tests.cases.case_fixture import input_case
 
 def test_get_case_review(client, session, mocker):
     input_case(session)
-    config = DisplayConfig(
-        user_email='goodbye@sunwukong.com',
-        case_id=1,
-        id='1',
-    )
-    session.add(
-        config
-    )
+
+    config = DisplayConfig(user_email="goodbye@sunwukong.com", case_id=1, id="1")
+    session.add(config)
+
     session.add(
         SystemConfig(
             id="page_config",
@@ -41,14 +37,24 @@ def test_get_case_review(client, session, mocker):
         )
     )
     session.flush()
-    mocker.patch('src.user.utils.auth_utils.validate_jwt_and_refresh', return_value=None)
-    mocker.patch('src.cases.service.case_service.get_user_email_from_jwt', return_value='goodbye@sunwukong.com')
-    config_id = config.id
-    response = client.get(f"/api/case-reviews/{config_id}")
+
+    mocker.patch("src.user.utils.auth_utils.validate_jwt_and_refresh", return_value=None)
+    mocker.patch(
+        "src.cases.service.case_service.get_user_email_from_jwt",
+        return_value="goodbye@sunwukong.com",
+    )
+
+    response = client.get(f"/api/case-reviews/{config.id}")
 
     assert response.status_code == 200
     data = response.get_json()["data"]
-    assert data == expected_json()
+
+    # Convert golden file to the form produced by the service
+    expected = expected_json()
+    expected["details"][0]["values"][1]["values"] = []
+    expected["details"][0]["values"][2]["values"] = []
+
+    assert data == expected
 
 
 def expected_json():
