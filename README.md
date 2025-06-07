@@ -1,6 +1,6 @@
 # The AugMed App (Backend API)
 
-AugMed is a web application, built for the UNC-Chapel Hill DHEP Lab, that allows the lab to collect data from participants in a user-friendly way. The app is designed to be used on a tablet, and it allows participants to answer questions about their health and well-being. The app is built using React, and it uses the DHEP Lab's API to store and retrieve data.
+AugMed is a web application, built for the UNC-Chapel Hill DHEP Lab, that allows the lab to collect data from participants in a user-friendly way. The app is designed to be used on any devices, and it allows participants to answer questions about their judgements for cases with potential Colorectal Cancer (CRC). The app is built using React, and the backend API is built using Flask and Python.
 
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)
