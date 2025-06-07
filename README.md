@@ -67,6 +67,19 @@ To run the application locally, follow these steps:
    ```
    Adjust the command based on your application's entry point if different.
 
+> **NOTE:** If your frontend is also running, ensure it is configured to communicate with this backend API. You may need to set the API URL in your frontend configuration.
+> Also, you might need to use CORS (Cross-Origin Resource Sharing) if your frontend and backend are served from different origins. You can use the `flask-cors` package to handle this:
+> ```shell
+> pipenv install flask-cors
+> ```
+> Then, in `src/__init__.py`, add:
+> ```python
+> from flask_cors import CORS
+> # Then, after declaring `app` in the same file:
+> CORS(app, origins=["http://localhost:3000"], supports_credentials=True, expose_headers=["Authorization"],)
+> ```
+> This will allow your frontend to make requests to the backend without running into CORS issues.
+
 ## Testing
 
 ### Pytest Naming
