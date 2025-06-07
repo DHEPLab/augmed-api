@@ -163,7 +163,7 @@ def test_reset_password_request_failed_with_no_user(client, mocker):
     assert response.status_code == 500
     assert {
         "data": None,
-        "error": {'code': '1040', 'message': 'Email failed to send. Please try again.'}
+        "error": {'code': '1040', 'message': 'Email failed to send. Please try again. If the problem persists, contact dhep.lab@gmail.com for support.'}
     } == response.json
 
 

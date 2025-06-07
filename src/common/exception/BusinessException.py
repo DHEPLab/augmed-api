@@ -49,7 +49,8 @@ class BusinessExceptionEnum(Enum):
         "Failed to reset password due to expired token. Please resend reset password request.",
     )
     RenderTemplateError = ("1030", "Template render error.")
-    SendEmailError = ("1040", "Email failed to send. Please try again.")
+    SendEmailError = ("1040", "Email failed to send. Please try again. If the problem persists, "
+                              "contact dhep.lab@gmail.com for support.")
 
     def __init__(self, code: str, message: str):
         self._code = code
