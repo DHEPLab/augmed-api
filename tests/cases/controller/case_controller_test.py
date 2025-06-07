@@ -54,14 +54,8 @@ def test_get_case_review(client, session, mocker):
     expected["details"][0]["values"][1]["values"] = []
     expected["details"][0]["values"][2]["values"] = []
 
-    # inject the AI CRC Risk Score node
-    expected["importantInfos"] = [
-        {
-            "key": "AI CRC Risk Score (<6: Low; 6-11: Medium; >11: High)",
-            "style": None,
-            "values": ["N/A"],
-        }
-    ]
+    # when CSV doesn’t reference any RISK ASSESSMENT, importantInfos should be empty
+    expected["importantInfos"] = []
 
     assert data == expected
 
