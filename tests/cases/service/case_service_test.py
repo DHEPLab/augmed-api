@@ -920,12 +920,7 @@ class TestGetCaseReview:
                     ],
                 )
             ],
-            importantInfos=[
-                TreeNode(
-                    "AI CRC Risk Score (<6: Low; 6-11: Medium; >11: High)",
-                    ["N/A"],
-                )
-            ],
+            importantInfos=[]
         )
 
     def test_get_case_review_without_path_config(self, mocker):
@@ -974,12 +969,7 @@ class TestGetCaseReview:
                     ],
                 )
             ],
-            importantInfos=[
-                TreeNode(
-                    "AI CRC Risk Score (<6: Low; 6-11: Medium; >11: High)",
-                    ["N/A"],
-                )
-            ],
+            importantInfos=[]
         )
 
     def test_get_case_review_when_path_config_top_area(self, mocker):
@@ -1036,12 +1026,7 @@ class TestGetCaseReview:
                     ],
                 )
             ],
-            importantInfos=[
-                TreeNode(
-                    "AI CRC Risk Score (<6: Low; 6-11: Medium; >11: High)",
-                    ["N/A"],
-                )
-            ],
+            importantInfos=[]
         )
 
 
