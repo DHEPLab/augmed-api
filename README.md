@@ -1,6 +1,29 @@
-# AugMed-API
+# The AugMed App (Backend API)
+
+AugMed is a web application, built for the UNC-Chapel Hill DHEP Lab, that allows the lab to collect data from participants in a user-friendly way. The app is designed to be used on a tablet, and it allows participants to answer questions about their health and well-being. The app is built using React, and it uses the DHEP Lab's API to store and retrieve data.
+
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
+![Celery](https://img.shields.io/badge/Celery-37814A?style=for-the-badge&logo=celery&logoColor=white)
+![Alembic](https://img.shields.io/badge/Alembic-000000?style=for-the-badge&logo=alembic&logoColor=white)
+![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-3E8EDE?style=for-the-badge&logo=sqlalchemy&logoColor=white)
+![SQL](https://img.shields.io/badge/SQL-003B57?style=for-the-badge&logo=mysql&logoColor=white)
+![pytest](https://img.shields.io/badge/pytest-0A9EDC?style=for-the-badge&logo=pytest&logoColor=white)
+![Pipenv](https://img.shields.io/badge/Pipenv-343434?style=for-the-badge&logo=pipenv&logoColor=white)
+![Flake8](https://img.shields.io/badge/Flake8-000000?style=for-the-badge&logo=flake8&logoColor=white)
+![Pylint](https://img.shields.io/badge/Pylint-0D5BFF?style=for-the-badge&logo=pylint&logoColor=white)
+![Shell](https://img.shields.io/badge/Shell-4EAA25?style=for-the-badge&logo=gnu-bash&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Docker Compose](https://img.shields.io/badge/Docker%20Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
+![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
+![Postman](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white)
 
 ## Local Environment Setup
+
+Clone the repository if you haven't done so already, then follow these steps to set up your local environment:
 
 1. **Install Python**
 
@@ -43,6 +66,19 @@ To run the application locally, follow these steps:
    flask run
    ```
    Adjust the command based on your application's entry point if different.
+
+> **NOTE:** If your frontend is also running, ensure it is configured to communicate with this backend API. You may need to set the API URL in your frontend configuration.
+> Also, you might need to use CORS (Cross-Origin Resource Sharing) if your frontend and backend are served from different origins. You can use the `flask-cors` package to handle this:
+> ```shell
+> pipenv install flask-cors
+> ```
+> Then, in `src/__init__.py`, add:
+> ```python
+> from flask_cors import CORS
+> # Then, after declaring `app` in the same file:
+> CORS(app, origins=["http://localhost:3000"], supports_credentials=True, expose_headers=["Authorization"],)
+> ```
+> This will allow your frontend to make requests to the backend without running into CORS issues.
 
 ## Testing
 
@@ -102,5 +138,8 @@ Configure your local hooks as follows:
 git config core.hooksPath .githooks
 ```
 
+This will ensure that your local git hooks are used instead of the default ones. You can find the hooks in the `.githooks` directory.
 
+## License
 
+This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for details.

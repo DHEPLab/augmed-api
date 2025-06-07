@@ -201,9 +201,7 @@ class CaseService:
         if value and observation.unit_concept_id:
             value = value + " " + self.get_concept_name(observation.unit_concept_id)
         if value and observation.qualifier_concept_id:
-            value = (
-                    self.get_concept_name(observation.qualifier_concept_id) + " : " + value
-            )
+            value = (self.get_concept_name(observation.qualifier_concept_id) + " : " + value)
         return value
 
     def get_nodes_of_background(self, case_id, title_config):
@@ -270,142 +268,144 @@ class CaseService:
         """
         return self.system_config_repository.get_config_by_id("page_config").json_config
 
-    def get_case_review(self, case_config_id): # pragma: no cover
+    def get_case_review(self, case_config_id):  # pragma: no cover
         """
-        1) Load the saved DisplayConfig (path_config list of { "path": "...", "style": {...} })
-           for this case_config_id + user_email. If none or wrong user, error.
-        2) Build the full “case_details” tree by calling `get_case_detail(case_id)`.
-        3) Prune each parent (e.g. “Family History”, “Medical History”, etc.) down to exactly the
-           leaves specified in path_config. Attach collapse/highlight/top style at the parent.
-        4) If the raw CSV contained exactly the path "RISK ASSESSMENT.CRC risk assessments", then
-           and only then fetch any “Adjusted CRC Risk: …” obs (concept_id = 45614722), rename it,
-           and append as “AI Colorectal Cancer Risk Score” under importantInfos.
-        5) Return a Case(...) object containing the pruned tree plus any “important info” nodes.
+        1) Load saved DisplayConfig for this case_config_id + user_email.
+        2) Build full unpruned case_details tree.
+        3) Prune under “BACKGROUND” according to CSV path_config.
+        4) If CSV included a “Colorectal Cancer Score” entry, use that value
+           directly under “AI CRC Risk Score (<6: Low; 6-11: Medium; >11: High)”.
+        5) Otherwise, if CSV toggled CRC risk assessments, look first for a
+           “Colorectal Cancer Score” observation in the DB; if none, fall
+           back to the old “Adjusted CRC Risk” observation logic. If still
+           nothing, emit “N/A”.
         """
+        # load configuration & verify access
         configuration = self.configuration_repository.get_configuration_by_id(case_config_id)
         current_user = get_user_email_from_jwt()
         if not configuration or configuration.user_email != current_user:
             raise BusinessException(BusinessExceptionEnum.NoAccessToCaseReview)
 
-        # 1) Build the raw case_details (unpruned – contains all leaves)
+        # raw, unpruned
         case_details = self.get_case_detail(configuration.case_id)
 
-        # 2) Gather every single path_config entry into a map: parent_key → list of {leaf, style}
+        # index CSV path_config entries
         raw_path_cfg = configuration.path_config or []
         parent_to_entries: dict[str, list[dict]] = defaultdict(list)
 
-        # Also: detect if the CSV explicitly toggled CRC risk assessments at all
-        has_crc_toggle = False
+        csv_crc_score_leaf: str | None = None
+        old_crc_toggle = False
 
         for entry in raw_path_cfg:
-            path_str = entry.get("path", "").strip()
-            style_dict = entry.get("style", {}) or {}
+            path_str = (entry.get("path") or "").strip()
+            style = entry.get("style") or {}
             if not path_str:
-                # skip lines with no path
                 continue
-
-            # If exactly "RISK ASSESSMENT.CRC risk assessments" appears, note it:
-            if path_str == "RISK ASSESSMENT.CRC risk assessments":
-                has_crc_toggle = True
 
             segments = path_str.split(".")
             if len(segments) < 2:
-                # malformed, skip
                 continue
-            parent_key = ".".join(segments[:-1])  # e.g. "BACKGROUND.Family History"
-            leaf_text = segments[-1]  # e.g. "Diabetes: Yes"
-            parent_to_entries[parent_key].append({
-                "leaf": leaf_text,
-                "style": style_dict,
-            })
 
-        # 3) Build a list of important_infos for any node that has a “top” style
+            parent_key = ".".join(segments[:-1])
+            leaf_text = segments[-1]
+
+            # CSV‐provided score override?
+            if path_str.startswith("RISK ASSESSMENT.Colorectal Cancer Score"):
+                csv_crc_score_leaf = leaf_text
+
+            # old‐style toggle
+            if path_str == "RISK ASSESSMENT.CRC risk assessments":
+                old_crc_toggle = True
+
+            parent_to_entries[parent_key].append({"leaf": leaf_text, "style": style})
+
+        # prune under BACKGROUND
         important_infos: list[dict] = []
-
-        # 4) Walk down case_details to prune each parent. We only prune under “BACKGROUND”
-        for top_node in case_details:
-            if top_node.key != "BACKGROUND":
+        for top in case_details:
+            if top.key != "BACKGROUND":
                 continue
-            # top_node.values is a list of TreeNode children:
-            #   [ TreeNode("Patient Demographics"), TreeNode("Family History"), TreeNode("Social History"),
-            #     TreeNode("Medical History"), ... ]
-            for child in top_node.values:
-                # ALWAYS keep "Patient Demographics" as-is (Age/Gender). Skip pruning for it:
+            for child in top.values:
                 if child.key == "Patient Demographics":
                     continue
 
-                parent_key = f"BACKGROUND.{child.key}"
-                if parent_key not in parent_to_entries:
-                    # If CSV asked nothing about this parent, prune _all_ leaves under it.
+                pk = f"BACKGROUND.{child.key}"
+                if pk not in parent_to_entries:
                     child.values = []
                     continue
 
-                # Otherwise, collect all leaf entries under this parent
-                entries = parent_to_entries[parent_key]
-                leaves_to_keep = {e["leaf"] for e in entries}
+                entries = parent_to_entries[pk]
+                keep = {e["leaf"] for e in entries}
+                child.values = [v for v in child.values if v in keep]
 
-                # child.values was originally a list of strings (all possible leaves). Prune:
-                child.values = [val for val in child.values if val in leaves_to_keep]
-
-                # Merge all style dicts from entries for this parent into one combined style
-                combined_style: dict = {}
+                merged: dict = {}
                 for e in entries:
-                    style_dict = e.get("style") or {}
-                    # CSV generator sets collapse=False to indicate “show this leaf” → invert it
-                    if "collapse" in style_dict:
-                        combined_style["collapse"] = not style_dict["collapse"]
-                    if "highlight" in style_dict:
-                        combined_style["highlight"] = style_dict["highlight"]
-                    if "top" in style_dict:
-                        # If multiple “top” values, pick the largest weight
-                        if "top" not in combined_style or style_dict["top"] > combined_style["top"]:
-                            combined_style["top"] = style_dict["top"]
+                    s = e["style"]
+                    if "collapse" in s:
+                        merged["collapse"] = not s["collapse"]
+                    if "highlight" in s:
+                        merged["highlight"] = s["highlight"]
+                    if "top" in s:
+                        merged["top"] = max(merged.get("top", -1), s["top"])
 
-                # Attach the merged style to this parent node
-                child.style = combined_style
-
-                # If there is a “top” key, add to important_infos
-                if "top" in combined_style:
+                child.style = merged
+                if "top" in merged:
                     important_infos.append({
                         "key": child.key,
                         "values": child.values,
-                        "weight": combined_style["top"],
+                        "weight": merged["top"],
                     })
 
-        # 5) Sort important_infos by weight, then convert to TreeNode list
+        # sort & wrap
         important_infos.sort(key=itemgetter("weight"))
-        sorted_important_infos = list(map(lambda e: TreeNode(e["key"], e["values"]), important_infos))
+        sorted_important = [TreeNode(e["key"], e["values"]) for e in important_infos]
 
-        # 6) ONLY if the CSV included "RISK ASSESSMENT.CRC risk assessments",
-        #    fetch any “Adjusted CRC Risk: …” observation (concept_id = 45614722),
-        #    rename it to “AI-Predicted CRC Risk Score”, and append as “AI Colorectal Cancer Risk Score”.
-        if has_crc_toggle:
+        # label we use in the UI
+        ai_label = "AI CRC Risk Score (<6: Low; 6-11: Medium; >11: High)"
+
+        if csv_crc_score_leaf:
+            sorted_important.append(TreeNode(ai_label, [csv_crc_score_leaf]))
+
+        # fallback branch
+        elif old_crc_toggle:
             crc_obs = self.observation_repository.get_observations_by_concept(
                 configuration.case_id, [45614722]
             )
-            for obs in crc_obs:
-                if obs.value_as_string and obs.value_as_string.startswith("Adjusted CRC Risk"):
-                    # Rewrite the leaf text: replace "Adjusted CRC Risk" with "AI-Predicted CRC Risk Score"
-                    raw_text = obs.value_as_string  # e.g. "Adjusted CRC Risk: 0.546125"
-                    new_leaf = raw_text.replace(
-                        "Adjusted CRC Risk", "AI-Predicted CRC Risk Score"
-                    )
-                    # Use "AI Colorectal Cancer Risk Score" as the parent key
-                    sorted_important_infos.append(
-                        TreeNode("AI Colorectal Cancer Risk Score", [new_leaf])
-                    )
-                    break
 
-        # 7) Return a Case object containing:
-        #      • person_source_value (e.g. MRN or whatever)
-        #      • case_id  (converted to str)
-        #      • case_details
-        #      • importantInfos  (only includes AI‐CRC node if CSV requested RISK ASSESSMENT toggles)
+            # (i) is there a literal Colorectal Cancer Score: X row?
+            csv_obs = next(
+                (
+                    o.value_as_string
+                    for o in crc_obs
+                    if o.value_as_string and o.value_as_string.startswith("Colorectal Cancer Score")
+                ),
+                None
+            )
+            if csv_obs:
+                sorted_important.append(TreeNode(ai_label, [csv_obs]))
+            else:
+                # (ii) fall back to Adjusted CRC Risk
+                for obs in crc_obs:
+                    txt = obs.value_as_string or ""
+                    if txt.startswith("Adjusted CRC Risk"):
+                        new_txt = txt.replace(
+                            "Adjusted CRC Risk",
+                            "AI-Predicted CRC Risk Score"
+                        )
+                        sorted_important.append(TreeNode(ai_label, [new_txt]))
+                        break
+                else:
+                    # (iii) still nothing? emit N/A
+                    sorted_important.append(TreeNode(ai_label, ["N/A"]))
+
+        # if neither CSV nor old toggle, emit N/A
+        else:
+            sorted_important.append(TreeNode(ai_label, ["N/A"]))
+
         return Case(
             self.person.person_source_value,
             str(configuration.case_id),
             case_details,
-            sorted_important_infos,
+            sorted_important,
         )
 
     def __get_current_case_by_user(self, user_email) -> tuple[int, str] | tuple[None, None]:
