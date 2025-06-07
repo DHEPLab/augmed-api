@@ -273,26 +273,27 @@ class CaseService:
         1) Load saved DisplayConfig for this case_config_id + user_email.
         2) Build full unpruned case_details tree.
         3) Prune under “BACKGROUND” according to CSV path_config.
-        4) If CSV included a “Colorectal Cancer Score” entry, use that value
-           directly under “AI CRC Risk Score (<6: Low; 6-11: Medium; >11: High)”.
-        5) Otherwise, if CSV toggled CRC risk assessments, look first for a
-           “Colorectal Cancer Score” observation in the DB; if none, fall
-           back to the old “Adjusted CRC Risk” observation logic. If still
-           nothing, emit “N/A”.
+        4) If CSV included a literal Colorectal Cancer Score leaf, use that directly.
+        5) Else if CSV toggled CRC risk assessments, look for an observation row:
+           a) First, any value_as_string starting with "Colorectal Cancer Score"
+           b) Then, any "Adjusted CRC Risk" row (renaming it)
+           c) If neither found, emit "N/A"
+        6) If CSV had no RISK ASSESSMENT entries at all, do not emit any CRC score node.
         """
-        # load configuration & verify access
+        # --- 1) Load configuration & verify access ---
         configuration = self.configuration_repository.get_configuration_by_id(case_config_id)
         current_user = get_user_email_from_jwt()
         if not configuration or configuration.user_email != current_user:
             raise BusinessException(BusinessExceptionEnum.NoAccessToCaseReview)
 
-        # raw, unpruned
+        # --- 2) Raw, unpruned case tree ---
         case_details = self.get_case_detail(configuration.case_id)
 
-        # index CSV path_config entries
+        # --- 3) Index CSV path_config entries ---
         raw_path_cfg = configuration.path_config or []
         parent_to_entries: dict[str, list[dict]] = defaultdict(list)
 
+        # Track whether CSV provided an explicit literal score or just toggled the section
         csv_crc_score_leaf: str | None = None
         old_crc_toggle = False
 
@@ -303,40 +304,43 @@ class CaseService:
                 continue
 
             segments = path_str.split(".")
+            # We need at least a parent and a leaf
             if len(segments) < 2:
                 continue
 
             parent_key = ".".join(segments[:-1])
             leaf_text = segments[-1]
 
-            # CSV‐provided score override?
+            # CSV-provided literal score override?
             if path_str.startswith("RISK ASSESSMENT.Colorectal Cancer Score"):
                 csv_crc_score_leaf = leaf_text
 
-            # old‐style toggle
+            # Old-style toggle of the entire CRC section?
             if path_str == "RISK ASSESSMENT.CRC risk assessments":
                 old_crc_toggle = True
 
             parent_to_entries[parent_key].append({"leaf": leaf_text, "style": style})
 
-        # prune under BACKGROUND
+        # --- 4) Prune under BACKGROUND according to path_config ---
         important_infos: list[dict] = []
         for top in case_details:
             if top.key != "BACKGROUND":
                 continue
             for child in top.values:
                 if child.key == "Patient Demographics":
+                    # always keep demographics
                     continue
-
                 pk = f"BACKGROUND.{child.key}"
                 if pk not in parent_to_entries:
+                    # no CSV entries for this category ⇒ drop it entirely
                     child.values = []
                     continue
-
                 entries = parent_to_entries[pk]
+                # only keep those leaves the CSV listed
                 keep = {e["leaf"] for e in entries}
                 child.values = [v for v in child.values if v in keep]
 
+                # merge style directives (collapse, highlight, top)
                 merged: dict = {}
                 for e in entries:
                     s = e["style"]
@@ -348,30 +352,32 @@ class CaseService:
                         merged["top"] = max(merged.get("top", -1), s["top"])
 
                 child.style = merged
-                if "top" in merged:
+                # collect any "top"-weighted nodes for separate display
+                if merged.get("top") is not None:
                     important_infos.append({
                         "key": child.key,
                         "values": child.values,
                         "weight": merged["top"],
                     })
 
-        # sort & wrap
+        # sort by weight and wrap into TreeNodes
         important_infos.sort(key=itemgetter("weight"))
         sorted_important = [TreeNode(e["key"], e["values"]) for e in important_infos]
 
-        # label we use in the UI
+        # --- 5) Handle AI CRC Risk Score section only if CSV referenced it ---
         ai_label = "AI CRC Risk Score (<6: Low; 6-11: Medium; >11: High)"
 
         if csv_crc_score_leaf:
+            # CSV gave us the exact leaf text to show
             sorted_important.append(TreeNode(ai_label, [csv_crc_score_leaf]))
 
-        # fallback branch
         elif old_crc_toggle:
+            # CSV toggled the section but did not supply a literal score; fetch from DB
             crc_obs = self.observation_repository.get_observations_by_concept(
                 configuration.case_id, [45614722]
             )
 
-            # (i) is there a literal Colorectal Cancer Score: X row?
+            # (a) look first for any literal "Colorectal Cancer Score: X"
             csv_obs = next(
                 (
                     o.value_as_string
@@ -383,10 +389,11 @@ class CaseService:
             if csv_obs:
                 sorted_important.append(TreeNode(ai_label, [csv_obs]))
             else:
-                # (ii) fall back to Adjusted CRC Risk
+                # (b) fallback to any "Adjusted CRC Risk" row
                 for obs in crc_obs:
                     txt = obs.value_as_string or ""
                     if txt.startswith("Adjusted CRC Risk"):
+                        # rename to match "AI-Predicted CRC Risk Score"
                         new_txt = txt.replace(
                             "Adjusted CRC Risk",
                             "AI-Predicted CRC Risk Score"
@@ -394,13 +401,12 @@ class CaseService:
                         sorted_important.append(TreeNode(ai_label, [new_txt]))
                         break
                 else:
-                    # (iii) still nothing? emit N/A
+                    # (c) CSV toggled but no score found ⇒ explicitly show N/A
                     sorted_important.append(TreeNode(ai_label, ["N/A"]))
 
-        # if neither CSV nor old toggle, emit N/A
-        else:
-            sorted_important.append(TreeNode(ai_label, ["N/A"]))
+        # 6) If neither csv_crc_score_leaf nor old_crc_toggle, we do not append any CRC score node.
 
+        # --- 7) Return the assembled Case object ---
         return Case(
             self.person.person_source_value,
             str(configuration.case_id),
