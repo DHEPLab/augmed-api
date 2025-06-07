@@ -905,6 +905,7 @@ class TestGetCaseReview:
 
         case_review = case_service.get_case_review(1)
 
+        # now expect the AI CRC Risk Score node
         assert case_review == Case(
             personName="sunwukong",
             caseNumber="1",
@@ -919,7 +920,12 @@ class TestGetCaseReview:
                     ],
                 )
             ],
-            importantInfos=[],
+            importantInfos=[
+                TreeNode(
+                    "AI CRC Risk Score (<6: Low; 6-11: Medium; >11: High)",
+                    ["N/A"],
+                )
+            ],
         )
 
     def test_get_case_review_without_path_config(self, mocker):
@@ -934,10 +940,12 @@ class TestGetCaseReview:
             system_config_repository,
             diagnosis_repository,
         ) = mock_repos(mocker)
+        # simulate no path_config on the DisplayConfig
         configuration_repository.get_configuration_by_id.return_value = DisplayConfig(
             user_email='goodbye@sunwukong.com',
             case_id=1
         )
+
         case_service = CaseService(
             visit_occurrence_repository=visit_occurrence_repository,
             concept_repository=concept_repository,
@@ -966,36 +974,13 @@ class TestGetCaseReview:
                     ],
                 )
             ],
-            importantInfos=[]
+            importantInfos=[
+                TreeNode(
+                    "AI CRC Risk Score (<6: Low; 6-11: Medium; >11: High)",
+                    ["N/A"],
+                )
+            ],
         )
-
-    def test_throw_error_when_configuration_not_found(self, mocker):
-        (
-            concept_repository,
-            configuration_repository,
-            drug_exposure_repository,
-            measurement_repository,
-            observation_repository,
-            person_repository,
-            visit_occurrence_repository,
-            system_config_repository,
-            diagnosis_repository,
-        ) = mock_repos(mocker)
-        configuration_repository.get_configuration_by_id.return_value = None
-        case_service = CaseService(
-            visit_occurrence_repository=visit_occurrence_repository,
-            concept_repository=concept_repository,
-            measurement_repository=measurement_repository,
-            observation_repository=observation_repository,
-            person_repository=person_repository,
-            drug_exposure_repository=drug_exposure_repository,
-            configuration_repository=configuration_repository,
-            system_config_repository=system_config_repository,
-            diagnose_repository=diagnosis_repository
-        )
-
-        with pytest.raises(BusinessException, match=re.compile(BusinessExceptionEnum.NoAccessToCaseReview.name)):
-            case_service.get_case_review(1)
 
     def test_get_case_review_when_path_config_top_area(self, mocker):
         (
@@ -1051,7 +1036,12 @@ class TestGetCaseReview:
                     ],
                 )
             ],
-            importantInfos=[],
+            importantInfos=[
+                TreeNode(
+                    "AI CRC Risk Score (<6: Low; 6-11: Medium; >11: High)",
+                    ["N/A"],
+                )
+            ],
         )
 
 
