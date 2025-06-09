@@ -270,6 +270,8 @@ class CaseService:
 
     def get_case_review(self, case_config_id):  # pragma: no cover
         """
+        A function that implements the business logic for the /case-reviews/{id} API endpoint.
+        Steps:
         1) Load saved DisplayConfig for this case_config_id + user_email.
         2) Build full unpruned case_details tree.
         3) Prune under “BACKGROUND” according to CSV path_config.
@@ -279,6 +281,9 @@ class CaseService:
            b) Then, any "Adjusted CRC Risk" row (renaming it)
            c) If neither found, emit "N/A"
         6) If CSV had no RISK ASSESSMENT entries at all, do not emit any CRC score node.
+        7) Return Case object with pruned case_details and important_infos.
+
+        This function relies on the Tree data structure, which is built by utils/csv_parser.py.
         """
         # --- 1) Load configuration & verify access ---
         configuration = self.configuration_repository.get_configuration_by_id(case_config_id)
@@ -406,7 +411,6 @@ class CaseService:
 
         # 6) If neither csv_crc_score_leaf nor old_crc_toggle, we do not append any CRC score node.
 
-        # --- 7) Return the assembled Case object ---
         return Case(
             self.person.person_source_value,
             str(configuration.case_id),

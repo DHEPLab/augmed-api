@@ -59,13 +59,22 @@ Clone the repository if you haven't done so already, then follow these steps to 
 
 To run the application locally, follow these steps:
 
+> Note: Ensure you have activated your pipenv shell by running `pipenv shell`.
+
 1. Ensure all dependencies are installed using Pipenv.
+   ```bash
+   pipenv install
+   ```
 2. Start your Docker containers if the application requires any external services like databases.
-3. Use the following command to run the application under the ``src``:
+3. Use the following command to run the application under the ``src`` directory:
    ```shell
    flask run
    ```
    Adjust the command based on your application's entry point if different.
+4. Alternatively, run the following command to start the application, at the root path of the project if there is any port conflict on your machine:
+   ```shell
+   flask run --host=127.0.0.1 --port=5001
+   ```
 
 > **NOTE:** If your frontend is also running, ensure it is configured to communicate with this backend API. You may need to set the API URL in your frontend configuration.
 > Also, you might need to use CORS (Cross-Origin Resource Sharing) if your frontend and backend are served from different origins. You can use the `flask-cors` package to handle this:
