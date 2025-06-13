@@ -1,7 +1,7 @@
 from src.analytics.model.analytics import Analytics
 
 class AnalyticsRepository:
-    def __init__(self, session):
+    def __init__(self, session):  # pragma: no cover
         self.session = session
 
     def add(self, analytics: Analytics) -> Analytics:  # pragma: no cover

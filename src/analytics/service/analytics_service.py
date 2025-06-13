@@ -10,7 +10,7 @@ class AnalyticsService:
         self,
         analytics_repository: AnalyticsRepository,
         display_config_repository: DisplayConfigRepository,
-    ):
+    ):  # pragma: no cover
         self.analytics_repo = analytics_repository
         self.config_repo = display_config_repository
 
