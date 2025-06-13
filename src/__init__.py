@@ -5,6 +5,7 @@ from flask_json_schema import JsonSchema
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate, upgrade
 from flask_sqlalchemy import SQLAlchemy
+# from flask_cors import CORS
 
 from src.common.exception.exception_handlers import register_error_handlers
 
@@ -15,6 +16,13 @@ jwt = JWTManager()
 
 def create_app(config_object=None):
     app = Flask(__name__)
+    #
+    # CORS(
+    #     app,
+    #     origins=["http://localhost:3000"],
+    #     supports_credentials=True,
+    #     expose_headers=["Authorization"],
+    # )
 
     # Allow custom configuration for testing
     if config_object:
@@ -45,6 +53,7 @@ def create_app(config_object=None):
         from src.user.controller.auth_controller import auth_blueprint
         from src.user.controller.config_controller import config_blueprint
         from src.user.controller.user_controller import user_blueprint
+        from src.analytics.controller.analytics_controller import analytics_blueprint
 
         app.register_blueprint(admin_answer_config_blueprint, url_prefix="/admin")
         app.register_blueprint(user_blueprint, url_prefix="/admin")
@@ -55,6 +64,7 @@ def create_app(config_object=None):
         app.register_blueprint(healthcheck_blueprint, url_prefix="/api")
         app.register_blueprint(case_blueprint, url_prefix="/api")
         app.register_blueprint(answer_blueprint, url_prefix="/api")
+        app.register_blueprint(analytics_blueprint)
 
         register_error_handlers(app)
 
