@@ -5,6 +5,11 @@ AugMed is a web application, built for the UNC-Chapel Hill DHEP Lab, that allows
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+![AWS RDS](https://img.shields.io/badge/AWS%20RDS-527FFF?style=for-the-badge&logo=amazon-rds&logoColor=white)
+![AWS S3](https://img.shields.io/badge/AWS%20S3-8C4FFF?style=for-the-badge&logo=amazon-s3&logoColor=white)
+![AWS ECR](https://img.shields.io/badge/AWS%20ECR-F58534?style=for-the-badge&logo=aws&logoColor=white)
+![AWS ECS](https://img.shields.io/badge/AWS%20ECS-FF5A00?style=for-the-badge&logo=aws&logoColor=white)
+![AWS ALB](https://img.shields.io/badge/AWS%20ALB-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)
 ![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
 ![Celery](https://img.shields.io/badge/Celery-37814A?style=for-the-badge&logo=celery&logoColor=white)
 ![Alembic](https://img.shields.io/badge/Alembic-000000?style=for-the-badge&logo=alembic&logoColor=white)
@@ -17,6 +22,7 @@ AugMed is a web application, built for the UNC-Chapel Hill DHEP Lab, that allows
 ![Shell](https://img.shields.io/badge/Shell-4EAA25?style=for-the-badge&logo=gnu-bash&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![Docker Compose](https://img.shields.io/badge/Docker%20Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Terraform](https://img.shields.io/badge/Terraform-7B42BC?style=for-the-badge&logo=terraform&logoColor=white)
 ![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
 ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
 ![Postman](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white)
@@ -148,6 +154,16 @@ git config core.hooksPath .githooks
 ```
 
 This will ensure that your local git hooks are used instead of the default ones. You can find the hooks in the `.githooks` directory.
+
+## Deployment
+
+The application is deployed using Docker and AWS services. The deployment process involves building Docker images, pushing them to AWS ECR, and deploying them to AWS ECS.
+
+Specifically, the application is deployed to an AWS ECS cluster using Fargate. The deployment process is automated using GitHub Actions, which builds the Docker image, pushes it to ECR, and updates the ECS service.
+
+It also uses Terraform to manage the infrastructure as code. 
+
+> **Visit the [augmed-infra repository](https://github.com/DHEPLab/augmed-infra) for more details on the infrastructure setup and deployment process.**
 
 ## License
 
