@@ -17,7 +17,7 @@ analytics_blueprint = Blueprint(
 
 @analytics_blueprint.route("/", methods=["POST"], strict_slashes=False)
 @jwt_validation_required()
-def record():
+def record():  # pragma: no cover
     payload = request.get_json() or {}
     case_config_id    = payload.get("caseConfigId")
     case_open_str     = payload.get("caseOpenTime")

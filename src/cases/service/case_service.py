@@ -410,7 +410,7 @@ class CaseService:
                 )
                 sorted_important.append(TreeNode(ai_label, [display_txt]))
             else:
-                # (b) fallback to Adjusted CRC Risk…
+                # (b) fallback to Adjusted CRC Risk
                 for obs in crc_obs:
                     txt = obs.value_as_string or ""
                     if txt.startswith("Adjusted CRC Risk"):

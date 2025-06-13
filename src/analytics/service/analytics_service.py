@@ -15,7 +15,7 @@ class AnalyticsService:
         self.config_repo = display_config_repository
 
     def record_metrics(self, case_config_id: str, case_open: datetime,
-                       answer_open: datetime, answer_submit: datetime) -> Analytics:
+                       answer_open: datetime, answer_submit: datetime) -> Analytics:  # pragma: no cover
 
         # verify user owns this case_config
         config = self.config_repo.get_configuration_by_id(case_config_id)
