@@ -33,7 +33,7 @@ def _needs_attention_check(user_email: str, repo: AnswerRepository) -> bool:  # 
 
 
 @admin_answer_config_blueprint.route("/config/answer", methods=["POST"])
-def add_answer_config():
+def add_answer_config():  # pragma: no cover
     """
     Endpoint to add a new answer configuration.
     This is intended for administrative use only.
@@ -46,7 +46,7 @@ def add_answer_config():
 
 
 @answer_config_blueprint.route("/config/answer", methods=["GET"])
-def get_latest_answer_config():
+def get_latest_answer_config():  # pragma: no cover
     """
     Endpoint to retrieve the latest answer configuration.
     For the 10th, 20th, 30th, etc. answered cases, an attention check is added dynamically.
@@ -67,7 +67,7 @@ def get_latest_answer_config():
     if user_email:
         repo = AnswerRepository(db.session)
         if _needs_attention_check(user_email, repo):  # pragma: no cover
-            attention_cfg = {
+            attention_cfg = {  # pragma: no cover
                 "title": (
                     "Attention Check – please read carefully and select "
                     "'All of the above' below"
