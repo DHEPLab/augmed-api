@@ -8,7 +8,6 @@ from src.configration.repository.answer_config_repository import (
 from src.configration.service.answer_config_service import AnswerConfigurationService
 from src.answer.repository.answer_repository import AnswerRepository
 from src.user.utils.auth_utils import (
-    jwt_validation_required,
     get_user_email_from_jwt,
 )
 
