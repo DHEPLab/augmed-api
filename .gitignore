@@ -78,3 +78,8 @@ backend.tf
 *.iso
 .env
 .coverage
+
+# participants info
+create_accounts_local.sh
+participants.tsv
+generate_tsv.sh
