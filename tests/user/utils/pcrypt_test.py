@@ -12,6 +12,7 @@ def test_password():
 def salt():
     return generate_salt()
 
+
 @pytest.fixture
 def digt(test_password, salt):
     return pcrypt(test_password, salt)
@@ -32,7 +33,7 @@ def test_pcrypt(test_password, salt):
     assert isinstance(derived_key, str)
     assert len(derived_key) == 172
 
-    
+
 def test_verify(test_password, salt, digt):
     un_match_password = "?FAdWqd6pPuPX.mc"
     un_match_salt = generate_salt()

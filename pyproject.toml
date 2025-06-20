@@ -1,7 +1,13 @@
 [tool.black]
+line-length = 88
+target-version = ['py38']
 exclude = '''
 /(
-    src/migrations/*
+    \.venv         # skip your virtual-env
+  | src/migrations  # skip all files under migrations
+  | \.git          # skip git dir
+  | build          # skip build/
+  | dist           # skip dist/
 )/
 '''
 

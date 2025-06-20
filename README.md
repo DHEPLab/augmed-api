@@ -65,7 +65,8 @@ Clone the repository if you haven't done so already, then follow these steps to 
 
 To run the application locally, follow these steps:
 
-> Note: Ensure you have activated your pipenv shell by running `pipenv shell`.
+> [!IMPORTANT]
+> Ensure you have activated your pipenv shell by running `pipenv shell`.
 
 1. Ensure all dependencies are installed using Pipenv.
    ```bash
@@ -82,7 +83,8 @@ To run the application locally, follow these steps:
    flask run --host=127.0.0.1 --port=5001
    ```
 
-> **NOTE:** If your frontend is also running, ensure it is configured to communicate with this backend API. You may need to set the API URL in your frontend configuration.
+> [!NOTE]
+> If your frontend is also running, ensure it is configured to communicate with this backend API. You may need to set the API URL in your frontend configuration.
 > Also, you might need to use CORS (Cross-Origin Resource Sharing) if your frontend and backend are served from different origins. You can use the `flask-cors` package to handle this:
 > ```shell
 > pipenv install flask-cors
@@ -122,6 +124,16 @@ pipenv install flake8
 flake8 src
 ```
 
+## Black Formatting
+
+It is highly encouraged to use [Black](https://black.readthedocs.io/en/stable/) for code formatting before every commit. You can run it as follows:
+
+```shell
+pipenv run black .
+```
+
+Run this inside a pipenv shell, from the root directory of the project. This will format all Python files in the project.
+
 ## Database Setup and Migrations
 
 ### Local Database
@@ -146,6 +158,10 @@ flask db migrate -m "Create user table"
 flask db upgrade  # Execute this if you pull new changes that alter the schema remotely.
 ```
 
+> [!IMPORTANT]
+> When you run `flask db migrate`, it generates a new migration script in the `src/migrations/versions` directory. Review this script to ensure it accurately reflects the changes you made to the models. If necessary, modify the script before running `flask db upgrade`.
+> This is very crucial because the migration script might contain errors or false commands, like `drop_table`, which can lead to data loss. Always double-check the generated migration script before applying it.
+
 ## Git Hooks
 
 Configure your local hooks as follows:
@@ -163,6 +179,7 @@ Specifically, the application is deployed to an AWS ECS cluster using Fargate. T
 
 It also uses Terraform to manage the infrastructure as code. 
 
+> [!TIP]
 > **Visit the [augmed-infra repository](https://github.com/DHEPLab/augmed-infra) for more details on the infrastructure setup and deployment process.**
 
 ## License

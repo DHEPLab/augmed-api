@@ -4,8 +4,9 @@ from src import db
 from src.common.model.ApiResponse import ApiResponse
 from src.user.controller.request.loginRequest import LoginRequest
 from src.user.controller.request.signupRequest import SignupRequest
-from src.user.repository.reset_password_token_repository import \
-    ResetPasswordTokenRepository
+from src.user.repository.reset_password_token_repository import (
+    ResetPasswordTokenRepository,
+)
 from src.user.repository.user_repository import UserRepository
 from src.user.service.auth_service import AuthService
 

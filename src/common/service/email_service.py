@@ -5,8 +5,10 @@ import boto3
 from botocore.exceptions import ClientError
 from mako.template import Template
 
-from src.common.exception.BusinessException import (BusinessException,
-                                                    BusinessExceptionEnum)
+from src.common.exception.BusinessException import (
+    BusinessException,
+    BusinessExceptionEnum,
+)
 
 CHARSET = "UTF-8"
 SENDER = "AugMed <dhep.lab@gmail.com>"

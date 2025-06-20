@@ -10,7 +10,10 @@ from src.cases.repository.measurement_repository import MeasurementRepository
 from src.cases.repository.observation_repository import ObservationRepository
 from src.cases.repository.person_repository import PersonRepository
 from src.cases.repository.visit_occurrence_repository import VisitOccurrenceRepository
-from src.common.exception.BusinessException import (BusinessException, BusinessExceptionEnum)
+from src.common.exception.BusinessException import (
+    BusinessException,
+    BusinessExceptionEnum,
+)
 from src.common.repository.system_config_repository import SystemConfigRepository
 from src.user.repository.display_config_repository import DisplayConfigRepository
 from src.user.utils.auth_utils import get_user_email_from_jwt
@@ -75,16 +78,16 @@ def add_if_value_present(data, node):
 
 class CaseService:
     def __init__(
-            self,
-            visit_occurrence_repository: VisitOccurrenceRepository,
-            concept_repository: ConceptRepository,
-            measurement_repository: MeasurementRepository,
-            observation_repository: ObservationRepository,
-            person_repository: PersonRepository,
-            drug_exposure_repository: DrugExposureRepository,
-            configuration_repository: DisplayConfigRepository,
-            system_config_repository: SystemConfigRepository,
-            diagnose_repository: AnswerRepository,
+        self,
+        visit_occurrence_repository: VisitOccurrenceRepository,
+        concept_repository: ConceptRepository,
+        measurement_repository: MeasurementRepository,
+        observation_repository: ObservationRepository,
+        person_repository: PersonRepository,
+        drug_exposure_repository: DrugExposureRepository,
+        configuration_repository: DisplayConfigRepository,
+        system_config_repository: SystemConfigRepository,
+        diagnose_repository: AnswerRepository,
     ):
         self.person = None
         self.visit_occurrence_repository = visit_occurrence_repository
@@ -128,7 +131,9 @@ class CaseService:
                 data.append(
                     TreeNode(
                         section_name,
-                        get_value_of_rows(parent_measurements, self.get_value_of_measurement),
+                        get_value_of_rows(
+                            parent_measurements, self.get_value_of_measurement
+                        ),
                     )
                 )
             else:
@@ -201,7 +206,9 @@ class CaseService:
         if value and observation.unit_concept_id:
             value = value + " " + self.get_concept_name(observation.unit_concept_id)
         if value and observation.qualifier_concept_id:
-            value = (self.get_concept_name(observation.qualifier_concept_id) + " : " + value)
+            value = (
+                self.get_concept_name(observation.qualifier_concept_id) + " : " + value
+            )
         return value
 
     def get_nodes_of_background(self, case_id, title_config):
@@ -220,7 +227,9 @@ class CaseService:
         return data
 
     def get_nodes_of_patient(self, case_id):
-        visit_occurrence = self.visit_occurrence_repository.get_visit_occurrence(case_id)
+        visit_occurrence = self.visit_occurrence_repository.get_visit_occurrence(
+            case_id
+        )
         person = self.person_repository.get_person(visit_occurrence.person_id)
         age = get_age(person, visit_occurrence)
         gender = self.get_concept_name(person.gender_concept_id)
@@ -243,7 +252,9 @@ class CaseService:
             return get_value_of_rows(observations, self.get_value_of_observation)
         data: list[TreeNode] = []
         for key, nested_config in config.items():
-            node = TreeNode(key, self.get_nodes_of_nested_fields(case_id, nested_config))
+            node = TreeNode(
+                key, self.get_nodes_of_nested_fields(case_id, nested_config)
+            )
             if node.values:
                 data.append(node)
         return data
@@ -279,7 +290,9 @@ class CaseService:
         6) Return Case with sorted important_infos.
         """
         # --- 1) Load configuration & verify access ---
-        configuration = self.configuration_repository.get_configuration_by_id(case_config_id)
+        configuration = self.configuration_repository.get_configuration_by_id(
+            case_config_id
+        )
         current_user = get_user_email_from_jwt()
         if not configuration or configuration.user_email != current_user:
             raise BusinessException(BusinessExceptionEnum.NoAccessToCaseReview)
@@ -347,11 +360,13 @@ class CaseService:
 
                 child.style = merged
                 if merged.get("top") is not None:
-                    important_infos.append({
-                        "key": child.key,
-                        "values": child.values,
-                        "weight": merged["top"],
-                    })
+                    important_infos.append(
+                        {
+                            "key": child.key,
+                            "values": child.values,
+                            "weight": merged["top"],
+                        }
+                    )
 
         # sort and wrap into TreeNodes
         important_infos.sort(key=itemgetter("weight"))
@@ -374,8 +389,7 @@ class CaseService:
             # pick the "predicted" one (e.g. first)
             predicted_leaf = csv_crc_score_leaves[0]
             display_pred = predicted_leaf.replace(
-                "Colorectal Cancer Score",
-                "Predicted Colorectal Cancer Score"
+                "Colorectal Cancer Score", "Predicted Colorectal Cancer Score"
             )
             sorted_important.append(TreeNode(ai_label, [display_pred]))
 
@@ -399,14 +413,14 @@ class CaseService:
                 (
                     o.value_as_string
                     for o in crc_obs
-                    if o.value_as_string and o.value_as_string.startswith("Colorectal Cancer Score")
+                    if o.value_as_string
+                    and o.value_as_string.startswith("Colorectal Cancer Score")
                 ),
-                None
+                None,
             )
             if csv_obs:
                 display_txt = csv_obs.replace(
-                    "Colorectal Cancer Score",
-                    "Predicted Colorectal Cancer Score"
+                    "Colorectal Cancer Score", "Predicted Colorectal Cancer Score"
                 )
                 sorted_important.append(TreeNode(ai_label, [display_txt]))
             else:
@@ -415,8 +429,7 @@ class CaseService:
                     txt = obs.value_as_string or ""
                     if txt.startswith("Adjusted CRC Risk"):
                         new_txt = txt.replace(
-                            "Adjusted CRC Risk",
-                            "AI-Predicted CRC Risk Score"
+                            "Adjusted CRC Risk", "AI-Predicted CRC Risk Score"
                         )
                         sorted_important.append(TreeNode(ai_label, [new_txt]))
                         break
@@ -431,11 +444,15 @@ class CaseService:
             sorted_important,
         )
 
-    def __get_current_case_by_user(self, user_email) -> tuple[int, str] | tuple[None, None]:
+    def __get_current_case_by_user(
+        self, user_email
+    ) -> tuple[int, str] | tuple[None, None]:
         case_config_pairs = (
             self.configuration_repository.get_case_configurations_by_user(user_email)
         )
-        completed_case_list = self.diagnose_repository.get_answered_case_list_by_user(user_email)
+        completed_case_list = self.diagnose_repository.get_answered_case_list_by_user(
+            user_email
+        )
 
         for case_id, config_id in case_config_pairs:
             if config_id not in completed_case_list:
@@ -453,9 +470,13 @@ class CaseService:
 
         cases_summary_list: list[CaseSummary] = []
         page_config = self.get_page_configuration()
-        chief_complaint_concept_ids = page_config["PATIENT COMPLAINT"]["Chief Complaint"]
+        chief_complaint_concept_ids = page_config["PATIENT COMPLAINT"][
+            "Chief Complaint"
+        ]
 
-        visit_occurrence = self.visit_occurrence_repository.get_visit_occurrence(case_id)
+        visit_occurrence = self.visit_occurrence_repository.get_visit_occurrence(
+            case_id
+        )
         person = self.person_repository.get_person(visit_occurrence.person_id)
         age = get_age(person, visit_occurrence)
         gender = self.get_concept_name(person.gender_concept_id)

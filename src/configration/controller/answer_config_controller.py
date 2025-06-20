@@ -18,7 +18,9 @@ _cfg_repo = AnswerConfigurationRepository(db.session)
 _cfg_service = AnswerConfigurationService(_cfg_repo)
 
 
-def _needs_attention_check(user_email: str, repo: AnswerRepository) -> bool:  # pragma: no cover
+def _needs_attention_check(
+    user_email: str, repo: AnswerRepository
+) -> bool:  # pragma: no cover
     """
     Check if the user needs an attention check based on their answered cases.
     Only applies if the user has answered a multiple of 10 cases.

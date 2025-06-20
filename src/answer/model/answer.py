@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from sqlalchemy import Boolean
 from sqlalchemy.dialects.postgresql import UUID
 
 from src import db
@@ -18,7 +19,7 @@ class Answer(db.Model):
     display_configuration = db.Column(db.JSON, nullable=True)
     answer_config_id = db.Column(UUID(as_uuid=True), nullable=True)
     answer: dict = db.Column(db.JSON, nullable=True)
-
+    ai_score_shown: bool = db.Column(Boolean, nullable=False, default=False)
     created_timestamp: datetime = db.Column(db.DateTime, default=datetime.utcnow)
     modified_timestamp: datetime = db.Column(
         db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow

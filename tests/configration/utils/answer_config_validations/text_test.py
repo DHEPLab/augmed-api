@@ -1,14 +1,15 @@
 import unittest
-from src.common.exception.BusinessException import BusinessException, BusinessExceptionEnum
+from src.common.exception.BusinessException import (
+    BusinessException,
+    BusinessExceptionEnum,
+)
 from src.configration.utils.answer_config_validations.text import text_type_validate
 
 
 class TestTextTypeValidate(unittest.TestCase):
 
     def test_valid_data(self):
-        data = {
-            "title": "Sample question?"
-        }
+        data = {"title": "Sample question?"}
         try:
             text_type_validate(data)
         except BusinessException:

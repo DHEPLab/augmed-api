@@ -4,10 +4,10 @@ from src import db
 from src.answer.repository.answer_repository import AnswerRepository
 from src.answer.service.answer_service import AnswerService
 from src.common.model.ApiResponse import ApiResponse
-from src.configration.repository.answer_config_repository import \
-    AnswerConfigurationRepository
-from src.user.repository.display_config_repository import \
-    DisplayConfigRepository
+from src.configration.repository.answer_config_repository import (
+    AnswerConfigurationRepository,
+)
+from src.user.repository.display_config_repository import DisplayConfigRepository
 from src.user.utils.auth_utils import jwt_validation_required
 
 answer_blueprint = Blueprint("answer", __name__)

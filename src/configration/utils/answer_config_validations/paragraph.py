@@ -1,5 +1,7 @@
-from src.common.exception.BusinessException import (BusinessException,
-                                                    BusinessExceptionEnum)
+from src.common.exception.BusinessException import (
+    BusinessException,
+    BusinessExceptionEnum,
+)
 
 
 def paragraph_type_validate(data: dict):

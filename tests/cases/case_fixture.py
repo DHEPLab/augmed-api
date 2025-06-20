@@ -4,11 +4,9 @@ from src.cases.model.clinical_data.person.drug_exposure import DrugExposure
 from src.cases.model.clinical_data.person.measurement import Measurement
 from src.cases.model.clinical_data.person.observation import Observation
 from src.cases.model.clinical_data.person.person import Person
-from src.cases.model.clinical_data.person.visit_occurrence import \
-    VisitOccurrence
+from src.cases.model.clinical_data.person.visit_occurrence import VisitOccurrence
 from src.cases.model.vocabularies.concept import Concept
-from src.cases.model.vocabularies.concept_relationship import \
-    ConceptRelationship
+from src.cases.model.vocabularies.concept_relationship import ConceptRelationship
 from src.cases.model.vocabularies.relationship import Relationship
 
 
@@ -55,7 +53,7 @@ def person_fixture(person_id=1, gender_concept_id=2, race_concept_id=3):
         day_of_birth=1,
         race_concept_id=race_concept_id,
         ethnicity_concept_id=12,
-        person_source_value='sunwukong'
+        person_source_value="sunwukong",
     )
 
 

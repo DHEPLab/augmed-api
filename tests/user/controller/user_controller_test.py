@@ -5,9 +5,13 @@ from src.user.model.user import User
 
 def test_get_user(client, mocker):
     user = User(name="test", email="goodbye@suwukong.com")
-    mocker.patch('src.user.service.user_service.UserService.get_user', return_value=user)
+    mocker.patch(
+        "src.user.service.user_service.UserService.get_user", return_value=user
+    )
 
-    mocker.patch('src.user.utils.auth_utils.validate_jwt_and_refresh', return_value=None)
+    mocker.patch(
+        "src.user.utils.auth_utils.validate_jwt_and_refresh", return_value=None
+    )
 
     response = client.get("/admin/users/1")
 
@@ -18,9 +22,13 @@ def test_get_user(client, mocker):
 
 
 def test_can_not_get_user(client, mocker):
-    mocker.patch('src.user.service.user_service.UserService.get_user', return_value=None)
+    mocker.patch(
+        "src.user.service.user_service.UserService.get_user", return_value=None
+    )
 
-    mocker.patch('src.user.utils.auth_utils.validate_jwt_and_refresh', return_value=None)
+    mocker.patch(
+        "src.user.utils.auth_utils.validate_jwt_and_refresh", return_value=None
+    )
 
     response = client.get("/admin/users/1")
 
@@ -31,16 +39,20 @@ def test_can_not_get_user(client, mocker):
 
 def test_create_users(client):
     request = {
-        "users": [{
-            "name": "name",
-            "email": "test@example.com",
-            "position": "position",
-            "employer": "employer",
-            "area_of_clinical_ex": "area_of_clinical_ex"
-        }]
+        "users": [
+            {
+                "name": "name",
+                "email": "test@example.com",
+                "position": "position",
+                "employer": "employer",
+                "area_of_clinical_ex": "area_of_clinical_ex",
+            }
+        ]
     }
 
-    response = client.post("/admin/users", data=json.dumps(request), content_type='application/json')
+    response = client.post(
+        "/admin/users", data=json.dumps(request), content_type="application/json"
+    )
 
     assert response.status_code == 201
     data = response.json["data"]
@@ -56,11 +68,13 @@ def test_invalid_request_params_when_create_users(client):
             {
                 "name": "name2",
                 "email": "test",
-            }
+            },
         ]
     }
 
-    response = client.post("/admin/users", data=json.dumps(request), content_type='application/json')
+    response = client.post(
+        "/admin/users", data=json.dumps(request), content_type="application/json"
+    )
 
     assert response.status_code == 400
     error = response.json["error"]

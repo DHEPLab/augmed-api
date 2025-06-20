@@ -1,7 +1,6 @@
 import pytest
 
-from src.cases.repository.drug_exposure_repository import \
-    DrugExposureRepository
+from src.cases.repository.drug_exposure_repository import DrugExposureRepository
 from tests.cases.case_fixture import input_case
 
 
