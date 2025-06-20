@@ -17,7 +17,9 @@ def configuration_repository(session):
 
 
 def test_add_diagnose(diagnose_repository, configuration_repository):
-    config = DisplayConfig(user_email="user@test.com", case_id=1, path_config={"key": "value"})
+    config = DisplayConfig(
+        user_email="user@test.com", case_id=1, path_config={"key": "value"}
+    )
     configuration_repository.save_configuration(config)
 
     diagnose = Answer(
@@ -35,10 +37,14 @@ def test_add_diagnose(diagnose_repository, configuration_repository):
 
 
 def test_get_diagnosed_case_list_by_user(diagnose_repository, configuration_repository):
-    config1 = DisplayConfig(user_email="user1@test.com", case_id=1, path_config={"key": "value"})
+    config1 = DisplayConfig(
+        user_email="user1@test.com", case_id=1, path_config={"key": "value"}
+    )
     configuration_repository.save_configuration(config1)
 
-    config2 = DisplayConfig(user_email="user2@test.com", case_id=2, path_config={"key": "value"})
+    config2 = DisplayConfig(
+        user_email="user2@test.com", case_id=2, path_config={"key": "value"}
+    )
     configuration_repository.save_configuration(config2)
 
     diagnose1 = Answer(
@@ -57,8 +63,12 @@ def test_get_diagnosed_case_list_by_user(diagnose_repository, configuration_repo
     )
     diagnose_repository.add_answer(diagnose2)
 
-    user1_task_ids = diagnose_repository.get_answered_case_list_by_user("user1@test.com")
-    user2_task_ids = diagnose_repository.get_answered_case_list_by_user("user2@test.com")
+    user1_task_ids = diagnose_repository.get_answered_case_list_by_user(
+        "user1@test.com"
+    )
+    user2_task_ids = diagnose_repository.get_answered_case_list_by_user(
+        "user2@test.com"
+    )
 
     assert user1_task_ids == [config1.id]
     assert user2_task_ids == [config2.id]
@@ -71,5 +81,7 @@ def test_get_diagnosed_case_list_by_user(diagnose_repository, configuration_repo
     )
     diagnose_repository.add_answer(diagnose3)
 
-    user1_task_ids = diagnose_repository.get_answered_case_list_by_user("user1@test.com")
+    user1_task_ids = diagnose_repository.get_answered_case_list_by_user(
+        "user1@test.com"
+    )
     assert user1_task_ids == [config1.id, config1.id]

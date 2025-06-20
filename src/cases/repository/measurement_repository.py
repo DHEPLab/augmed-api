@@ -1,8 +1,7 @@
 from sqlalchemy import select
 
 from src.cases.model.clinical_data.person.measurement import Measurement
-from src.cases.model.vocabularies.concept_relationship import \
-    ConceptRelationship
+from src.cases.model.vocabularies.concept_relationship import ConceptRelationship
 
 
 class MeasurementRepository:

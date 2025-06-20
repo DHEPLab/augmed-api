@@ -3,8 +3,7 @@ from io import StringIO
 from werkzeug.exceptions import InternalServerError
 
 from src.common.exception.BusinessException import BusinessException
-from src.user.repository.display_config_repository import \
-    DisplayConfigRepository
+from src.user.repository.display_config_repository import DisplayConfigRepository
 from src.user.utils.csv_parser import parse_csv_stream_to_configurations
 
 

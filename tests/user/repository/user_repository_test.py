@@ -59,10 +59,20 @@ def test_get_user_by_email_failed(user_repository):
 
 
 def test_get_users(user_repository):
-    user_1 = User(name="123", email="goodbye@sunwukong.com", position="position",
-                  employer="employer", area_of_clinical_ex="area_of_clinical_ex")
-    user_2 = User(name="123", email="goodbye2@sunwukong.com", position="position",
-                  employer="employer", area_of_clinical_ex="area_of_clinical_ex")
+    user_1 = User(
+        name="123",
+        email="goodbye@sunwukong.com",
+        position="position",
+        employer="employer",
+        area_of_clinical_ex="area_of_clinical_ex",
+    )
+    user_2 = User(
+        name="123",
+        email="goodbye2@sunwukong.com",
+        position="position",
+        employer="employer",
+        area_of_clinical_ex="area_of_clinical_ex",
+    )
     user_repository.create_user(user_1)
     user_repository.create_user(user_2)
 

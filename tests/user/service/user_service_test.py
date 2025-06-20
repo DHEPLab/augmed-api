@@ -10,10 +10,10 @@ from src.user.service.user_service import UserService
 def user():
     return User(
         id=1,
-        name='Test User',
-        email='test@example.com',
-        password=generate_password_hash('password123'),
-        salt='somesalt'
+        name="Test User",
+        email="test@example.com",
+        password=generate_password_hash("password123"),
+        salt="somesalt",
     )
 
 
@@ -29,11 +29,13 @@ def test_get_user(mocker, user):
 
 def test_only_add_user_for_not_existed(mocker, user):
     not_exist_user = User(
-        name='Test User',
-        email='test2@example.com',
+        name="Test User",
+        email="test2@example.com",
     )
     mock_repo = mocker.Mock(UserRepository)
-    mock_repo.get_user_by_email.side_effect = lambda email: user if email == user.email else None
+    mock_repo.get_user_by_email.side_effect = lambda email: (
+        user if email == user.email else None
+    )
     mock_repo.create_user.return_value = user
     user_service = UserService(mock_repo)
     users = [user, not_exist_user]
@@ -46,8 +48,8 @@ def test_only_add_user_for_not_existed(mocker, user):
 
 def test_not_add_user_when_exception(mocker):
     not_exist_user = User(
-        name='Test User',
-        email='test2@example.com',
+        name="Test User",
+        email="test2@example.com",
     )
     mock_repo = mocker.Mock(UserRepository)
     mock_repo.get_user_by_email.return_value = None
@@ -62,8 +64,8 @@ def test_not_add_user_when_exception(mocker):
 
 def test_get_users(mocker):
     user = User(
-        name='Test User',
-        email='test2@example.com',
+        name="Test User",
+        email="test2@example.com",
     )
     mock_repo = mocker.Mock(UserRepository)
     mock_repo.get_users.return_value = [user]
@@ -72,4 +74,3 @@ def test_get_users(mocker):
     result = user_service.get_users()
 
     assert result[0] == user
-

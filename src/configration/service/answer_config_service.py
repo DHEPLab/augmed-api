@@ -1,10 +1,14 @@
-from src.common.exception.BusinessException import (BusinessException,
-                                                    BusinessExceptionEnum)
+from src.common.exception.BusinessException import (
+    BusinessException,
+    BusinessExceptionEnum,
+)
 from src.configration.model.answer_config import AnswerConfig
-from src.configration.repository.answer_config_repository import \
-    AnswerConfigurationRepository
-from src.configration.utils.answer_config_validations.validation_factory import \
-    validate_factory
+from src.configration.repository.answer_config_repository import (
+    AnswerConfigurationRepository,
+)
+from src.configration.utils.answer_config_validations.validation_factory import (
+    validate_factory,
+)
 
 
 class AnswerConfigurationService:

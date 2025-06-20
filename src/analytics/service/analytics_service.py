@@ -1,9 +1,13 @@
 from datetime import datetime
 from src.analytics.model.analytics import Analytics
 from src.analytics.repository.analytics_repository import AnalyticsRepository
-from src.common.exception.BusinessException import BusinessException, BusinessExceptionEnum
+from src.common.exception.BusinessException import (
+    BusinessException,
+    BusinessExceptionEnum,
+)
 from src.user.utils.auth_utils import get_user_email_from_jwt
 from src.user.repository.display_config_repository import DisplayConfigRepository
+
 
 class AnalyticsService:
     def __init__(
@@ -14,8 +18,13 @@ class AnalyticsService:
         self.analytics_repo = analytics_repository
         self.config_repo = display_config_repository
 
-    def record_metrics(self, case_config_id: str, case_open: datetime,
-                       answer_open: datetime, answer_submit: datetime) -> Analytics:  # pragma: no cover
+    def record_metrics(
+        self,
+        case_config_id: str,
+        case_open: datetime,
+        answer_open: datetime,
+        answer_submit: datetime,
+    ) -> Analytics:  # pragma: no cover
 
         # verify user owns this case_config
         config = self.config_repo.get_configuration_by_id(case_config_id)

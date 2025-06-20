@@ -1,11 +1,11 @@
-
-
 import uuid
 import pytest
 
 from src.common.exception.db_transaction import db_transaction
 from src.user.model.reset_password_token import ResetPasswordToken
-from src.user.repository.reset_password_token_repository import ResetPasswordTokenRepository
+from src.user.repository.reset_password_token_repository import (
+    ResetPasswordTokenRepository,
+)
 
 
 @pytest.fixture(scope="session")
@@ -15,7 +15,9 @@ def token_repository(session):
 
 @pytest.fixture
 def fake_token():
-    return ResetPasswordToken(id=uuid.uuid4(), email="user@test.com", token="hash_token")
+    return ResetPasswordToken(
+        id=uuid.uuid4(), email="user@test.com", token="hash_token"
+    )
 
 
 def biz_service_without_transaction(token_repository, fake_token):

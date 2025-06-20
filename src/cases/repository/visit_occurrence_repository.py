@@ -1,5 +1,4 @@
-from src.cases.model.clinical_data.person.visit_occurrence import \
-    VisitOccurrence
+from src.cases.model.clinical_data.person.visit_occurrence import VisitOccurrence
 
 
 class VisitOccurrenceRepository:

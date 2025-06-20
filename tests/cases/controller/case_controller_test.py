@@ -38,7 +38,9 @@ def test_get_case_review(client, session, mocker):
     )
     session.flush()
 
-    mocker.patch("src.user.utils.auth_utils.validate_jwt_and_refresh", return_value=None)
+    mocker.patch(
+        "src.user.utils.auth_utils.validate_jwt_and_refresh", return_value=None
+    )
     mocker.patch(
         "src.cases.service.case_service.get_user_email_from_jwt",
         return_value="goodbye@sunwukong.com",
@@ -61,32 +63,37 @@ def test_get_case_review(client, session, mocker):
 
 
 def expected_json():
-    with open('tests/cases/controller/expected_response.json') as f:
+    with open("tests/cases/controller/expected_response.json") as f:
         return json.load(f)
 
 
 def test_get_case_summary(client, mocker, session):
-    mocker.patch('src.user.utils.auth_utils.validate_jwt_and_refresh', return_value=None)
-    mocker.patch('src.user.utils.auth_utils.get_user_email_from_jwt', return_value='user@example.com')
+    mocker.patch(
+        "src.user.utils.auth_utils.validate_jwt_and_refresh", return_value=None
+    )
+    mocker.patch(
+        "src.user.utils.auth_utils.get_user_email_from_jwt",
+        return_value="user@example.com",
+    )
 
     mocker.patch(
         "src.cases.service.case_service.CaseService.get_cases_by_user",
         return_value=[
             CaseSummary(
-                config_id='1',
+                config_id="1",
                 case_id=1,
-                patient_chief_complaint='Headache',
-                age='36',
-                gender='Male'
+                patient_chief_complaint="Headache",
+                age="36",
+                gender="Male",
             ),
             CaseSummary(
-                config_id='2',
+                config_id="2",
                 case_id=2,
-                patient_chief_complaint='Cough',
-                age='30',
-                gender='Female'
-            )
-        ]
+                patient_chief_complaint="Cough",
+                age="30",
+                gender="Female",
+            ),
+        ],
     )
 
     response = client.get("/api/cases")
@@ -100,20 +107,20 @@ def test_get_case_summary(client, mocker, session):
         "error": None,
         "data": [
             {
-                "config_id": '1',
+                "config_id": "1",
                 "case_id": 1,
                 "patient_chief_complaint": "Headache",
                 "age": "36",
-                "gender": "Male"
+                "gender": "Male",
             },
             {
-                "config_id": '2',
+                "config_id": "2",
                 "case_id": 2,
                 "patient_chief_complaint": "Cough",
                 "age": "30",
-                "gender": "Female"
-            }
-        ]
+                "gender": "Female",
+            },
+        ],
     }
 
     assert data == expected_data

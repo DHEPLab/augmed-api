@@ -2,8 +2,12 @@ from datetime import datetime, timedelta, timezone
 from functools import wraps
 
 from flask import make_response, request
-from flask_jwt_extended import (create_access_token, get_jwt, get_jwt_identity,
-                                verify_jwt_in_request)
+from flask_jwt_extended import (
+    create_access_token,
+    get_jwt,
+    get_jwt_identity,
+    verify_jwt_in_request,
+)
 from werkzeug.exceptions import Unauthorized
 
 

@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from sqlalchemy import Column, Integer, String, DateTime, Float
 from src import db
 
+
 class Analytics(db.Model):
     __tablename__ = "analytics"
 
@@ -11,22 +12,21 @@ class Analytics(db.Model):
     case_id = Column(Integer, nullable=False)
 
     # these three fields will also accept and store tz-aware UTC datetimes
-    case_open_time    = Column(DateTime(timezone=True), nullable=False)
-    answer_open_time  = Column(DateTime(timezone=True), nullable=False)
-    answer_submit_time= Column(DateTime(timezone=True), nullable=False)
+    case_open_time = Column(DateTime(timezone=True), nullable=False)
+    answer_open_time = Column(DateTime(timezone=True), nullable=False)
+    answer_submit_time = Column(DateTime(timezone=True), nullable=False)
 
     to_answer_open_secs = Column(Float, nullable=False)
-    to_submit_secs      = Column(Float, nullable=False)
+    to_submit_secs = Column(Float, nullable=False)
     total_duration_secs = Column(Float, nullable=False)
 
-    created_timestamp  = Column(
-        DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc)
+    created_timestamp = Column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
     modified_timestamp = Column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),
-        onupdate=lambda: datetime.now(timezone.utc)
+        onupdate=lambda: datetime.now(timezone.utc),
     )
 
     __table_args__ = (

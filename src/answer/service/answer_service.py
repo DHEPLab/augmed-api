@@ -1,11 +1,13 @@
 from src.answer.model.answer import Answer
 from src.answer.repository.answer_repository import AnswerRepository
-from src.common.exception.BusinessException import (BusinessException,
-                                                    BusinessExceptionEnum)
-from src.configration.repository.answer_config_repository import \
-    AnswerConfigurationRepository
-from src.user.repository.display_config_repository import \
-    DisplayConfigRepository
+from src.common.exception.BusinessException import (
+    BusinessException,
+    BusinessExceptionEnum,
+)
+from src.configration.repository.answer_config_repository import (
+    AnswerConfigurationRepository,
+)
+from src.user.repository.display_config_repository import DisplayConfigRepository
 from src.user.utils import auth_utils
 
 
@@ -26,6 +28,8 @@ class AnswerService:
         answer = data["answer"]
         answer_config_id = data["answerConfigId"]
 
+        ai_shown = data.get("aiScoreShown", False)
+
         configuration = self.configuration_repository.get_configuration_by_id(task_id)
 
         if not configuration or configuration.user_email != user_eamil:
@@ -41,6 +45,7 @@ class AnswerService:
             task_id=task_id,
             case_id=configuration.case_id,
             user_email=user_eamil,
+            ai_score_shown=ai_shown,
             display_configuration=configuration.path_config,
             answer_config_id=answer_config.id,
             answer=answer,

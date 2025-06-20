@@ -5,8 +5,7 @@ from flask import Blueprint, jsonify, request
 from src import db
 from src.common.exception.BusinessException import BusinessExceptionEnum
 from src.common.model.ApiResponse import ApiResponse
-from src.user.repository.display_config_repository import \
-    DisplayConfigRepository
+from src.user.repository.display_config_repository import DisplayConfigRepository
 from src.user.service.configuration_service import ConfigurationService
 from src.user.utils.csv_parser import is_csv_file
 

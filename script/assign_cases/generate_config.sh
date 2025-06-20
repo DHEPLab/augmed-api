@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 # ---------------------------------------------------------------------------------------------------------------
 # generate_config.sh
@@ -26,8 +26,8 @@
 #
 # To run:
 # 1. Change directory to the script's location: cd script/assign_cases
-# 1. Run: chmod +x generate_config.sh
-# 2. Run the script: (Remember to remove the # symbols at the beginning of each line)
+# 2. Run: chmod +x generate_config.sh
+# 3. Run the script: (Remember to remove the # symbols at the beginning of each line)
 #   ./generate_config.sh \
 #     <db_host> \
 #     <db_port> \
@@ -63,28 +63,33 @@ CASES_PER_USER="$6"
 RISK_CASES_PER_USER="$7"
 OUT="$8"
 
+# Prompt for database password once, export to PGPASSWORD for all subsequent psql invocations
+printf 'Password for user %s: ' "$DB_USER"
+stty -echo
+read DB_PASS
+stty echo
+echo
+export PGPASSWORD="$DB_PASS"
+
 # 1) Print a single header line.  (The CSV parser expects exactly these columns.)
 printf 'User,Case No.,Path,Collapse,Highlight,Top\n' > "$OUT"
 
-# 2) Run one big psql‐COPY that:
-#    • Picks N random users
-#    • Picks M random cases per user (only person_ids that exist in visit_occurrence)
-#    • For each sampled (user,case_id), fetch all leaf‐observations but filter them at random() < 0.5
-#      → emit only those chosen leaves, with Collapse=FALSE, Highlight=TRUE
-#    • Separately, pick K random “risk cases” per user → emit exactly one "CRC risk assessments" row for each
-#      of those, again with Collapse=FALSE, Highlight=TRUE
-psql -h "$DB_HOST" \
-     -p "$DB_PORT" \
-     -U "$DB_USER" \
-     -d "$DB_NAME" \
-     -A -F',' -t <<SQL >> "$OUT"
+# 2) Loop over each of N random users, generate their cases, and append to CSV with progress logging
+count=0
+while IFS= read -r user; do
+  count=$((count + 1))
+  echo "[${count}/${NUM_USERS}] Processing user: $user"
+
+  psql -h "$DB_HOST" \
+       -p "$DB_PORT" \
+       -U "$DB_USER" \
+       -d "$DB_NAME" \
+       -w \
+       -A -F',' -t <<SQL >> "$OUT"
 WITH
-  -- STEP A: Pick N random users
+  -- STEP A: Single user context
   users AS (
-    SELECT email
-    FROM public."user"
-    ORDER BY random()
-    LIMIT $NUM_USERS
+    SELECT '$user' AS email
   ),
 
   -- STEP B: All person_ids that actually have at least one visit (so get_case_by_user won't blow up)
@@ -329,10 +334,26 @@ WITH
     FROM risk_cases rc
   )
 
--- UNION together leaf_rows + risk_rows
-SELECT * FROM leaf_rows
-UNION ALL
-SELECT * FROM risk_rows;
+-- UNION together leaf_rows + risk_rows and randomize order for this user
+SELECT * FROM (
+  SELECT * FROM leaf_rows
+  UNION ALL
+  SELECT * FROM risk_rows
+) AS all_rows
+ORDER BY random();
 SQL
 
-echo "Wrote $OUT"
+done < <(psql -h "$DB_HOST" \
+           -p "$DB_PORT" \
+           -U "$DB_USER" \
+           -d "$DB_NAME" \
+           -w \
+           -A -t <<SQL
+SELECT email
+FROM public."user"
+ORDER BY random()
+LIMIT $NUM_USERS;
+SQL
+)
+
+echo "Done – wrote $OUT"

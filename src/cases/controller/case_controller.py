@@ -3,19 +3,15 @@ from flask import Blueprint, jsonify
 from src import db
 from src.answer.repository.answer_repository import AnswerRepository
 from src.cases.repository.concept_repository import ConceptRepository
-from src.cases.repository.drug_exposure_repository import \
-    DrugExposureRepository
+from src.cases.repository.drug_exposure_repository import DrugExposureRepository
 from src.cases.repository.measurement_repository import MeasurementRepository
 from src.cases.repository.observation_repository import ObservationRepository
 from src.cases.repository.person_repository import PersonRepository
-from src.cases.repository.visit_occurrence_repository import \
-    VisitOccurrenceRepository
+from src.cases.repository.visit_occurrence_repository import VisitOccurrenceRepository
 from src.cases.service.case_service import CaseService
 from src.common.model.ApiResponse import ApiResponse
-from src.common.repository.system_config_repository import \
-    SystemConfigRepository
-from src.user.repository.display_config_repository import \
-    DisplayConfigRepository
+from src.common.repository.system_config_repository import SystemConfigRepository
+from src.user.repository.display_config_repository import DisplayConfigRepository
 from src.user.utils import auth_utils
 from src.user.utils.auth_utils import jwt_validation_required
 

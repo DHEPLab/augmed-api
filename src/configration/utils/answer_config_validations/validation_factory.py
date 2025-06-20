@@ -1,7 +1,9 @@
 from enum import Enum
 
-from src.common.exception.BusinessException import (BusinessException,
-                                                    BusinessExceptionEnum)
+from src.common.exception.BusinessException import (
+    BusinessException,
+    BusinessExceptionEnum,
+)
 
 from .multiple_choice import multiple_choice_type_validate
 from .paragraph import paragraph_type_validate

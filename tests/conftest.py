@@ -16,14 +16,14 @@ def app():
     time.sleep(3)
 
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    migrations_dir = os.path.join(base_dir, 'src', 'migrations')
+    migrations_dir = os.path.join(base_dir, "src", "migrations")
 
     app = create_app(
         dict(
             SQLALCHEMY_DATABASE_URI=postgres.get_connection_url(),
-            JWT_SECRET_KEY='super-secret-key',
+            JWT_SECRET_KEY="super-secret-key",
             JWT_ACCESS_TOKEN_EXPIRES=15 * 60,
-            JWT_REFRESH_TOKEN_EXPIRES=259200
+            JWT_REFRESH_TOKEN_EXPIRES=259200,
         )
     )
     JWTManager(app)

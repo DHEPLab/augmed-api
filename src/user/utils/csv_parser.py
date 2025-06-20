@@ -97,6 +97,7 @@ class CsvConfigurationParser:
     and produce exactly one DisplayConfig(user_email, case_id, path_config=[…]) object,
     where path_config is a list of {"path": PATH, "style": {...}} dictionaries.
     """
+
     def __init__(self, csv_stream: StringIO):
         reader = csv.DictReader(csv_stream, delimiter=",")
         self.rows: List[Dict[str, str]] = []

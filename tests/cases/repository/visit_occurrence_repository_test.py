@@ -1,7 +1,6 @@
 import pytest
 
-from src.cases.repository.visit_occurrence_repository import \
-    VisitOccurrenceRepository
+from src.cases.repository.visit_occurrence_repository import VisitOccurrenceRepository
 from tests.cases.case_fixture import input_case
 
 
