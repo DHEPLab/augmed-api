@@ -2,6 +2,8 @@
 
 AugMed is a web application, built for the UNC-Chapel Hill DHEP Lab, that allows the lab to collect data from participants in a user-friendly way. The app is designed to be used on any devices, and it allows participants to answer questions about their judgements for cases with potential Colorectal Cancer (CRC). The app is built using React, and the backend API is built using Flask and Python.
 
+**Live Website**: **[https://augmed1.dhep.org/](https://augmed1.dhep.org/).**
+
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
@@ -26,6 +28,9 @@ AugMed is a web application, built for the UNC-Chapel Hill DHEP Lab, that allows
 ![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
 ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
 ![Postman](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white)
+
+> [!NOTE]
+> **Frontend Repository**: **[DHEP Lab AugMed Frontend](https://github.com/DHEPLab/augmed-app).**
 
 ## Local Environment Setup
 
@@ -83,7 +88,7 @@ To run the application locally, follow these steps:
    flask run --host=127.0.0.1 --port=5001
    ```
 
-> [!NOTE]
+> [!IMPORTANT]
 > If your frontend is also running, ensure it is configured to communicate with this backend API. You may need to set the API URL in your frontend configuration.
 > Also, you might need to use CORS (Cross-Origin Resource Sharing) if your frontend and backend are served from different origins. You can use the `flask-cors` package to handle this:
 > ```shell
