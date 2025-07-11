@@ -30,7 +30,7 @@ AugMed is a web application, built for the UNC-Chapel Hill DHEP Lab, that allows
 ![Postman](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white)
 
 > [!NOTE]
-> **Backend Repository**: **[DHEP Lab AugMed Backend](https://github.com/DHEPLab/augmed-api).**
+> **Frontend Repository**: **[DHEP Lab AugMed Frontend](https://github.com/DHEPLab/augmed-app).**
 
 ## Local Environment Setup
 
