@@ -23,7 +23,7 @@ class AnswerService:
         self.answer_config_repository = answer_config_repository
 
     def add_answer_response(self, task_id: int, data: dict):
-        user_eamil = auth_utils.get_user_email_from_jwt()
+        user_email = auth_utils.get_user_email_from_jwt()
 
         answer = data["answer"]
         answer_config_id = data["answerConfigId"]
@@ -32,7 +32,7 @@ class AnswerService:
 
         configuration = self.configuration_repository.get_configuration_by_id(task_id)
 
-        if not configuration or configuration.user_email != user_eamil:
+        if not configuration or configuration.user_email != user_email:
             raise BusinessException(BusinessExceptionEnum.NoAccessToCaseReview)
 
         answer_config = self.answer_config_repository.get_answer_config(
@@ -44,7 +44,7 @@ class AnswerService:
         diagnose = Answer(
             task_id=task_id,
             case_id=configuration.case_id,
-            user_email=user_eamil,
+            user_email=user_email,
             ai_score_shown=ai_shown,
             display_configuration=configuration.path_config,
             answer_config_id=answer_config.id,
