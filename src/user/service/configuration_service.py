@@ -36,4 +36,6 @@ class ConfigurationService:
                 result["status"] = "failed"
             responses.append(result)
 
+        self.repository.session.commit()
+
         return responses
