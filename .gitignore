@@ -77,6 +77,7 @@ template.beconf.tfvars
 backend.tf
 *.iso
 .env
+.envrc
 .coverage
 
 # participants info
