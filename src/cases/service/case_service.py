@@ -148,15 +148,9 @@ class CaseService:
                     children_measurements, lambda m: m.measurement_concept_id
                 )
                 for concept_id, rows in measurements_by_concept.items():
-                    # Special handling for BMI - change title from 'centile' to 'range'
-                    if concept_id == 40490382:
-                        concept_name = "BMI (body mass index) range"
-                    else:
-                        concept_name = self.get_concept_name(concept_id)
-                    
                     parent_node.add_node(
                         TreeNode(
-                            concept_name,
+                            self.get_concept_name(concept_id),
                             get_value_of_rows(rows, self.get_value_of_measurement),
                         )
                     )
@@ -403,11 +397,7 @@ class CaseService:
                 # Filter child.values - handle both string lists and TreeNode lists
                 if child.values and isinstance(child.values[0], TreeNode):
                     # child.values is a list of TreeNode objects
-                    # Special handling for BMI - accept both 'range' and 'centile' versions
-                    keep_with_bmi = keep.copy()
-                    if "BMI (body mass index) centile" in keep:
-                        keep_with_bmi.add("BMI (body mass index) range")
-                    child.values = [v for v in child.values if v.key in keep_with_bmi]
+                    child.values = [v for v in child.values if v.key in keep]
                 else:
                     # child.values is a list of strings
                     child.values = [v for v in child.values if v in keep]
@@ -432,6 +422,17 @@ class CaseService:
                             "weight": merged["top"],
                         }
                     )
+        
+        # --- 4c) Rename BMI title from 'centile' to 'range' after filtering ---
+        for top in case_details:
+            if top.key != "PHYSICAL EXAMINATION":
+                continue
+            for child in top.values:
+                if child.key == "Body measure" and child.values:
+                    if isinstance(child.values[0], TreeNode):
+                        for node in child.values:
+                            if node.key == "BMI (body mass index) centile":
+                                node.key = "BMI (body mass index) range"
 
         # sort and wrap into TreeNodes
         important_infos.sort(key=itemgetter("weight"))
