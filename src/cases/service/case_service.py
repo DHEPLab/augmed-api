@@ -160,12 +160,24 @@ class CaseService:
 
     def get_value_of_measurement(self, measurement) -> str | None:
         value = None
-        if measurement.value_as_number:
+        
+        # Special handling for BMI (concept_id 40490382) - convert numeric to category
+        if measurement.measurement_concept_id == 40490382 and measurement.value_as_number:
+            bmi_num = int(measurement.value_as_number)
+            bmi_categories = {
+                18: "Underweight",
+                22: "Normal",
+                27: "Overweight",
+                30: "Obese"
+            }
+            value = bmi_categories.get(bmi_num, str(bmi_num))
+        elif measurement.value_as_number:
             value = str(measurement.value_as_number)
         elif measurement.value_as_concept_id:
             value = self.get_concept_name(measurement.value_as_concept_id)
         elif measurement.unit_source_value:
             value = measurement.unit_source_value
+            
         if value and measurement.unit_concept_id:
             value = value + " " + self.get_concept_name(measurement.unit_concept_id)
         if value and measurement.operator_concept_id:
