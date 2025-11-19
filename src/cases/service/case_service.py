@@ -427,6 +427,20 @@ class CaseService:
             
             top.values = filtered_children
 
+        # --- 4e) Remove empty PHYSICAL EXAMINATION section entirely ---
+        # After filtering/gating, if no children remain under PHYSICAL EXAMINATION, drop the section.
+        pruned_case_details: list[TreeNode] = []
+        for section in case_details:
+            if section.key == "PHYSICAL EXAMINATION":
+                # Remove any empty child nodes first
+                if isinstance(section.values, list):
+                    section.values = [c for c in section.values if getattr(c, "values", None)]
+                if not section.values:
+                    # Skip adding this section entirely
+                    continue
+            pruned_case_details.append(section)
+        case_details = pruned_case_details
+
         # sort and wrap into TreeNodes
         important_infos.sort(key=itemgetter("weight"))
         sorted_important = [TreeNode(e["key"], e["values"]) for e in important_infos]
