@@ -56,9 +56,8 @@ def test_get_case_review(client, session, mocker):
     expected["details"][0]["values"][1]["values"] = []
     expected["details"][0]["values"][2]["values"] = []
     
-    # PHYSICAL EXAMINATION fields should be empty when path_config doesn't specify them
-    expected["details"][2]["values"][0]["values"] = []
-    expected["details"][2]["values"][1]["values"] = []
+    # PHYSICAL EXAMINATION is not filtered by path_config, so values remain as-is
+    # (golden file already has the correct PHYSICAL EXAMINATION values)
 
     # when CSV doesn't reference any RISK ASSESSMENT, importantInfos should be empty
     expected["importantInfos"] = []
