@@ -380,50 +380,7 @@ class CaseService:
                         }
                     )
         
-        # --- 4b) Prune PHYSICAL EXAMINATION per path_config ---
-        for top in case_details:
-            if top.key != "PHYSICAL EXAMINATION":
-                continue
-            for child in top.values:
-                pk = f"PHYSICAL EXAMINATION.{child.key}"
-                if pk not in parent_to_entries:
-                    # If this section is not in path_config, remove all values
-                    child.values = []
-                    continue
-                
-                entries = parent_to_entries[pk]
-                keep = {e["leaf"] for e in entries}
-                
-                # Filter child.values - handle both string lists and TreeNode lists
-                if child.values and isinstance(child.values[0], TreeNode):
-                    # child.values is a list of TreeNode objects
-                    child.values = [v for v in child.values if v.key in keep]
-                else:
-                    # child.values is a list of strings
-                    child.values = [v for v in child.values if v in keep]
-                
-                # Merge style directives
-                merged: dict = {}
-                for e in entries:
-                    s = e["style"]
-                    if "collapse" in s:
-                        merged["collapse"] = not s["collapse"]
-                    if "highlight" in s:
-                        merged["highlight"] = s["highlight"]
-                    if "top" in s:
-                        merged["top"] = max(merged.get("top", -1), s["top"])
-                
-                child.style = merged
-                if merged.get("top") is not None:
-                    important_infos.append(
-                        {
-                            "key": child.key,
-                            "values": child.values,
-                            "weight": merged["top"],
-                        }
-                    )
-        
-        # --- 4c) Rename BMI title from 'centile' to 'range' after filtering ---
+        # --- 4b) Rename BMI title from 'centile' to 'range' ---
         for top in case_details:
             if top.key != "PHYSICAL EXAMINATION":
                 continue
