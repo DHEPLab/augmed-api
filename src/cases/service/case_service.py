@@ -148,14 +148,24 @@ class CaseService:
                     children_measurements, lambda m: m.measurement_concept_id
                 )
                 for concept_id, rows in measurements_by_concept.items():
+                    label = self.get_concept_name(concept_id)
+                    # Normalize BMI label to "range" at build time for consistent UI
+                    if label == "BMI (body mass index) centile":
+                        label = "BMI (body mass index) range"
                     parent_node.add_node(
                         TreeNode(
-                            self.get_concept_name(concept_id),
+                            label,
                             get_value_of_rows(rows, self.get_value_of_measurement),
                         )
                     )
                 if parent_node.values:
                     data.append(parent_node)
+        # Safety: if already built under Body measure as child nodes, normalize too
+        for node in data:
+            if node.key == "Body measure" and node.values and isinstance(node.values[0], TreeNode):
+                for child in node.values:
+                    if child.key == "BMI (body mass index) centile":
+                        child.key = "BMI (body mass index) range"
         return data
 
     def get_value_of_measurement(self, measurement) -> str | None:
@@ -381,10 +391,12 @@ class CaseService:
                     )
         
         # --- 4b) Filter and rename PHYSICAL EXAMINATION based on path_config ---
-        # Build a set of all PHYSICAL EXAMINATION items that should be kept
+        # Build a set of all PHYSICAL EXAMINATION leaf texts that should be kept
         phys_exam_keep = set()
+        has_phys_exam_config = False
         for pk, entries in parent_to_entries.items():
             if pk.startswith("PHYSICAL EXAMINATION."):
+                has_phys_exam_config = True
                 # Extract leaf texts (these are the actual child.key values to keep)
                 for e in entries:
                     phys_exam_keep.add(e["leaf"])
@@ -394,8 +406,8 @@ class CaseService:
             if top.key != "PHYSICAL EXAMINATION":
                 continue
             
-            # If phys_exam_keep is not empty, filter children
-            if phys_exam_keep:
+            # If we have PHYSICAL EXAMINATION entries in path_config, filter
+            if has_phys_exam_config:
                 # Keep only children whose key is in the keep set
                 filtered_children = []
                 for child in top.values:
@@ -406,7 +418,7 @@ class CaseService:
                         filtered_children.append(child)
                 top.values = filtered_children
             else:
-                # No filtering needed, just rename BMI if present
+                # No PHYSICAL EXAMINATION in path_config, just rename BMI if present
                 for child in top.values:
                     if child.key == "BMI (body mass index) centile":
                         child.key = "BMI (body mass index) range"
