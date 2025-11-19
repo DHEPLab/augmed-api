@@ -458,17 +458,6 @@ class CaseService:
             )
             sorted_important.append(TreeNode(ai_label, [display_pred]))
 
-            # if we have numeric values, emit min/max
-            if nums:
-                min_val = int(min(nums))
-                max_val = int(max(nums))
-                sorted_important.append(
-                    TreeNode("Min Predicted Colorectal Cancer Score", [str(min_val)])
-                )
-                sorted_important.append(
-                    TreeNode("Max Predicted Colorectal Cancer Score", [str(max_val)])
-                )
-
         elif old_crc_toggle:
             crc_obs = self.observation_repository.get_observations_by_concept(
                 configuration.case_id, [45614722]
