@@ -885,6 +885,203 @@ class TestGetValue:
         # then
         assert value == "test 44 test"
 
+    def test_get_value_of_measurement_with_bmi_underweight(self, mocker):
+        # Given
+        (
+            concept_repository,
+            configuration_repository,
+            drug_exposure_repository,
+            measurement_repository,
+            observation_repository,
+            person_repository,
+            visit_occurrence_repository,
+            system_config_repository,
+            diagnosis_repository,
+        ) = mock_repos(mocker)
+
+        case_service = CaseService(
+            visit_occurrence_repository=visit_occurrence_repository,
+            concept_repository=concept_repository,
+            measurement_repository=measurement_repository,
+            observation_repository=observation_repository,
+            person_repository=person_repository,
+            drug_exposure_repository=drug_exposure_repository,
+            configuration_repository=configuration_repository,
+            system_config_repository=system_config_repository,
+            diagnose_repository=diagnosis_repository,
+        )
+        # BMI concept_id is 40490382
+        measurement_bmi_underweight = measurement_fixture(
+            concept_id=40490382,
+            value_as_number=18,
+            measurement_id=4,
+            person_id=1,
+            visit_id=1,
+        )
+
+        # when
+        value = case_service.get_value_of_measurement(measurement_bmi_underweight)
+
+        # then
+        assert value == "Underweight"
+
+    def test_get_value_of_measurement_with_bmi_normal(self, mocker):
+        # Given
+        (
+            concept_repository,
+            configuration_repository,
+            drug_exposure_repository,
+            measurement_repository,
+            observation_repository,
+            person_repository,
+            visit_occurrence_repository,
+            system_config_repository,
+            diagnosis_repository,
+        ) = mock_repos(mocker)
+
+        case_service = CaseService(
+            visit_occurrence_repository=visit_occurrence_repository,
+            concept_repository=concept_repository,
+            measurement_repository=measurement_repository,
+            observation_repository=observation_repository,
+            person_repository=person_repository,
+            drug_exposure_repository=drug_exposure_repository,
+            configuration_repository=configuration_repository,
+            system_config_repository=system_config_repository,
+            diagnose_repository=diagnosis_repository,
+        )
+        measurement_bmi_normal = measurement_fixture(
+            concept_id=40490382,
+            value_as_number=22,
+            measurement_id=5,
+            person_id=1,
+            visit_id=1,
+        )
+
+        # when
+        value = case_service.get_value_of_measurement(measurement_bmi_normal)
+
+        # then
+        assert value == "Normal"
+
+    def test_get_value_of_measurement_with_bmi_overweight(self, mocker):
+        # Given
+        (
+            concept_repository,
+            configuration_repository,
+            drug_exposure_repository,
+            measurement_repository,
+            observation_repository,
+            person_repository,
+            visit_occurrence_repository,
+            system_config_repository,
+            diagnosis_repository,
+        ) = mock_repos(mocker)
+
+        case_service = CaseService(
+            visit_occurrence_repository=visit_occurrence_repository,
+            concept_repository=concept_repository,
+            measurement_repository=measurement_repository,
+            observation_repository=observation_repository,
+            person_repository=person_repository,
+            drug_exposure_repository=drug_exposure_repository,
+            configuration_repository=configuration_repository,
+            system_config_repository=system_config_repository,
+            diagnose_repository=diagnosis_repository,
+        )
+        measurement_bmi_overweight = measurement_fixture(
+            concept_id=40490382,
+            value_as_number=27,
+            measurement_id=6,
+            person_id=1,
+            visit_id=1,
+        )
+
+        # when
+        value = case_service.get_value_of_measurement(measurement_bmi_overweight)
+
+        # then
+        assert value == "Overweight"
+
+    def test_get_value_of_measurement_with_bmi_obese(self, mocker):
+        # Given
+        (
+            concept_repository,
+            configuration_repository,
+            drug_exposure_repository,
+            measurement_repository,
+            observation_repository,
+            person_repository,
+            visit_occurrence_repository,
+            system_config_repository,
+            diagnosis_repository,
+        ) = mock_repos(mocker)
+
+        case_service = CaseService(
+            visit_occurrence_repository=visit_occurrence_repository,
+            concept_repository=concept_repository,
+            measurement_repository=measurement_repository,
+            observation_repository=observation_repository,
+            person_repository=person_repository,
+            drug_exposure_repository=drug_exposure_repository,
+            configuration_repository=configuration_repository,
+            system_config_repository=system_config_repository,
+            diagnose_repository=diagnosis_repository,
+        )
+        measurement_bmi_obese = measurement_fixture(
+            concept_id=40490382,
+            value_as_number=30,
+            measurement_id=7,
+            person_id=1,
+            visit_id=1,
+        )
+
+        # when
+        value = case_service.get_value_of_measurement(measurement_bmi_obese)
+
+        # then
+        assert value == "Obese"
+
+    def test_get_value_of_measurement_with_bmi_unknown(self, mocker):
+        # Given
+        (
+            concept_repository,
+            configuration_repository,
+            drug_exposure_repository,
+            measurement_repository,
+            observation_repository,
+            person_repository,
+            visit_occurrence_repository,
+            system_config_repository,
+            diagnosis_repository,
+        ) = mock_repos(mocker)
+
+        case_service = CaseService(
+            visit_occurrence_repository=visit_occurrence_repository,
+            concept_repository=concept_repository,
+            measurement_repository=measurement_repository,
+            observation_repository=observation_repository,
+            person_repository=person_repository,
+            drug_exposure_repository=drug_exposure_repository,
+            configuration_repository=configuration_repository,
+            system_config_repository=system_config_repository,
+            diagnose_repository=diagnosis_repository,
+        )
+        # Test with a BMI value not in the predefined categories
+        measurement_bmi_unknown = measurement_fixture(
+            concept_id=40490382,
+            value_as_number=25,
+            measurement_id=8,
+            person_id=1,
+            visit_id=1,
+        )
+
+        # when
+        value = case_service.get_value_of_measurement(measurement_bmi_unknown)
+
+        # then
+        assert value == "25"
+
 
 class TestGetCaseReview:
     def test_get_case_review_with_configuration_and_path_config(self, mocker):
