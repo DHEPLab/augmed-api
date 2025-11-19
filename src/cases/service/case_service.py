@@ -403,7 +403,11 @@ class CaseService:
                 # Filter child.values - handle both string lists and TreeNode lists
                 if child.values and isinstance(child.values[0], TreeNode):
                     # child.values is a list of TreeNode objects
-                    child.values = [v for v in child.values if v.key in keep]
+                    # Special handling for BMI - accept both 'range' and 'centile' versions
+                    keep_with_bmi = keep.copy()
+                    if "BMI (body mass index) centile" in keep:
+                        keep_with_bmi.add("BMI (body mass index) range")
+                    child.values = [v for v in child.values if v.key in keep_with_bmi]
                 else:
                     # child.values is a list of strings
                     child.values = [v for v in child.values if v in keep]
