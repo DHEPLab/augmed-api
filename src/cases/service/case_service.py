@@ -380,34 +380,36 @@ class CaseService:
                         }
                     )
         
-        # --- 4b) Filter PHYSICAL EXAMINATION if specified in path_config ---
-        # Only filter sections that ARE in path_config (selective filtering)
-        for top in case_details:
-            if top.key != "PHYSICAL EXAMINATION":
-                continue
-            for child in top.values:
-                pk = f"PHYSICAL EXAMINATION.{child.key}"
-                # Only filter if this specific section is mentioned in path_config
-                if pk in parent_to_entries:
-                    entries = parent_to_entries[pk]
-                    keep = {e["leaf"] for e in entries}
-                    
-                    # Filter child.values based on path_config
-                    if child.values and isinstance(child.values[0], TreeNode):
-                        child.values = [v for v in child.values if v.key in keep]
-                    else:
-                        child.values = [v for v in child.values if v in keep]
+        # --- 4b) Filter and rename PHYSICAL EXAMINATION based on path_config ---
+        # Build a set of all PHYSICAL EXAMINATION items that should be kept
+        phys_exam_keep = set()
+        for pk, entries in parent_to_entries.items():
+            if pk.startswith("PHYSICAL EXAMINATION."):
+                # Extract leaf texts (these are the actual child.key values to keep)
+                for e in entries:
+                    phys_exam_keep.add(e["leaf"])
         
-        # --- 4c) Rename BMI title from 'centile' to 'range' ---
+        # Filter and rename PHYSICAL EXAMINATION children
         for top in case_details:
             if top.key != "PHYSICAL EXAMINATION":
                 continue
-            for child in top.values:
-                if child.key == "Body measure" and child.values:
-                    if isinstance(child.values[0], TreeNode):
-                        for node in child.values:
-                            if node.key == "BMI (body mass index) centile":
-                                node.key = "BMI (body mass index) range"
+            
+            # If phys_exam_keep is not empty, filter children
+            if phys_exam_keep:
+                # Keep only children whose key is in the keep set
+                filtered_children = []
+                for child in top.values:
+                    if child.key in phys_exam_keep:
+                        # Rename BMI from 'centile' to 'range'
+                        if child.key == "BMI (body mass index) centile":
+                            child.key = "BMI (body mass index) range"
+                        filtered_children.append(child)
+                top.values = filtered_children
+            else:
+                # No filtering needed, just rename BMI if present
+                for child in top.values:
+                    if child.key == "BMI (body mass index) centile":
+                        child.key = "BMI (body mass index) range"
 
         # sort and wrap into TreeNodes
         important_infos.sort(key=itemgetter("weight"))
