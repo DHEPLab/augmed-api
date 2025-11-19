@@ -55,8 +55,12 @@ def test_get_case_review(client, session, mocker):
     expected = expected_json()
     expected["details"][0]["values"][1]["values"] = []
     expected["details"][0]["values"][2]["values"] = []
+    
+    # PHYSICAL EXAMINATION fields should be empty when path_config doesn't specify them
+    expected["details"][2]["values"][0]["values"] = []
+    expected["details"][2]["values"][1]["values"] = []
 
-    # when CSV doesn’t reference any RISK ASSESSMENT, importantInfos should be empty
+    # when CSV doesn't reference any RISK ASSESSMENT, importantInfos should be empty
     expected["importantInfos"] = []
 
     assert data == expected
