@@ -380,7 +380,25 @@ class CaseService:
                         }
                     )
         
-        # --- 4b) Rename BMI title from 'centile' to 'range' ---
+        # --- 4b) Filter PHYSICAL EXAMINATION if specified in path_config ---
+        # Only filter sections that ARE in path_config (selective filtering)
+        for top in case_details:
+            if top.key != "PHYSICAL EXAMINATION":
+                continue
+            for child in top.values:
+                pk = f"PHYSICAL EXAMINATION.{child.key}"
+                # Only filter if this specific section is mentioned in path_config
+                if pk in parent_to_entries:
+                    entries = parent_to_entries[pk]
+                    keep = {e["leaf"] for e in entries}
+                    
+                    # Filter child.values based on path_config
+                    if child.values and isinstance(child.values[0], TreeNode):
+                        child.values = [v for v in child.values if v.key in keep]
+                    else:
+                        child.values = [v for v in child.values if v in keep]
+        
+        # --- 4c) Rename BMI title from 'centile' to 'range' ---
         for top in case_details:
             if top.key != "PHYSICAL EXAMINATION":
                 continue
