@@ -406,22 +406,26 @@ class CaseService:
             if top.key != "PHYSICAL EXAMINATION":
                 continue
             
-            # If we have PHYSICAL EXAMINATION entries in path_config, filter
-            if has_phys_exam_config:
-                # Keep only children whose key is in the keep set
-                filtered_children = []
-                for child in top.values:
-                    if child.key in phys_exam_keep:
-                        # Rename BMI from 'centile' to 'range'
-                        if child.key == "BMI (body mass index) centile":
-                            child.key = "BMI (body mass index) range"
-                        filtered_children.append(child)
-                top.values = filtered_children
-            else:
-                # No PHYSICAL EXAMINATION in path_config, just rename BMI if present
-                for child in top.values:
+            # Filter: if we have PHYSICAL EXAMINATION in path_config, keep only what's specified.
+            # Otherwise, keep everything EXCEPT BMI (BMI only shows when explicitly in path_config)
+            filtered_children = []
+            for child in top.values:
+                should_keep = False
+                
+                if has_phys_exam_config:
+                    # Path config has PHYSICAL EXAMINATION entries - keep only specified items
+                    should_keep = child.key in phys_exam_keep
+                else:
+                    # No PHYSICAL EXAMINATION in path_config - keep everything except BMI
+                    should_keep = child.key != "BMI (body mass index) centile"
+                
+                if should_keep:
+                    # Rename BMI from 'centile' to 'range' if it's BMI
                     if child.key == "BMI (body mass index) centile":
                         child.key = "BMI (body mass index) range"
+                    filtered_children.append(child)
+            
+            top.values = filtered_children
 
         # sort and wrap into TreeNodes
         important_infos.sort(key=itemgetter("weight"))
